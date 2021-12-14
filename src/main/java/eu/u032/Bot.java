@@ -1,5 +1,6 @@
 package eu.u032;
 
+import com.jagrosh.jdautilities.examples.command.ShutdownCommand;
 import eu.u032.Commands.*;
 import eu.u032.Utils.Config;
 import net.dv8tion.jda.api.JDA;
@@ -22,7 +23,9 @@ public class Bot {
                 .setStatus(OnlineStatus.IDLE)
                 .useHelpBuilder(false);
         utils.addCommands(
-                new GuildCommand()
+                new GuildCommand(),
+                new MuteCommand(),
+                new ShutdownCommand()
         );
 
         JDA jda = JDABuilder
