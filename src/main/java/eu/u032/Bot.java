@@ -2,6 +2,7 @@ package eu.u032;
 
 import eu.u032.Commands.*;
 import eu.u032.Utils.Config;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -23,11 +24,18 @@ public class Bot {
                 new GuildCommand()
         );
 
-        JDABuilder
+        JDA jda = JDABuilder
             .createDefault(Config.getString("DISCORD_TOKEN"),
-                    GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_EMOJIS)
+                    GatewayIntent.GUILD_MEMBERS,
+                    GatewayIntent.GUILD_MESSAGES,
+                    GatewayIntent.GUILD_INVITES,
+                    GatewayIntent.GUILD_EMOJIS)
             .setActivity(Activity.competing("titled"))
-            .addEventListeners(utils.build())
+            .addEventListeners(
+                    new Events(),
+                    utils.build()
+            )
             .build();
     }
+
 }
