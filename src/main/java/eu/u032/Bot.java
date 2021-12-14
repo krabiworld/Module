@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import javax.security.auth.login.LoginException;
@@ -22,6 +23,7 @@ public class Bot {
                 .useHelpBuilder(false);
         utils.addCommands(
                 new GuildCommand()
+                new
         );
 
         JDA jda = JDABuilder
