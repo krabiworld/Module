@@ -114,7 +114,7 @@ public class Events extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(user.getAsTag(), user.getEffectiveAvatarUrl(), user.getEffectiveAvatarUrl())
-                .setColor(Color.decode("#f7d724"))
+                .setColor(Color.decode("#e94b3e"))
                 .setDescription(String.format("%s has left the server!", user.getAsMention()))
                 .addField("Registered at", String.format("<t:%s>", user.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(event.getGuild().getMemberCount()), true)
