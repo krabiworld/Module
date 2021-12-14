@@ -1,0 +1,5 @@
+build
+.gradle
+src/test
+.env
+.idea

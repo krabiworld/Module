@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'eu.u032'
+version '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
+    }
+    jcenter()
+}
+dependencies {
+    implementation("net.dv8tion:JDA:4.4.0_350")
+    implementation("io.github.cdimascio:dotenv-java:2.2.0")
+    implementation("com.jagrosh:jda-utilities:3.0.5")
+}
+compileJava.options.encoding = 'UTF-8'
