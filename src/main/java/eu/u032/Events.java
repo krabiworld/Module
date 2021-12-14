@@ -43,7 +43,8 @@ public class Events extends ListenerAdapter {
                 .queue();
 
     }
-
+    
+    // Message deleted
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
         Message msg = MessageCache.getMessage(event.getMessageIdLong());
@@ -60,7 +61,8 @@ public class Events extends ListenerAdapter {
                 .sendMessage(embed.build())
                 .queue();
     }
-
+    
+    // Message edited
     @Override
     public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
         Message old = MessageCache.getMessage(event.getMessageIdLong());
