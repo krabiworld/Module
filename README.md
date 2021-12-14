@@ -6,5 +6,5 @@ Private Discord bot for server **titled** (link in description)
 UNIX-like:
 ./gradlew dist
 Windows:
-gradle dist
+gradlew dist
 ```
