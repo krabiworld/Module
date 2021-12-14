@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
@@ -20,7 +21,6 @@ import java.util.Date;
 public class Events extends ListenerAdapter {
 
     // Cache messages
-
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         MessageCache.addMessage(event.getMessage());
@@ -35,7 +35,7 @@ public class Events extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(inviter.getAsTag(), inviter.getEffectiveAvatarUrl(), inviter.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#89d561"))
-                .setDescription(String.format("<@%s> created an [invite](https://discord.gg/%s)", inviter.getId(), invite.getCode()))
+                .setDescription(String.format("%s created an [invite](https://discord.gg/%s)", inviter.getAsMention(), invite.getCode()))
                 .setTimestamp(new Date().toInstant());
         event.getJDA()
                 .getTextChannelById(Config.getString("LOGS_CHANNEL"))
@@ -44,15 +44,16 @@ public class Events extends ListenerAdapter {
 
     }
 
+    // Message deleted
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
         Message msg = MessageCache.getMessage(event.getMessageIdLong());
         User author = msg.getAuthor();
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(author.getAsTag(), author.getAvatarUrl(), author.getAvatarUrl())
+                .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#e94b3e"))
-                .setDescription(String.format("Message from <@%s> deleted in <#%s>", author.getId(), msg.getChannel().getId()))
+                .setDescription(String.format("Message from %s deleted in <#%s>", author.getAsMention(), msg.getChannel().getId()))
                 .setTimestamp(new Date().toInstant());
 
         if(!msg.getAttachments().isEmpty()) {
@@ -61,7 +62,8 @@ public class Events extends ListenerAdapter {
             embed.addField("Message content", msg.getContentDisplay(), false);
         }
 
-        event.getJDA().getTextChannelById("910264805275865109")
+        event.getJDA()
+                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }
@@ -69,15 +71,15 @@ public class Events extends ListenerAdapter {
     // Message edited
     @Override
     public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
-        Message old = MessageCache.getMessage(event.getMessageIdLong());
+        Message before = MessageCache.getMessage(event.getMessageIdLong());
         Message after = event.getMessage();
         User author = after.getAuthor();
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(author.getAsTag(), author.getAvatarUrl(), author.getAvatarUrl())
+                .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#f7d724"))
-                .setDescription(String.format("Message from <@%s> edited in <#%s>", author.getId(), after.getChannel().getId()))
-                .addField("Before", old.getContentDisplay(), true)
+                .setDescription(String.format("Message from %s edited in <#%s>", author.getAsMention(), after.getChannel().getId()))
+                .addField("Before", before.getContentDisplay(), true)
                 .addField("After", after.getContentDisplay(), false)
                 .setTimestamp(new Date().toInstant());
         event.getJDA()
@@ -86,17 +88,37 @@ public class Events extends ListenerAdapter {
                 .queue();
     }
 
-    // Member joined
+    // Member join
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         Member member = event.getMember();
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(member.getUser().getAsTag(), member.getAvatarUrl(), member.getAvatarUrl())
+                .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#f7d724"))
-                .setDescription(String.format("<@%s> joined to server", member.getId()))
-                .addField("Account created", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
+                .setDescription(String.format("%s joined to server!", member.getAsMention()))
+                .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(member.getGuild().getMemberCount()), true)
+                .setFooter("ID: " + member.getId())
+                .setTimestamp(new Date().toInstant());
+        event.getJDA()
+                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+                .sendMessageEmbeds(embed.build())
+                .queue();
+    }
+
+    // Member leave
+    @Override
+    public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
+        User user = event.getUser();
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setAuthor(user.getAsTag(), user.getEffectiveAvatarUrl(), user.getEffectiveAvatarUrl())
+                .setColor(Color.decode("#f7d724"))
+                .setDescription(String.format("%s has left the server!", user.getAsMention()))
+                .addField("Registered at", String.format("<t:%s>", user.getTimeCreated().toEpochSecond()), true)
+                .addField("Member count", String.valueOf(event.getGuild().getMemberCount()), true)
+                .setFooter("ID: " + user.getId())
                 .setTimestamp(new Date().toInstant());
         event.getJDA()
                 .getTextChannelById(Config.getString("LOGS_CHANNEL"))
