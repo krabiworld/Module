@@ -46,9 +46,14 @@ public class Events extends ListenerAdapter {
                 .queue();
 
     }
+<<<<<<< HEAD
 
     // TODO: rewrite this pizdec
 
+=======
+    
+    // Message deleted
+>>>>>>> 7204aefc8829eb2a89ccf740c28ae42864b5189b
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
         Message msg = MessageCache.getMessage(event.getMessageIdLong());
@@ -70,7 +75,8 @@ public class Events extends ListenerAdapter {
                 .sendMessage(embed.build())
                 .queue();
     }
-
+    
+    // Message edited
     @Override
     public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
         Message old = MessageCache.getMessage(event.getMessageIdLong());
