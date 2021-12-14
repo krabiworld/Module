@@ -15,7 +15,10 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
+import java.io.BufferedInputStream;
+import java.net.URL;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 public class Events extends ListenerAdapter {
 
@@ -44,6 +47,8 @@ public class Events extends ListenerAdapter {
 
     }
 
+    // TODO: rewrite this pizdec
+
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
         Message msg = MessageCache.getMessage(event.getMessageIdLong());
@@ -53,10 +58,15 @@ public class Events extends ListenerAdapter {
                 .setAuthor(author.getAsTag(), author.getAvatarUrl(), author.getAvatarUrl())
                 .setColor(Color.decode("#e94b3e"))
                 .setDescription(String.format("Message from <@%s> deleted in <#%s>", author.getId(), msg.getChannel().getId()))
-                .addField("Message content", msg.getContentDisplay(), true)
                 .setTimestamp(new Date().toInstant());
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+
+        if(!msg.getAttachments().isEmpty()) {
+            embed.addField("Message content", msg.getAttachments().get(0).getUrl(), false);
+        } else {
+            embed.addField("Message content", msg.getContentDisplay(), false);
+        }
+
+        event.getJDA().getTextChannelById("910264805275865109")
                 .sendMessage(embed.build())
                 .queue();
     }
