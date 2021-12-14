@@ -8,17 +8,14 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
-import java.io.BufferedInputStream;
-import java.net.URL;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 public class Events extends ListenerAdapter {
 
@@ -42,10 +39,11 @@ public class Events extends ListenerAdapter {
                 .setTimestamp(new Date().toInstant());
         event.getJDA()
                 .getTextChannelById(Config.getString("LOGS_CHANNEL"))
-                .sendMessage(embed.build())
+                .sendMessageEmbeds(embed.build())
                 .queue();
 
     }
+
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
         Message msg = MessageCache.getMessage(event.getMessageIdLong());
@@ -64,10 +62,10 @@ public class Events extends ListenerAdapter {
         }
 
         event.getJDA().getTextChannelById("910264805275865109")
-                .sendMessage(embed.build())
+                .sendMessageEmbeds(embed.build())
                 .queue();
     }
-    
+
     // Message edited
     @Override
     public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
@@ -84,7 +82,25 @@ public class Events extends ListenerAdapter {
                 .setTimestamp(new Date().toInstant());
         event.getJDA()
                 .getTextChannelById(Config.getString("LOGS_CHANNEL"))
-                .sendMessage(embed.build())
+                .sendMessageEmbeds(embed.build())
+                .queue();
+    }
+
+    // Member joined
+    @Override
+    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+        Member member = event.getMember();
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setAuthor(member.getUser().getAsTag(), member.getAvatarUrl(), member.getAvatarUrl())
+                .setColor(Color.decode("#f7d724"))
+                .setDescription(String.format("<@%s> joined to server", member.getId()))
+                .addField("Account created", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
+                .addField("Member count", String.valueOf(member.getGuild().getMemberCount()), true)
+                .setTimestamp(new Date().toInstant());
+        event.getJDA()
+                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+                .sendMessageEmbeds(embed.build())
                 .queue();
     }
 
