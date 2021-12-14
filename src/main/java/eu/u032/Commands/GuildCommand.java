@@ -19,11 +19,15 @@ public class GuildCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         Guild guild = event.getGuild();
-        String value = String.format("Members count: %s\nOwner: %s\nEmotes: %s\nCreated: <t:%s:D>",
+        String value = String.format("Members count: %s\nOwner: %s\nEmotes: %s\nCreated: <t:%s:D>\nChannels: %s (%s text, %s voice, %s categories)",
                 guild.getMemberCount(),
                 guild.getOwner().getAsMention(),
                 guild.getEmotes().size(),
-                guild.getTimeCreated().toEpochSecond()
+                guild.getTimeCreated().toEpochSecond(),
+                guild.getChannels().size(),
+                guild.getTextChannels().size(),
+                guild.getVoiceChannels().size(),
+                guild.getCategories().size()
         );
 
         EmbedBuilder aboutembed = new EmbedBuilder()
