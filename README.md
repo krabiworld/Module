@@ -3,7 +3,7 @@ Private Discord bot for server **titled** (link in description)
 
 ## Build
 ```
-UNIX:
+UNIX-like:
 ./gradlew dist
 Windows:
 gradle build
