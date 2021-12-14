@@ -23,7 +23,6 @@ public class Bot {
                 .useHelpBuilder(false);
         utils.addCommands(
                 new GuildCommand()
-                new
         );
 
         JDA jda = JDABuilder
