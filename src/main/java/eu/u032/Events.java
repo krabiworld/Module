@@ -89,13 +89,6 @@ public class Events extends ListenerAdapter {
                 .sendMessageEmbeds(embed.build())
                 .queue();
 
-        event.getJDA().getTextChannelById("910273839781531698")
-                .sendMessage("To send a verification request, click the button below")
-                .setActionRow(
-                        Button.primary("send_verify_button", "Verify")
-                )
-                .queue();
-
     }
 
     // Member join
