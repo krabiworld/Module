@@ -10,12 +10,10 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.Button;
 
 import java.awt.*;
 import java.util.Date;
@@ -25,6 +23,7 @@ public class Events extends ListenerAdapter {
     // Cache messages
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+        if (event.getAuthor().isBot()) return;
         MessageCache.addMessage(event.getMessage());
     }
 
@@ -49,6 +48,8 @@ public class Events extends ListenerAdapter {
     // Message deleted
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
+        if (MessageCache.getMessage(event.getMessageIdLong()) == null) return;
+
         Message msg = MessageCache.getMessage(event.getMessageIdLong());
         User author = msg.getAuthor();
 
