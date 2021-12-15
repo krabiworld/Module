@@ -10,10 +10,12 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.Button;
 
 import java.awt.*;
 import java.util.Date;
@@ -86,6 +88,14 @@ public class Events extends ListenerAdapter {
                 .getTextChannelById(Config.getString("LOGS_CHANNEL"))
                 .sendMessageEmbeds(embed.build())
                 .queue();
+
+        event.getJDA().getTextChannelById("910273839781531698")
+                .sendMessage("To send a verification request, click the button below")
+                .setActionRow(
+                        Button.primary("send_verify_button", "Verify")
+                )
+                .queue();
+
     }
 
     // Member join
@@ -125,5 +135,6 @@ public class Events extends ListenerAdapter {
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }
+
 
 }
