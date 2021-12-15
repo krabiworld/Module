@@ -25,13 +25,15 @@ public class Bot {
                 .setPrefix(Config.getString("PREFIX"))
                 .setActivity(Activity.competing("JDA 4.4.0_350"))
                 .setStatus(OnlineStatus.IDLE)
+                .setEmojis(":white_check_mark:", ":warning:", ":x:")
                 .useHelpBuilder(false);
         utils.addCommands(
                 new GuildCommand(),
                 new MuteCommand(),
                 new ShutdownCommand(),
                 new UnmuteCommand(),
-                new ClearCommand()
+                new ClearCommand(),
+                new SlowmodeCommand()
         );
 
         JDA jda = JDABuilder

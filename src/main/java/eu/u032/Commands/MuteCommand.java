@@ -17,7 +17,7 @@ public class MuteCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         if (event.getArgs().isEmpty()) {
-            event.reply("Required arguments are missing!");
+            event.replyError("Required arguments are missing!");
             return;
         }
 
@@ -26,8 +26,7 @@ public class MuteCommand extends Command {
 
             event.getMessage().addReaction("U+2705").queue();
         } catch (Exception e) {
-            event.reply(e.getMessage());
-            event.getMessage().addReaction("U+274C").queue();
+            event.replyError(e.getMessage());
         }
     }
 

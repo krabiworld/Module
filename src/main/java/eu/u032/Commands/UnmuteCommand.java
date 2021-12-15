@@ -17,7 +17,7 @@ public class UnmuteCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         if (event.getArgs().isEmpty()) {
-            event.reply("Required arguments are missing!");
+            event.replyError("Required arguments are missing!");
             return;
         }
 
