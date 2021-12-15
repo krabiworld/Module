@@ -29,7 +29,9 @@ public class Bot {
         utils.addCommands(
                 new GuildCommand(),
                 new MuteCommand(),
-                new ShutdownCommand()
+                new ShutdownCommand(),
+                new UnmuteCommand(),
+                new ClearCommand()
         );
 
         JDA jda = JDABuilder
