@@ -28,12 +28,9 @@ public class Bot {
                 .setEmojis(":white_check_mark:", ":warning:", ":x:")
                 .useHelpBuilder(false);
         utils.addCommands(
-                new GuildCommand(),
-                new MuteCommand(),
-                new ShutdownCommand(),
-                new UnmuteCommand(),
-                new ClearCommand(),
-                new SlowmodeCommand()
+                new GuildCommand(), new MuteCommand(), new ShutdownCommand(),
+                new UnmuteCommand(), new ClearCommand(), new SlowmodeCommand(),
+                new UserCommand()
         );
 
         JDA jda = JDABuilder

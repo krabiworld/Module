@@ -11,14 +11,15 @@ import java.awt.*;
 public class GuildCommand extends Command {
     public GuildCommand() {
         this.name = "guild";
-        this.aliases = new String[]{"stats"};
-        this.guildOnly = true;
-        this.help = "Guild stats";
+        this.aliases = new String[]{"server"};
+        this.help = "Guild info";
+        this.category = new Category("Information");
     }
 
     @Override
     protected void execute(CommandEvent event) {
         Guild guild = event.getGuild();
+
         String value = String.format("Members count: %s\nOwner: %s\nEmotes: %s\nCreated: <t:%s:D>\nChannels: %s (%s text, %s voice, %s categories)",
                 guild.getMemberCount(),
                 guild.getOwner().getAsMention(),
@@ -30,10 +31,10 @@ public class GuildCommand extends Command {
                 guild.getCategories().size()
         );
 
-        EmbedBuilder aboutembed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(guild.getName(), guild.getIconUrl(), guild.getIconUrl())
                 .setColor(Color.decode("#6196d5"))
                 .addField("Guild stats", value, true);
-        event.reply(aboutembed.build());
+        event.reply(embed.build());
     }
 }
