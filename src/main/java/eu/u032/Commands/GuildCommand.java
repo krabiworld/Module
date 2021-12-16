@@ -11,8 +11,8 @@ import java.awt.*;
 public class GuildCommand extends Command {
     public GuildCommand() {
         this.name = "guild";
-        this.aliases = new String[]{"server"};
-        this.help = "Guild info";
+        this.aliases = new String[]{"server", "serverinfo"};
+        this.help = "Guild information";
         this.category = new Category("Information");
     }
 
