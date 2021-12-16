@@ -74,6 +74,8 @@ public class Events extends ListenerAdapter {
     // Message edited
     @Override
     public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+        if (MessageCache.getMessage(event.getMessageIdLong()) == null) return;
+
         Message before = MessageCache.getMessage(event.getMessageIdLong());
         Message after = event.getMessage();
         User author = after.getAuthor();
@@ -114,21 +116,21 @@ public class Events extends ListenerAdapter {
     // Member leave
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-        User user = event.getUser();
+        Member member = event.getGuild().retrieveMemberById(event.getUser().getId()).complete();
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(user.getAsTag(), user.getEffectiveAvatarUrl(), user.getEffectiveAvatarUrl())
+                .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#e94b3e"))
-                .setDescription(String.format("%s has left the server!", user.getAsMention()))
-                .addField("Registered at", String.format("<t:%s>", user.getTimeCreated().toEpochSecond()), true)
+                .setDescription(String.format("%s has left the server!", member.getAsMention()))
+                .addField("Joined at", String.format("<t:%s>", member.getTimeJoined().toEpochSecond()), true)
+                .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(event.getGuild().getMemberCount()), true)
-                .setFooter("ID: " + user.getId())
+                .setFooter("ID: " + member.getId())
                 .setTimestamp(new Date().toInstant());
         event.getJDA()
                 .getTextChannelById(Config.getString("LOGS_CHANNEL"))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }
-
 
 }

@@ -4,9 +4,9 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
+import java.util.Date;
 
 public class UserCommand extends Command {
 
@@ -22,9 +22,8 @@ public class UserCommand extends Command {
             Member member =
                     event.getArgs().isEmpty() ? event.getMember() : event.getGuild().retrieveMemberById(event.getArgs()).complete();
 
-            String value = String.format("**Username:** %s\n**ID:** %s\n**Color:** #%06x\n**Joined at:** <t:%s>\n**Registered at:** <t:%s>",
+            String value = String.format("**Username:** %s\n**Color:** #%06x\n**Joined at:** <t:%s>\n**Registered at:** <t:%s>",
                     member.getUser().getAsTag(),
-                    member.getId(),
                     member.getColor().getRGB() & 0xFFFFFF,
                     member.getTimeJoined().toEpochSecond(),
                     member.getTimeCreated().toEpochSecond()
@@ -34,7 +33,9 @@ public class UserCommand extends Command {
                     .setAuthor("Information about " + member.getUser().getName(), member.getEffectiveAvatarUrl())
                     .setColor(Color.decode("#6196d5"))
                     .setDescription(value)
-                    .setThumbnail(member.getEffectiveAvatarUrl());
+                    .setThumbnail(member.getEffectiveAvatarUrl())
+                    .setFooter("ID: " + member.getId())
+                    .setTimestamp(new Date().toInstant());
             event.reply(embed.build());
         } catch (Exception e) {
             event.replyError(e.getMessage());
