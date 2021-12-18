@@ -1,9 +1,12 @@
 # UASM
-Private Discord bot for server **titled** (link in description)
+Private bot for discord server **titled** (link in description)
 
 ## Build
+1. Rename `.env.ex` to `.env`
+2. Write the required data in the `.env` file
+3. And run this command:
 ```
-UNIX-like:
+Unix-Like:
 ./gradlew dist
 Windows:
 gradlew dist

@@ -1,10 +1,10 @@
 package eu.u032;
 
-import com.jagrosh.jdautilities.examples.command.ShutdownCommand;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import com.jagrosh.jdautilities.examples.command.*;
 import eu.u032.Commands.*;
 import eu.u032.Interactions.VerifyButton;
 import eu.u032.Utils.Config;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -25,12 +25,15 @@ public class Bot {
                 .setEmojis(":white_check_mark:", ":warning:", ":x:")
                 .useHelpBuilder(false);
         utils.addCommands(
-                new GuildCommand(), new MuteCommand(), new ShutdownCommand(),
-                new UnmuteCommand(), new ClearCommand(), new SlowmodeCommand(),
-                new UserCommand(), new AvatarCommand()
+                new GuildCommand(), new MuteCommand(), new UnmuteCommand(),
+                new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
+                new AvatarCommand(), new TestCommand(),
+                // From JDA Utilities
+                new GuildlistCommand(new EventWaiter()),
+                new PingCommand(), new RoleinfoCommand(), new ShutdownCommand()
         );
 
-        JDA jda = JDABuilder
+        JDABuilder
                 .createDefault(Config.getString("DISCORD_TOKEN"),
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_MESSAGES,
