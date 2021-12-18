@@ -23,7 +23,7 @@ public class Events extends ListenerAdapter {
     // Cache messages
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) return;
+        if (event.getAuthor().isBot() || event.getAuthor().isSystem()) return;
         MessageCache.addMessage(event.getMessage());
     }
 

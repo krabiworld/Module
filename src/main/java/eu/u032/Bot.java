@@ -1,6 +1,5 @@
 package eu.u032;
 
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.*;
 import eu.u032.Commands.*;
 import eu.u032.Interactions.VerifyButton;
@@ -22,14 +21,13 @@ public class Bot {
                 .setPrefix(Config.getString("PREFIX"))
                 .setActivity(Activity.competing("JDA 4.4.0_350"))
                 .setStatus(OnlineStatus.IDLE)
-                .setEmojis(":white_check_mark:", ":warning:", ":x:")
+                .setEmojis("U+2705", "U+26A0", "U+274C")
                 .useHelpBuilder(false);
         utils.addCommands(
                 new GuildCommand(), new MuteCommand(), new UnmuteCommand(),
                 new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
-                new AvatarCommand(), new TestCommand(),
+                new AvatarCommand(), new KickCommand(),
                 // From JDA Utilities
-                new GuildlistCommand(new EventWaiter()),
                 new PingCommand(), new RoleinfoCommand(), new ShutdownCommand()
         );
 
