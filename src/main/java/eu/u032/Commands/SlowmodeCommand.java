@@ -23,7 +23,7 @@ public class SlowmodeCommand extends Command {
             }
 
             event.getTextChannel().getManager().setSlowmode(interval).queue();
-            event.getMessage().addReaction("U+2705").queue();
+            event.reactSuccess();
         } catch (Exception e) {
             event.replyError(e.getMessage());
         }

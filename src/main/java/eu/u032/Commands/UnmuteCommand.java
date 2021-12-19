@@ -22,20 +22,14 @@ public class UnmuteCommand extends Command {
         }
 
         try {
-            if (event.getJDA().getUserById(event.getArgs()) == null) {
-                throw new Exception();
-            }
+            event.getGuild().removeRoleFromMember(
+                    event.getArgs(), event.getJDA().getRoleById(Config.getString("MUTE_ROLE"))
+            ).queue();
+
+            event.reactSuccess();
         } catch (Exception e) {
-            event.reply(e.getMessage());
-            event.getMessage().addReaction("U+274C").queue();
-            return;
+            event.replyError(e.getMessage());
         }
-
-        event.getGuild().removeRoleFromMember(
-                event.getArgs(), event.getJDA().getRoleById(Config.getString("MUTE_ROLE"))
-        ).queue();
-
-        event.getMessage().addReaction("U+2705").queue();
     }
 
 }
