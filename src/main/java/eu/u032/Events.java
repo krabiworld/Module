@@ -3,10 +3,9 @@ package eu.u032;
 import eu.u032.Utils.Config;
 import eu.u032.Utils.MessageCache;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Invite;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
+import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -126,6 +125,38 @@ public class Events extends ListenerAdapter {
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(event.getGuild().getMemberCount()), true)
                 .setFooter("ID: " + member.getId())
+                .setTimestamp(new Date().toInstant());
+        event.getJDA()
+                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+                .sendMessageEmbeds(embed.build())
+                .queue();
+    }
+
+    // Channel delete
+    @Override
+    public void onTextChannelDelete(TextChannelDeleteEvent event) {
+        TextChannel channel = event.getChannel();
+        EmbedBuilder embed = new EmbedBuilder()
+                .setAuthor("Text Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
+                .setColor(Color.decode("#e94b3e"))
+                .addField("Channel", channel.getName(), false)
+                .setFooter("ID: " + channel.getId())
+                .setTimestamp(new Date().toInstant());
+        event.getJDA()
+                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+                .sendMessageEmbeds(embed.build())
+                .queue();
+    }
+
+    // Channel create
+    @Override
+    public void onTextChannelCreate(TextChannelCreateEvent event) {
+        TextChannel channel = event.getChannel();
+        EmbedBuilder embed = new EmbedBuilder()
+                .setAuthor("Text Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
+                .setColor(Color.decode("#89d561"))
+                .addField("Channel", channel.getName(), false)
+                .setFooter("ID: " + channel.getId())
                 .setTimestamp(new Date().toInstant());
         event.getJDA()
                 .getTextChannelById(Config.getString("LOGS_CHANNEL"))
