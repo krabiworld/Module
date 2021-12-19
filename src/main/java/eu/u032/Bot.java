@@ -26,9 +26,9 @@ public class Bot {
         utils.addCommands(
                 new GuildCommand(), new MuteCommand(), new UnmuteCommand(),
                 new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
-                new AvatarCommand(), new KickCommand(),
+                new AvatarCommand(), new KickCommand(), new StatsCommand(),
                 // From JDA Utilities
-                new PingCommand(), new RoleinfoCommand(), new ShutdownCommand()
+                new RoleinfoCommand(), new ShutdownCommand()
         );
 
         if(System.getProperty("os.name").startsWith("Windows")) return;
