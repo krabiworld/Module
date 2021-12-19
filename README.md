@@ -8,6 +8,4 @@ Private bot for discord server **titled** (link in description)
 ```
 Unix-Like:
 ./gradlew dist
-Windows:
-gradlew dist
 ```
