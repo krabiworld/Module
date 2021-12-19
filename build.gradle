@@ -4,6 +4,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.0'
 }
 
+mainClassName = 'eu.u032.Bot'
+
 group 'eu.u032'
 version '1.0'
 
@@ -38,7 +40,7 @@ task dist(type: Jar) {
         archiveVersion.set('snapshot')
     }
     manifest {
-        attributes 'Main-Class': 'eu.u032.Bot'
+        attributes 'Main-Class': mainClassName
     }
 }
 
