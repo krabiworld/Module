@@ -31,6 +31,8 @@ public class Bot {
                 new PingCommand(), new RoleinfoCommand(), new ShutdownCommand()
         );
 
+        if(System.getProperty("os.name").startsWith("Windows")) return;
+
         JDABuilder
                 .createDefault(Config.getString("DISCORD_TOKEN"),
                         GatewayIntent.GUILD_MEMBERS,
