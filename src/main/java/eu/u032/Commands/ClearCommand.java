@@ -14,9 +14,7 @@ public class ClearCommand extends Command {
 
     public ClearCommand() {
         this.name = "clear";
-        this.help = "Clear messages";
         this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
-        this.category = new Category("Moderation");
     }
 
     @Override

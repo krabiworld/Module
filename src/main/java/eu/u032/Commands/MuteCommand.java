@@ -9,9 +9,7 @@ public class MuteCommand extends Command {
 
     public MuteCommand() {
         this.name = "mute";
-        this.help = "Mute member";
         this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
-        this.category = new Category("Moderation");
     }
 
     @Override
