@@ -8,7 +8,7 @@ public class SlowmodeCommand extends Command {
 
     public SlowmodeCommand() {
         this.name = "slowmode";
-        this.help = "Set slowmode in this text channel";
+        this.help = "Set slowmode in current text channel";
         this.userPermissions = new Permission[]{Permission.MANAGE_CHANNEL};
         this.category = new Category("Moderation");
     }
@@ -23,6 +23,7 @@ public class SlowmodeCommand extends Command {
             }
 
             event.getTextChannel().getManager().setSlowmode(interval).queue();
+
             event.reactSuccess();
         } catch (Exception e) {
             event.replyError(e.getMessage());

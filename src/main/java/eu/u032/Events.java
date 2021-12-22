@@ -82,7 +82,7 @@ public class Events extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#f7d724"))
-                .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](https://discordapp.com/channels/%s/%s/%s)", author.getAsMention(), after.getChannel().getId(), after.getGuild().getId(), after.getChannel().getId(), after.getId()))
+                .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)", author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
                 .addField("Before", before.getContentDisplay(), true)
                 .addField("After", after.getContentDisplay(), false)
                 .setTimestamp(new Date().toInstant());

@@ -22,7 +22,7 @@ public class AvatarCommand extends Command {
                     event.getArgs().isEmpty() ? event.getAuthor() : event.getGuild().getJDA().retrieveUserById(event.getArgs()).complete();
 
             EmbedBuilder embed = new EmbedBuilder()
-                    .setTitle("Avatar of " + user.getName())
+                    .setAuthor("Avatar of " + user.getName())
                     .setColor(Color.decode("#6196d5"))
                     .setImage(user.getEffectiveAvatarUrl() + "?size=512");
             event.reply(embed.build());

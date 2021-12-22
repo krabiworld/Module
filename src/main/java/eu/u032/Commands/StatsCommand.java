@@ -13,7 +13,7 @@ public class StatsCommand extends Command {
 
     public StatsCommand() {
         this.name = "stats";
-        this.help = "Get stats";
+        this.help = "Bot statistics";
         this.category = new Category("Information");
     }
 
@@ -30,7 +30,8 @@ public class StatsCommand extends Command {
         String platform = String.format("**OS:** %s\n**Architecture:** %s\n**RAM Usage:** %sMB / %sMB\n**Ping:** %s ms\n**Uptime:** %s m",
                 System.getProperty("os.name"),
                 System.getProperty("os.arch"),
-                runtime.freeMemory() / 1024 / 1024, runtime.totalMemory() / 1024 / 1024,
+                (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024,
+                runtime.totalMemory() / 1024 / 1024,
                 jda.getGatewayPing(),
                 (mxBean.getUptime() / 1000) / 60
         );

@@ -24,7 +24,7 @@ public class KickCommand extends Command {
 
         try {
             event.getGuild().retrieveMemberById(args[0]).complete()
-                    .kick(args[1]).queue();
+                    .kick().queue();
             event.reactSuccess();
         } catch (Exception e) {
             event.replyError(e.getMessage());
