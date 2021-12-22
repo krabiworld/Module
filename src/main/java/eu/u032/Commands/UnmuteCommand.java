@@ -9,9 +9,7 @@ public class UnmuteCommand extends Command {
 
     public UnmuteCommand() {
         this.name = "unmute";
-        this.help = "Unmute member";
         this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
-        this.category = new Category("Moderation");
     }
 
     @Override

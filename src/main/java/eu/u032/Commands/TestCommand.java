@@ -10,8 +10,8 @@ public class TestCommand extends Command {
 
     public TestCommand() {
         this.name = "test";
-        this.hidden = true;
         this.ownerCommand = true;
+        this.hidden = true;
     }
 
     @Override

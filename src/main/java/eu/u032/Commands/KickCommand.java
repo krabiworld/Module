@@ -8,9 +8,7 @@ public class KickCommand extends Command {
 
     public KickCommand() {
         this.name = "kick";
-        this.help = "Mute member";
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
-        this.category = new Category("Moderation");
     }
 
     @Override

@@ -1,8 +1,6 @@
 package eu.u032;
 
-import com.jagrosh.jdautilities.examples.command.*;
 import eu.u032.Commands.*;
-import eu.u032.Commands.ServerinfoCommand;
 import eu.u032.Utils.Config;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -22,16 +20,15 @@ public class Bot {
         CommandClientBuilder builder = new CommandClientBuilder()
                 .setOwnerId(Config.getString("OWNER_ID"))
                 .setPrefix(Config.getString("PREFIX"))
-                .setActivity(Activity.competing("JDA " + JDA.class.getPackage().getImplementationVersion()))
+                .setActivity(Activity.competing("JDA"))
                 .setStatus(OnlineStatus.IDLE)
                 .setEmojis("✅", "⚠️", "❌")
+                .useHelpBuilder(false)
                 .addCommands(
                     new ServerinfoCommand(), new MuteCommand(), new UnmuteCommand(),
                     new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
                     new AvatarCommand(), new KickCommand(), new StatsCommand(),
-                    new TestCommand(),
-                    // From JDA Utilities
-                    new RoleinfoCommand(), new ShutdownCommand()
+                    new ShutdownCommand(), new TestCommand()
                 );
 
         JDABuilder

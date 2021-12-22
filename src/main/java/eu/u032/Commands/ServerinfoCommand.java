@@ -10,10 +10,9 @@ import java.awt.*;
 
 
 public class ServerinfoCommand extends Command {
+
     public ServerinfoCommand() {
         this.name = "serverinfo";
-        this.help = "Server information";
-        this.category = new Category("Information");
     }
 
     @Override
@@ -49,4 +48,5 @@ public class ServerinfoCommand extends Command {
                 .setDescription(value);
         event.reply(embed.build());
     }
+
 }
