@@ -16,14 +16,16 @@ public class MuteCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (event.getArgs().isEmpty()) {
+        String[] args = event.getArgs().split("\\s+");
+
+        if (args[0].isEmpty()) {
             event.replyError("Required arguments are missing!");
             return;
         }
 
         try {
             event.getGuild().addRoleToMember(
-                    event.getArgs(), event.getJDA().getRoleById(Config.getString("MUTE_ROLE"))
+                    args[0], event.getJDA().getRoleById(Config.getString("MUTE_ROLE"))
             ).queue();
 
             event.reactSuccess();

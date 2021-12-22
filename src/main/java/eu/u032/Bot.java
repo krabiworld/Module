@@ -2,36 +2,37 @@ package eu.u032;
 
 import com.jagrosh.jdautilities.examples.command.*;
 import eu.u032.Commands.*;
-import eu.u032.Interactions.VerifyButton;
+import eu.u032.Commands.ServerinfoCommand;
 import eu.u032.Utils.Config;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import javax.security.auth.login.LoginException;
 
 public class Bot {
 
     public static void main(String[] args) throws LoginException {
-        CommandClientBuilder utils = new CommandClientBuilder()
+        CommandClientBuilder builder = new CommandClientBuilder()
                 .setOwnerId(Config.getString("OWNER_ID"))
                 .setPrefix(Config.getString("PREFIX"))
-                .setActivity(Activity.competing("JDA 4.4.0_350"))
+                .setActivity(Activity.competing("JDA " + JDA.class.getPackage().getImplementationVersion()))
                 .setStatus(OnlineStatus.IDLE)
-                .setEmojis("U+2705", "U+26A0", "U+274C")
-                .useHelpBuilder(false);
-        utils.addCommands(
-                new GuildCommand(), new MuteCommand(), new UnmuteCommand(),
-                new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
-                new AvatarCommand(), new KickCommand(), new StatsCommand(),
-                // From JDA Utilities
-                new RoleinfoCommand(), new ShutdownCommand()
-        );
-
-        if(System.getProperty("os.name").startsWith("Windows")) return;
+                .setEmojis("✅", "⚠️", "❌")
+                .addCommands(
+                    new ServerinfoCommand(), new MuteCommand(), new UnmuteCommand(),
+                    new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
+                    new AvatarCommand(), new KickCommand(), new StatsCommand(),
+                    new TestCommand(),
+                    // From JDA Utilities
+                    new RoleinfoCommand(), new ShutdownCommand()
+                );
 
         JDABuilder
                 .createDefault(Config.getString("DISCORD_TOKEN"),
@@ -40,15 +41,11 @@ public class Bot {
                         GatewayIntent.GUILD_INVITES,
                         GatewayIntent.GUILD_PRESENCES,
                         GatewayIntent.GUILD_EMOJIS)
-                .setActivity(Activity.competing("titled"))
-                .addEventListeners(
-                        new Events(),
-                        new VerifyButton(),
-                        utils.build()
-                )
+                .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.CLIENT_STATUS)
+                .disableCache(CacheFlag.VOICE_STATE)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .addEventListeners(new Events(), builder.build())
                 .build();
-
-
     }
 
 }
