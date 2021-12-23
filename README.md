@@ -1,5 +1,5 @@
 # UASM
-Private bot for discord server **titled** (link in description)
+Private Discord bot.
 
 ## Build
 1. Rename `.env.example` to `.env`
