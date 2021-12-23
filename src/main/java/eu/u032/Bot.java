@@ -25,10 +25,11 @@ public class Bot {
                 .setEmojis("✅", "⚠️", "❌")
                 .useHelpBuilder(false)
                 .addCommands(
-                    new ServerinfoCommand(), new MuteCommand(), new UnmuteCommand(),
-                    new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
-                    new AvatarCommand(), new KickCommand(), new StatsCommand(),
-                    new ShutdownCommand(), new TestCommand()
+                        new ServerinfoCommand(), new MuteCommand(), new UnmuteCommand(),
+                        new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
+                        new AvatarCommand(), new KickCommand(), new StatsCommand(),
+                        new ShutdownCommand(), new BanCommand(), new UnbanCommand(),
+                        new TestCommand()
                 );
 
         JDABuilder
