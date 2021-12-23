@@ -2,6 +2,7 @@ package eu.u032.Commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eu.u032.Utils.Args;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ClientType;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,12 +18,15 @@ public class UserCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         try {
-            Member member =
-                    event.getArgs().isEmpty() ? event.getMember() : event.getGuild().retrieveMemberById(event.getArgs()).complete();
+            Member member = Args.getMemberFromArgs(event) != null ? Args.getMemberFromArgs(event) : event.getMember();
             String color = "#" + Integer.toHexString(member.getColor().getRGB()).substring(2);
             String device = "Unknown";
 
             for (ClientType type : member.getActiveClients()) {
+                if (member.getUser().isBot()) {
+                    device = ":cloud: Server";
+                    break;
+                }
                 switch (type) {
                     case DESKTOP -> device = ":desktop: Desktop";
                     case WEB -> device = ":spider_web: Web";

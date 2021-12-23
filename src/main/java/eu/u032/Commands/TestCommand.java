@@ -2,9 +2,9 @@ package eu.u032.Commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-
-import java.util.Arrays;
-import java.util.List;
+import eu.u032.Utils.Args;
+import eu.u032.Utils.Property;
+import net.dv8tion.jda.api.entities.Member;
 
 public class TestCommand extends Command {
 
@@ -16,13 +16,13 @@ public class TestCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        List<String> args = Arrays.asList(event.getArgs().split("\\s+"));
+        Member member = Args.getMemberFromArgs(event);
 
-        StringBuilder reason = new StringBuilder();
-        for (int i = 1; args.get(1).length() >= i; i++) {
-            reason.append(args.get(i)).append(" ");
+        if (member == null) {
+            event.replyError(Property.getError("member_not_found"));
+            return;
         }
 
-        event.reply(reason.toString());
+        event.reply("Member: " + member.getUser().getName());
     }
 }

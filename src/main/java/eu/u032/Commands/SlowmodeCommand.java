@@ -2,6 +2,7 @@ package eu.u032.Commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eu.u032.Utils.Property;
 import net.dv8tion.jda.api.Permission;
 
 public class SlowmodeCommand extends Command {
@@ -16,15 +17,15 @@ public class SlowmodeCommand extends Command {
         try {
             int interval = Integer.parseInt(event.getArgs());
             if (interval < 0 || interval > 21600) {
-                event.replyError("Specify in seconds from 0 (off) to 21600.");
+                event.replyError(Property.getError("seconds"));
                 return;
             }
 
             event.getTextChannel().getManager().setSlowmode(interval).queue();
-
             event.reactSuccess();
         } catch (Exception e) {
             event.replyError(e.getMessage());
         }
     }
+
 }
