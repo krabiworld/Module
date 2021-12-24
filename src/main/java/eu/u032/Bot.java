@@ -26,8 +26,7 @@ public class Bot {
                         new ServerinfoCommand(), new MuteCommand(), new UnmuteCommand(),
                         new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
                         new AvatarCommand(), new KickCommand(), new StatsCommand(),
-                        new ShutdownCommand(), new BanCommand(), new UnbanCommand(),
-                        new TestCommand()
+                        new ShutdownCommand(), new BanCommand(), new UnbanCommand()
                 );
 
         JDABuilder
