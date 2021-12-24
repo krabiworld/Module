@@ -17,7 +17,7 @@ public class SlowmodeCommand extends Command {
         try {
             int interval = Integer.parseInt(event.getArgs());
             if (interval < 0 || interval > 21600) {
-                event.replyError(Property.getError("seconds"));
+                event.replyError("Specify in seconds from 0 (off) to 21600.");
                 return;
             }
 
