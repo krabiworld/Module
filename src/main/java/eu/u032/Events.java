@@ -178,11 +178,10 @@ public class Events extends ListenerAdapter {
         Member member = event.getMember();
         String before = event.getOldNickname();
         String after = event.getNewNickname();
-        String action = " updated";
+        String action = " was updated";
 
         if (before == null) return;
-
-        if (after == null) action = " reset";
+        if (after == null) action = " was reset";
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Nickname for " + member.getUser().getAsTag() + action, null, member.getEffectiveAvatarUrl())
