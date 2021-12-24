@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Events extends ListenerAdapter {
@@ -62,7 +63,14 @@ public class Events extends ListenerAdapter {
                 .setTimestamp(new Date().toInstant());
 
         if (!msg.getAttachments().isEmpty()) {
-            embed.addField("Message content", msg.getAttachments().get(0).getUrl(), false);
+            StringBuilder message = new StringBuilder();
+            for (Message.Attachment attachment : msg.getAttachments()) {
+                message.append(
+                        String.format("File: [%s](%s)", attachment.getFileName(), attachment.getUrl())
+                ).append("\n");
+            }
+            message.append(msg.getContentDisplay());
+            embed.addField("Message content", message.toString(), false);
         } else {
             embed.addField("Message content", msg.getContentDisplay(), false);
         }

@@ -40,7 +40,7 @@ public class StatsCommand extends Command {
         String common = String.format("**Servers:** %s\n**Users:** %s\n**Channels:** %s",
                 jda.getGuilds().size(), jda.getUsers().size(), channelsCount
         );
-        String platform = String.format("**OS:** %s\n**Architecture:** %s\n**RAM Usage:** %sMB / %sMB\n**Ping:** %s ms\n**Uptime:** %s",
+        String platform = String.format("**OS:** %s\n**Arch:** %s\n**RAM Usage:** %sMB / %sMB\n**Ping:** %s ms\n**Uptime:** %s",
                 System.getProperty("os.name"),
                 System.getProperty("os.arch"),
                 (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024,
