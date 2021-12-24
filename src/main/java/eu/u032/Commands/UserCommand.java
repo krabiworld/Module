@@ -34,7 +34,7 @@ public class UserCommand extends Command {
                 }
             }
 
-            String value = String.format("**Username:** %s\n**Device:** %s\n**Color:** %s\n**Joined at:** <t:%s>\n**Registered at:** <t:%s>",
+            String description = String.format("**Username:** %s\n**Device:** %s\n**Color:** %s\n**Joined at:** <t:%s>\n**Registered at:** <t:%s>",
                     member.getUser().getAsTag(),
                     device, color,
                     member.getTimeJoined().toEpochSecond(),
@@ -44,7 +44,7 @@ public class UserCommand extends Command {
             EmbedBuilder embed = new EmbedBuilder()
                     .setAuthor("Information about " + member.getUser().getName())
                     .setColor(Color.decode(color))
-                    .setDescription(value)
+                    .setDescription(description)
                     .setThumbnail(member.getEffectiveAvatarUrl())
                     .setFooter("ID: " + member.getId());
             event.reply(embed.build());
