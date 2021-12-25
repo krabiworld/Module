@@ -2,8 +2,7 @@ package eu.u032.Commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils.Args;
-import eu.u032.Utils.Property;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 
@@ -17,13 +16,13 @@ public class KickCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         String[] args = event.getArgs().split("\\s+");
-        Member member = Args.getMemberFromArgs(event);
+        Member member = Utils.getMemberFromArgs(event);
 
         if (args[0].isEmpty()) {
-            event.replyError(Property.getError("required_args"));
+            event.replyError("Required arguments are missing!");
             return;
         } else if (member == null) {
-            event.replyError(Property.getError("member_not_found"));
+            event.replyError("Member not found.");
             return;
         }
 

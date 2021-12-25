@@ -1,6 +1,6 @@
 package eu.u032.BotEvents;
 
-import eu.u032.Utils.Config;
+import eu.u032.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.channel.text.TextChannelCreateEvent;
@@ -12,7 +12,6 @@ import java.util.Date;
 
 public class ChannelEvents extends ListenerAdapter {
 
-    // Channel delete
     @Override
     public void onTextChannelDelete(TextChannelDeleteEvent event) {
         TextChannel channel = event.getChannel();
@@ -29,7 +28,6 @@ public class ChannelEvents extends ListenerAdapter {
                 .queue();
     }
 
-    // Channel create
     @Override
     public void onTextChannelCreate(TextChannelCreateEvent event) {
         TextChannel channel = event.getChannel();

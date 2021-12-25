@@ -1,7 +1,7 @@
 package eu.u032.BotEvents;
 
-import eu.u032.Utils.Config;
-import eu.u032.Utils.MessageCache;
+import eu.u032.Config;
+import eu.u032.MessageCache;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -15,14 +15,12 @@ import java.util.Date;
 
 public class MessageEvents extends ListenerAdapter {
 
-    // Cache messages
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         if (event.getAuthor().isBot() || event.getAuthor().isSystem()) return;
         MessageCache.addMessage(event.getMessage());
     }
 
-    // Message deleted
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
         if (MessageCache.getMessage(event.getMessageIdLong()) == null) return;
@@ -56,7 +54,6 @@ public class MessageEvents extends ListenerAdapter {
                 .queue();
     }
 
-    // Message edited and update message cache
     @Override
     public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
         if (MessageCache.getMessage(event.getMessageIdLong()) == null) return;

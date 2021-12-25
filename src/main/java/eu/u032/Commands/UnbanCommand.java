@@ -2,7 +2,7 @@ package eu.u032.Commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils.Property;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.Permission;
 
 public class UnbanCommand extends Command {
@@ -17,7 +17,7 @@ public class UnbanCommand extends Command {
         String[] args = event.getArgs().split("\\s+");
 
         if (args[0].isEmpty()) {
-            event.replyError(Property.getError("required_args"));
+            event.replyError("Required arguments are missing!");
             return;
         }
 

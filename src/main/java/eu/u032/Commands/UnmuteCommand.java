@@ -2,9 +2,8 @@ package eu.u032.Commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils.Args;
-import eu.u032.Utils.Config;
-import eu.u032.Utils.Property;
+import eu.u032.Config;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -19,17 +18,17 @@ public class UnmuteCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         String[] args = event.getArgs().split("\\s+");
-        Member member = Args.getMemberFromArgs(event);
+        Member member = Utils.getMemberFromArgs(event);
         Role muteRole = event.getGuild().getRoleById(Config.getString("MUTE_ROLE"));
 
         if (muteRole == null) {
-            event.replyError(Property.getError("mute_role_not_set"));
+            event.replyError("Mute role is not set.");
             return;
         } else if (args[0].isEmpty()) {
-            event.replyError(Property.getError("required_args"));
+            event.replyError("Required arguments are missing!");
             return;
         } else if (member == null) {
-            event.replyError(Property.getError("member_not_found"));
+            event.replyError("Member not found.");
             return;
         }
 

@@ -1,6 +1,6 @@
 package eu.u032.BotEvents;
 
-import eu.u032.Utils.Config;
+import eu.u032.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -13,7 +13,6 @@ import java.util.Date;
 
 public class MemberEvents extends ListenerAdapter {
 
-    // Member join
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         Member member = event.getMember();
@@ -32,7 +31,6 @@ public class MemberEvents extends ListenerAdapter {
                 .queue();
     }
 
-    // Member leave
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
         Member member = event.getMember();
@@ -54,7 +52,6 @@ public class MemberEvents extends ListenerAdapter {
                 .queue();
     }
 
-    // Member nickname update
     @Override
     public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
         Member member = event.getMember();

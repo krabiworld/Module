@@ -2,7 +2,7 @@ package eu.u032.Commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils.Args;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ClientType;
 import net.dv8tion.jda.api.entities.Member;
@@ -18,7 +18,7 @@ public class UserCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         try {
-            Member member = Args.getMemberFromArgs(event) != null ? Args.getMemberFromArgs(event) : event.getMember();
+            Member member = Utils.getMemberFromArgs(event) != null ? Utils.getMemberFromArgs(event) : event.getMember();
             String color = "#" + Integer.toHexString(member.getColor().getRGB()).substring(2);
             String device = "Unknown";
 

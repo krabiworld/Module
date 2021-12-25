@@ -2,7 +2,6 @@ package eu.u032.Commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils.Property;
 import net.dv8tion.jda.api.Permission;
 
 public class SlowmodeCommand extends Command {
