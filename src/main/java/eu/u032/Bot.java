@@ -1,5 +1,9 @@
 package eu.u032;
 
+import eu.u032.BotEvents.ChannelEvents;
+import eu.u032.BotEvents.InviteEvents;
+import eu.u032.BotEvents.MemberEvents;
+import eu.u032.BotEvents.MessageEvents;
 import eu.u032.Commands.*;
 import eu.u032.Utils.Config;
 import net.dv8tion.jda.api.JDABuilder;
@@ -39,7 +43,13 @@ public class Bot {
                 .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.CLIENT_STATUS)
                 .disableCache(CacheFlag.VOICE_STATE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .addEventListeners(new Events(), builder.build())
+                .addEventListeners(
+                        new InviteEvents(),
+                        new ChannelEvents(),
+                        new MemberEvents(),
+                        new MessageEvents(),
+                        builder.build()
+                )
                 .build();
     }
 
