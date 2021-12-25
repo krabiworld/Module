@@ -1,9 +1,9 @@
-package eu.u032.Utils;
+package eu.u032;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.Member;
 
-public class Args {
+public class Utils {
 
     public static Member getMemberFromArgs(CommandEvent event) {
         String[] args = event.getArgs().split("\\s+");

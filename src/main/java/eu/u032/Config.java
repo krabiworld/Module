@@ -1,4 +1,4 @@
-package eu.u032.Utils;
+package eu.u032;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.jetbrains.annotations.NotNull;

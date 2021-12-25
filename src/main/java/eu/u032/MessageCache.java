@@ -1,4 +1,4 @@
-package eu.u032.Utils;
+package eu.u032;
 
 import net.dv8tion.jda.api.entities.Message;
 

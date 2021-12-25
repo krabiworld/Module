@@ -5,7 +5,6 @@ import eu.u032.BotEvents.InviteEvents;
 import eu.u032.BotEvents.MemberEvents;
 import eu.u032.BotEvents.MessageEvents;
 import eu.u032.Commands.*;
-import eu.u032.Utils.Config;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
