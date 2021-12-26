@@ -78,7 +78,6 @@ public class MessageEvents extends ListenerAdapter {
         Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
-
     }
 
 }

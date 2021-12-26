@@ -12,7 +12,11 @@ public class MuteCommand extends Command {
 
     public MuteCommand() {
         this.name = "mute";
-        this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
+        this.help = "Mute member on whole server";
+        this.arguments = "<@Member | ID>";
+        this.category = new Category("Moderation");
+        this.userPermissions = new Permission[]{Permission.VOICE_MUTE_OTHERS};
+        this.botPermissions = new Permission[]{Permission.VOICE_MUTE_OTHERS};
     }
 
     @Override

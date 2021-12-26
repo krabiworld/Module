@@ -14,6 +14,8 @@ public class StatsCommand extends Command {
 
     public StatsCommand() {
         this.name = "stats";
+        this.help = "Bot statistics";
+        this.category = new Category("Information");
     }
 
     @Override

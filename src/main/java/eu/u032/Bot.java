@@ -21,10 +21,11 @@ public class Bot {
         CommandClientBuilder builder = new CommandClientBuilder()
                 .setOwnerId(Config.getString("OWNER_ID"))
                 .setPrefix(Config.getString("PREFIX"))
+                .setAlternativePrefix(Config.getString("ALT_PREFIX"))
                 .setActivity(Activity.competing("JDA"))
                 .setStatus(OnlineStatus.IDLE)
                 .setEmojis("✅", "⚠️", "❌")
-                .useHelpBuilder(false)
+                .setHelpConsumer(Utils::help)
                 .addCommands(
                         new ServerinfoCommand(), new MuteCommand(), new UnmuteCommand(),
                         new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
@@ -42,13 +43,11 @@ public class Bot {
                 .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.CLIENT_STATUS)
                 .disableCache(CacheFlag.VOICE_STATE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .addEventListeners(
+                .addEventListeners(builder.build(),
                         new InviteEvents(),
                         new ChannelEvents(),
                         new MemberEvents(),
-                        new MessageEvents(),
-                        builder.build()
-                )
+                        new MessageEvents())
                 .build();
     }
 
