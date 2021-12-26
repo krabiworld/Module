@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ClientType;
 import net.dv8tion.jda.api.entities.Member;
 
-import java.awt.*;
+import java.util.Objects;
 
 public class UserCommand extends Command {
 
@@ -17,39 +17,45 @@ public class UserCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        try {
-            Member member = Utils.getMemberFromArgs(event) != null ? Utils.getMemberFromArgs(event) : event.getMember();
-            String color = "#" + Integer.toHexString(member.getColor().getRGB()).substring(2);
-            String device = "Unknown";
+        Member member = Utils.getMemberFromArgs(event) != null ? Utils.getMemberFromArgs(event) : event.getMember();
+        String status = ":black_circle: Offline";
+        String device = "Unknown";
 
-            for (ClientType type : member.getActiveClients()) {
-                if (member.getUser().isBot()) {
-                    device = ":cloud: Server";
-                    break;
-                }
-                switch (type) {
-                    case DESKTOP -> device = ":desktop: Desktop";
-                    case WEB -> device = ":spider_web: Web";
-                    case MOBILE -> device = ":mobile_phone: Mobile";
-                }
+        status = switch (member.getOnlineStatus()) {
+            case ONLINE -> ":green_circle: Online";
+            case IDLE -> ":yellow_circle: Idle";
+            case DO_NOT_DISTURB -> ":red_circle: Do Not Disturb";
+            default -> status;
+        };
+
+        for (ClientType type : member.getActiveClients()) {
+            if (member.getUser().isBot()) {
+                device = ":cloud: Server";
+                break;
             }
-
-            String description = String.format("**Username:** %s\n**Device:** %s\n**Color:** %s\n**Joined at:** <t:%s>\n**Registered at:** <t:%s>",
-                    member.getUser().getAsTag(),
-                    device, color,
-                    member.getTimeJoined().toEpochSecond(),
-                    member.getTimeCreated().toEpochSecond()
-            );
-
-            EmbedBuilder embed = new EmbedBuilder()
-                    .setAuthor("Information about " + member.getUser().getName())
-                    .setColor(Color.decode(color))
-                    .setDescription(description)
-                    .setThumbnail(member.getEffectiveAvatarUrl())
-                    .setFooter("ID: " + member.getId());
-            event.reply(embed.build());
-        } catch (Exception e) {
-            event.replyError(e.getMessage());
+            device = switch (type) {
+                case DESKTOP -> ":desktop: Desktop";
+                case MOBILE -> ":mobile_phone: Mobile";
+                case WEB -> ":spider_web: Web";
+                default -> device;
+            };
         }
+
+        String description = String.format("**Username:** %s\n**Status:** %s\n**Device:** %s\n**Color:** #%s\n**Joined at:** <t:%s>\n**Registered at:** <t:%s>",
+                member.getUser().getAsTag(),
+                status, device,
+                Integer.toHexString(Objects.requireNonNull(member.getColor()).getRGB()).substring(2),
+                member.getTimeJoined().toEpochSecond(),
+                member.getTimeCreated().toEpochSecond()
+        );
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setAuthor("Information about " + member.getUser().getName())
+                .setColor(member.getColor())
+                .setDescription(description)
+                .setThumbnail(member.getEffectiveAvatarUrl())
+                .setFooter("User ID: " + member.getId());
+        event.reply(embed.build());
     }
+
 }

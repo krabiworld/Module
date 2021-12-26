@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 
 import java.awt.*;
+import java.util.Objects;
 
 
 public class ServerinfoCommand extends Command {
@@ -32,7 +33,7 @@ public class ServerinfoCommand extends Command {
         String value = String.format("Members count: %s (%s online, %s idle, %s dnd, %s offline)\nOwner: %s\nEmojis count: %s\nCreated at: <t:%s>\nChannels: %s (%s text, %s voice, %s categories)",
                 guild.getMemberCount(),
                 online, idle, dnd, offline,
-                guild.getOwner().getAsMention(),
+                Objects.requireNonNull(guild.getOwner()).getAsMention(),
                 guild.getEmotes().size(),
                 guild.getTimeCreated().toEpochSecond(),
                 guild.getChannels().size(),
@@ -45,7 +46,8 @@ public class ServerinfoCommand extends Command {
                 .setAuthor(guild.getName())
                 .setColor(Color.decode("#6196d5"))
                 .setThumbnail(guild.getIconUrl())
-                .setDescription(value);
+                .setDescription(value)
+                .setFooter("Server ID: " + guild.getId());
         event.reply(embed.build());
     }
 

@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 import java.util.Date;
+import java.util.Objects;
 
 public class MessageEvents extends ListenerAdapter {
 
@@ -26,7 +27,7 @@ public class MessageEvents extends ListenerAdapter {
         if (MessageCache.getMessage(event.getMessageIdLong()) == null) return;
 
         Message msg = MessageCache.getMessage(event.getMessageIdLong());
-        User author = msg.getAuthor();
+        User author = Objects.requireNonNull(msg).getAuthor();
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
@@ -48,8 +49,7 @@ public class MessageEvents extends ListenerAdapter {
             embed.addField("Message content", msg.getContentDisplay(), false);
         }
 
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }
@@ -59,6 +59,9 @@ public class MessageEvents extends ListenerAdapter {
         if (MessageCache.getMessage(event.getMessageIdLong()) == null) return;
 
         Message before = MessageCache.getMessage(event.getMessageIdLong());
+
+        if (before == null) return;
+
         Message after = event.getMessage();
         User author = after.getAuthor();
 
@@ -72,8 +75,7 @@ public class MessageEvents extends ListenerAdapter {
                 .addField("After", after.getContentDisplay(), false)
                 .setFooter("User ID: " + author.getId())
                 .setTimestamp(new Date().toInstant());
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
 

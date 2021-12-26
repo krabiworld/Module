@@ -7,14 +7,12 @@ public class Utils {
 
     public static Member getMemberFromArgs(CommandEvent event) {
         String[] args = event.getArgs().split("\\s+");
-        Member member;
+        Member member = null;
 
         if (!event.getMessage().getMentionedMembers().isEmpty()) {
             member = event.getMessage().getMentionedMembers().get(0);
         } else if (args[0].length() == 18) {
             member = event.getGuild().retrieveMemberById(args[0]).complete();
-        } else {
-            member = null;
         }
 
         return member;
