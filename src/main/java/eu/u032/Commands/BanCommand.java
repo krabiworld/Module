@@ -10,7 +10,11 @@ public class BanCommand extends Command {
 
     public BanCommand() {
         this.name = "ban";
+        this.help = "Ban member from server";
+        this.arguments = "<@Member | ID>";
+        this.category = new Category("Moderation");
         this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
+        this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
     }
 
     @Override

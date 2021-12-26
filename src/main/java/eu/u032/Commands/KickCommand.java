@@ -10,7 +10,11 @@ public class KickCommand extends Command {
 
     public KickCommand() {
         this.name = "kick";
+        this.help = "Kick member from server";
+        this.arguments = "<@Member | ID>";
+        this.category = new Category("Moderation");
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
+        this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
     }
 
     @Override

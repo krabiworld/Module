@@ -12,6 +12,9 @@ public class AvatarCommand extends Command {
 
     public AvatarCommand() {
         this.name = "avatar";
+        this.help = "Show avatar of member";
+        this.arguments = "[@Member | ID]";
+        this.category = new Category("Utilities");
     }
 
     @Override

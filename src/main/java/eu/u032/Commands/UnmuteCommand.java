@@ -12,7 +12,11 @@ public class UnmuteCommand extends Command {
 
     public UnmuteCommand() {
         this.name = "unmute";
-        this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
+        this.help = "Unmute member on whole server";
+        this.arguments = "<@Member | ID>";
+        this.category = new Category("Moderation");
+        this.userPermissions = new Permission[]{Permission.VOICE_MUTE_OTHERS};
+        this.botPermissions = new Permission[]{Permission.VOICE_MUTE_OTHERS};
     }
 
     @Override

@@ -8,7 +8,11 @@ public class SlowmodeCommand extends Command {
 
     public SlowmodeCommand() {
         this.name = "slowmode";
+        this.help = "Set slowmode in current channel";
+        this.arguments = "<duration>";
+        this.category = new Category("Moderation");
         this.userPermissions = new Permission[]{Permission.MANAGE_CHANNEL};
+        this.botPermissions = new Permission[]{Permission.MANAGE_CHANNEL};
     }
 
     @Override

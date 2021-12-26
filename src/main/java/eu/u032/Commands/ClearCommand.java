@@ -14,7 +14,11 @@ public class ClearCommand extends Command {
 
     public ClearCommand() {
         this.name = "clear";
+        this.help = "Clear last messages in current channel";
+        this.arguments = "<count>";
+        this.category = new Category("Moderation");
         this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
+        this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
     }
 
     @Override

@@ -8,7 +8,11 @@ public class UnbanCommand extends Command {
 
     public UnbanCommand() {
         this.name = "unban";
+        this.help = "Unban member from server";
+        this.arguments = "<ID>";
+        this.category = new Category("Moderation");
         this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
+        this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
     }
 
     @Override

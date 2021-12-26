@@ -13,6 +13,9 @@ public class UserCommand extends Command {
 
     public UserCommand() {
         this.name = "user";
+        this.help = "User information";
+        this.arguments = "[@Member | ID]";
+        this.category = new Category("Information");
     }
 
     @Override

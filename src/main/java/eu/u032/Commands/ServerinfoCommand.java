@@ -14,6 +14,8 @@ public class ServerinfoCommand extends Command {
 
     public ServerinfoCommand() {
         this.name = "serverinfo";
+        this.help = "Server information";
+        this.category = new Category("Information");
     }
 
     @Override
