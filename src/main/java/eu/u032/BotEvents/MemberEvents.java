@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 import java.util.Date;
+import java.util.Objects;
 
 public class MemberEvents extends ListenerAdapter {
 
@@ -25,8 +26,7 @@ public class MemberEvents extends ListenerAdapter {
                 .addField("Member count", String.valueOf(member.getGuild().getMemberCount()), true)
                 .setFooter("User ID: " + member.getId())
                 .setTimestamp(new Date().toInstant());
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }
@@ -46,8 +46,7 @@ public class MemberEvents extends ListenerAdapter {
                 .addField("Member count", String.valueOf(event.getGuild().getMemberCount()), true)
                 .setFooter("User ID: " + member.getId())
                 .setTimestamp(new Date().toInstant());
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }
@@ -71,8 +70,7 @@ public class MemberEvents extends ListenerAdapter {
 
         if (after != null) embed.addField("After", after, true);
 
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }

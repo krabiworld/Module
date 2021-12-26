@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 import java.util.Date;
+import java.util.Objects;
 
 public class ChannelEvents extends ListenerAdapter {
 
@@ -22,8 +23,7 @@ public class ChannelEvents extends ListenerAdapter {
                 .addField("Channel", channel.getName(), false)
                 .setFooter("Channel ID: " + channel.getId())
                 .setTimestamp(new Date().toInstant());
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }
@@ -38,8 +38,7 @@ public class ChannelEvents extends ListenerAdapter {
                 .addField("Channel", channel.getName(), false)
                 .setFooter("Channel ID: " + channel.getId())
                 .setTimestamp(new Date().toInstant());
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }

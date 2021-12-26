@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 import java.util.Date;
+import java.util.Objects;
 
 public class InviteEvents extends ListenerAdapter {
 
@@ -17,14 +18,15 @@ public class InviteEvents extends ListenerAdapter {
         Invite invite = event.getInvite();
         User inviter = event.getInvite().getInviter();
 
+        if (inviter == null) return;
+
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(inviter.getAsTag(), null, inviter.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#89d561"))
                 .setDescription(String.format("%s created an [invite](%s)", inviter.getAsMention(), invite.getUrl()))
                 .setFooter("User ID: " + inviter.getId())
                 .setTimestamp(new Date().toInstant());
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }
@@ -36,8 +38,7 @@ public class InviteEvents extends ListenerAdapter {
                 .setColor(Color.decode("#89d561"))
                 .setDescription(String.format("Invite `%s` deleted", event.getCode()))
                 .setTimestamp(new Date().toInstant());
-        event.getJDA()
-                .getTextChannelById(Config.getString("LOGS_CHANNEL"))
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .queue();
     }

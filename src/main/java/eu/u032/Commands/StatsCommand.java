@@ -28,11 +28,10 @@ public class StatsCommand extends Command {
         }
 
         long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
-        String uptimeFormatted = String.format("%2d d. %2d hr. %2d min. %2d sec.",
+        String uptimeFormatted = String.format("%2d days %2d hours %2d minutes",
                 TimeUnit.MILLISECONDS.toDays(uptime),
                 TimeUnit.MILLISECONDS.toHours(uptime) % TimeUnit.DAYS.toHours(1),
-                TimeUnit.MILLISECONDS.toMinutes(uptime) % TimeUnit.HOURS.toMinutes(1),
-                TimeUnit.MILLISECONDS.toSeconds(uptime) % TimeUnit.MINUTES.toSeconds(1)
+                TimeUnit.MILLISECONDS.toMinutes(uptime) % TimeUnit.HOURS.toMinutes(1)
         );
 
         String common = String.format("**Servers:** %s\n**Users:** %s\n**Channels:** %s",
