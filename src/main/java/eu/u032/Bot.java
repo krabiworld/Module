@@ -39,9 +39,11 @@ public class Bot {
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_INVITES,
                         GatewayIntent.GUILD_PRESENCES,
-                        GatewayIntent.GUILD_EMOJIS)
+                        GatewayIntent.GUILD_EMOJIS,
+                        GatewayIntent.DIRECT_MESSAGES)
                 .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.CLIENT_STATUS)
                 .disableCache(CacheFlag.VOICE_STATE)
+                .setBulkDeleteSplittingEnabled(false)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(builder.build(),
                         new InviteEvents(),

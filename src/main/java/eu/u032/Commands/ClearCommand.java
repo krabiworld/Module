@@ -30,6 +30,8 @@ public class ClearCommand extends Command {
         }
 
         try {
+            event.getMessage().delete().queue();
+
             List<Message> messages = new LinkedList<>();
             MessageHistory history = event.getChannel().getHistory();
             OffsetDateTime dateTime = event.getMessage().getTimeCreated().minusHours(335);
@@ -55,8 +57,7 @@ public class ClearCommand extends Command {
             int index = 0;
             while (index < delMessages.size()) {
                 if (index + 100 > delMessages.size()) {
-                    if (index + 1 == delMessages.size()) delMessages.get(delMessages.size()).delete().complete();
-                    else event.getTextChannel().deleteMessages(delMessages.subList(index, delMessages.size())).complete();
+                    event.getTextChannel().deleteMessages(delMessages.subList(index, delMessages.size())).complete();
                 } else event.getTextChannel().deleteMessages(delMessages.subList(index, index + 100)).complete();
                 index += 100;
             }
