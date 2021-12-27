@@ -5,14 +5,17 @@ import eu.u032.MessageCache;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
-import java.util.Date;
-import java.util.Objects;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.*;
+import java.util.List;
 
 public class MessageEvents extends ListenerAdapter {
 
@@ -77,6 +80,36 @@ public class MessageEvents extends ListenerAdapter {
                 .setTimestamp(new Date().toInstant());
         Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
+                .queue();
+    }
+
+    @Override
+    public void onMessageBulkDelete(MessageBulkDeleteEvent event) {
+        List<String> deletedMessages = new ArrayList<>();
+
+        for (String messageId : event.getMessageIds()) {
+            Message message = MessageCache.getMessage(Long.parseLong(messageId));
+            if (message == null) continue;
+            deletedMessages.add(String.format("%s %s: %s\n",
+                    message.getTimeCreated().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)),
+                    message.getAuthor().getAsTag(),
+                    message.getContentDisplay()
+            ));
+        }
+
+        Collections.reverse(deletedMessages);
+        StringBuilder deletedMessagesString = new StringBuilder();
+        for (String message : deletedMessages) {
+            deletedMessagesString.append(message);
+        }
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setTitle("Deleted " + event.getMessageIds().size() + " messages!")
+                .setDescription("Deleted in channel " + event.getChannel().getAsMention())
+                .setColor(Color.decode("#e94b3e"));
+        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
+                .sendMessageEmbeds(embed.build())
+                .addFile(deletedMessagesString.toString().getBytes(), ".txt")
                 .queue();
     }
 
