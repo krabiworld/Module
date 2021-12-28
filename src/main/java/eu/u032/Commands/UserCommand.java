@@ -4,11 +4,9 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ClientType;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-
-import java.util.Objects;
 
 public class UserCommand extends Command {
 
@@ -23,8 +21,27 @@ public class UserCommand extends Command {
     protected void execute(CommandEvent event) {
         Member member = Utils.getMemberFromArgs(event) != null ? Utils.getMemberFromArgs(event) : event.getMember();
         String status;
-        StringBuilder device = new StringBuilder();
         User.Profile profile = member.getUser().retrieveProfile().complete();
+        StringBuilder activities = new StringBuilder();
+
+        for (Activity activity : member.getActivities()) {
+            if (activity.getType() == Activity.ActivityType.CUSTOM_STATUS) {
+                activities.append("**Custom Status:** ")
+                        .append(activity.getEmoji() == null ? "" : activity.getEmoji().getAsMention())
+                        .append(" ").append(activity.getName());
+            }
+            if (activity.getType() == Activity.ActivityType.DEFAULT)
+                activities.append("**Playing:** ").append(activity.getName());
+            if (activity.getType() == Activity.ActivityType.COMPETING)
+                activities.append("**Competing:** ").append(activity.getName());
+            if (activity.getType() == Activity.ActivityType.LISTENING)
+                activities.append("**Listening:** ").append(activity.getName());
+            if (activity.getType() == Activity.ActivityType.STREAMING)
+                activities.append("**Streaming:** ").append(activity.getName());
+            if (activity.getType() == Activity.ActivityType.WATCHING)
+                activities.append("**Watching:** ").append(activity.getName());
+            activities.append("\n");
+        }
 
         status = switch (member.getOnlineStatus()) {
             case ONLINE -> "<:online:925113750598598736>Online";
@@ -33,24 +50,9 @@ public class UserCommand extends Command {
             default -> "<:offline:925113750581817354>Offline";
         };
 
-        for (ClientType type : member.getActiveClients()) {
-            if (member.getUser().isBot()) {
-                device.append(":cloud: Server");
-                break;
-            }
-            switch (type) {
-                case DESKTOP -> device.append(":desktop: Desktop");
-                case MOBILE -> device.append(":mobile_phone: Mobile");
-                case WEB -> device.append(":spider_web: Web");
-                case UNKNOWN -> device.append("Unknown");
-            }
-            device.append(" ");
-        }
-
-        String description = String.format("**Username:** %s\n**Status:** %s\n**Device:** %s\n**Role color:** #%s\n**Joined at:** <t:%s>\n**Registered at:** <t:%s>",
+        String description = String.format("**Username:** %s\n**Status:** %s\n%s**Joined at:** <t:%s>\n**Registered at:** <t:%s>",
                 member.getUser().getAsTag(),
-                status, device,
-                Integer.toHexString(Objects.requireNonNull(member.getColor()).getRGB()).substring(2),
+                status, activities,
                 member.getTimeJoined().toEpochSecond(),
                 member.getTimeCreated().toEpochSecond()
         );
@@ -60,7 +62,7 @@ public class UserCommand extends Command {
                 .setColor(member.getColorRaw())
                 .setDescription(description)
                 .setThumbnail(member.getEffectiveAvatarUrl())
-                .setFooter("User ID: " + member.getId());
+                .setFooter("ID: " + member.getId());
 
         if (profile.getBannerUrl() != null) embed.setImage(profile.getBannerUrl() + "?size=512");
 

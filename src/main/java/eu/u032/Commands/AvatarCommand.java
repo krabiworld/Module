@@ -6,8 +6,6 @@ import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 
-import java.awt.*;
-
 public class AvatarCommand extends Command {
 
     public AvatarCommand() {
@@ -23,7 +21,7 @@ public class AvatarCommand extends Command {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Avatar of " + member.getUser().getName())
-                .setColor(Color.decode("#6196d5"))
+                .setColor(member.getColorRaw())
                 .setImage(member.getEffectiveAvatarUrl() + "?size=512");
         event.reply(embed.build());
     }
