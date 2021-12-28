@@ -36,7 +36,7 @@ public class MessageEvents extends ListenerAdapter {
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#e94b3e"))
                 .setDescription(String.format("Message from %s deleted in <#%s>", author.getAsMention(), msg.getChannel().getId()))
-                .setFooter("User ID: " + author.getId())
+                .setFooter("ID: " + author.getId())
                 .setTimestamp(new Date().toInstant());
 
         if (!msg.getAttachments().isEmpty()) {
@@ -76,7 +76,7 @@ public class MessageEvents extends ListenerAdapter {
                 .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)", author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
                 .addField("Before", before.getContentDisplay(), false)
                 .addField("After", after.getContentDisplay(), false)
-                .setFooter("User ID: " + author.getId())
+                .setFooter("ID: " + author.getId())
                 .setTimestamp(new Date().toInstant());
         Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())

@@ -16,15 +16,15 @@ public class InviteEvents extends ListenerAdapter {
     @Override
     public void onGuildInviteCreate(GuildInviteCreateEvent event) {
         Invite invite = event.getInvite();
-        User inviter = event.getInvite().getInviter();
+        User user = event.getInvite().getInviter();
 
-        if (inviter == null) return;
+        if (user == null) return;
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(inviter.getAsTag(), null, inviter.getEffectiveAvatarUrl())
+                .setAuthor(user.getAsTag(), null, user.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#89d561"))
-                .setDescription(String.format("%s created an [invite](%s)", inviter.getAsMention(), invite.getUrl()))
-                .setFooter("User ID: " + inviter.getId())
+                .setDescription(String.format("%s created an [invite](%s)", user.getAsMention(), invite.getUrl()))
+                .setFooter("ID: " + user.getId())
                 .setTimestamp(new Date().toInstant());
         Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())

@@ -49,7 +49,7 @@ public class ServerinfoCommand extends Command {
                 .setColor(Color.decode("#6196d5"))
                 .setThumbnail(guild.getIconUrl())
                 .setDescription(value)
-                .setFooter("Server ID: " + guild.getId());
+                .setFooter("ID: " + guild.getId());
         event.reply(embed.build());
     }
 

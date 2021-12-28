@@ -24,7 +24,7 @@ public class MemberEvents extends ListenerAdapter {
                 .setDescription(String.format("%s joined to server!", member.getAsMention()))
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(member.getGuild().getMemberCount()), true)
-                .setFooter("User ID: " + member.getId())
+                .setFooter("ID: " + member.getId())
                 .setTimestamp(new Date().toInstant());
         Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
@@ -44,7 +44,7 @@ public class MemberEvents extends ListenerAdapter {
                 .addField("Joined at", String.format("<t:%s>", member.getTimeJoined().toEpochSecond()), true)
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(event.getGuild().getMemberCount()), true)
-                .setFooter("User ID: " + member.getId())
+                .setFooter("ID: " + member.getId())
                 .setTimestamp(new Date().toInstant());
         Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
@@ -65,7 +65,7 @@ public class MemberEvents extends ListenerAdapter {
                 .setAuthor("Nickname for " + member.getUser().getAsTag() + action, null, member.getEffectiveAvatarUrl())
                 .setColor(member.getColor())
                 .addField("Before", before, true)
-                .setFooter("User ID: " + member.getId())
+                .setFooter("ID: " + member.getId())
                 .setTimestamp(new Date().toInstant());
 
         if (after != null) embed.addField("After", after, true);
