@@ -1,4 +1,4 @@
-package eu.u032.Commands;
+package eu.u032.Commands.Moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -11,7 +11,7 @@ public class KickCommand extends Command {
     public KickCommand() {
         this.name = "kick";
         this.help = "Kick member from server";
-        this.arguments = "<@Member | ID>";
+        this.arguments = "<@Member | ID> [reason]";
         this.category = new Category("Moderation");
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
         this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
@@ -19,19 +19,21 @@ public class KickCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] args = event.getArgs().split("\\s+");
+        String[] args = Utils.splitArgs(event.getArgs());
         Member member = Utils.getMemberFromArgs(event);
+        String reason = Utils.getArgsAsString(args, 1);
 
         if (args[0].isEmpty()) {
             event.replyError("Required arguments are missing!");
             return;
-        } else if (member == null) {
+        }
+        if (member == null) {
             event.replyError("Member not found.");
             return;
         }
 
         try {
-            event.getGuild().kick(member).complete();
+            event.getGuild().kick(member, reason).queue();
             event.reactSuccess();
         } catch (Exception e) {
             event.replyError(e.getMessage());

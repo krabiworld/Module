@@ -1,4 +1,4 @@
-package eu.u032.Commands;
+package eu.u032.Commands.Moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
