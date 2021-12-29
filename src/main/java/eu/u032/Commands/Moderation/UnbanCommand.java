@@ -1,7 +1,8 @@
-package eu.u032.Commands;
+package eu.u032.Commands.Moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.Permission;
 
 public class UnbanCommand extends Command {
@@ -17,7 +18,7 @@ public class UnbanCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        String[] args = event.getArgs().split("\\s+");
+        String[] args = Utils.splitArgs(event.getArgs());
 
         if (args[0].isEmpty()) {
             event.replyError("Required arguments are missing!");
@@ -25,7 +26,7 @@ public class UnbanCommand extends Command {
         }
 
         try {
-            event.getGuild().unban(args[0]).complete();
+            event.getGuild().unban(args[0]).queue();
             event.reactSuccess();
         } catch (Exception e) {
             event.replyError(e.getMessage());

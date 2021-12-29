@@ -1,14 +1,17 @@
 package eu.u032;
 
+import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import eu.u032.BotEvents.ChannelEvents;
 import eu.u032.BotEvents.InviteEvents;
 import eu.u032.BotEvents.MemberEvents;
 import eu.u032.BotEvents.MessageEvents;
 import eu.u032.Commands.*;
+import eu.u032.Commands.Information.*;
+import eu.u032.Commands.Moderation.*;
+import eu.u032.Commands.Utilities.AvatarCommand;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -21,16 +24,26 @@ public class Bot {
         CommandClientBuilder builder = new CommandClientBuilder()
                 .setOwnerId(Config.getString("OWNER_ID"))
                 .setPrefix(Config.getString("PREFIX"))
-                .setAlternativePrefix(Config.getString("ALT_PREFIX"))
                 .setActivity(Activity.competing("JDA"))
                 .setStatus(OnlineStatus.IDLE)
                 .setEmojis("✅", "⚠️", "❌")
                 .setHelpConsumer(Utils::help)
                 .addCommands(
-                        new ServerinfoCommand(), new MuteCommand(), new UnmuteCommand(),
-                        new ClearCommand(), new SlowmodeCommand(), new UserCommand(),
-                        new AvatarCommand(), new KickCommand(), new StatsCommand(),
-                        new ShutdownCommand(), new BanCommand(), new UnbanCommand()
+                        new EvalCommand(),
+                        // Information
+                        new ServerinfoCommand(),
+                        new UserCommand(),
+                        new StatsCommand(),
+                        // Moderation
+                        new MuteCommand(),
+                        new UnmuteCommand(),
+                        new ClearCommand(),
+                        new SlowmodeCommand(),
+                        new KickCommand(),
+                        new BanCommand(),
+                        new UnbanCommand(),
+                        // Utilities
+                        new AvatarCommand()
                 );
 
         JDABuilder

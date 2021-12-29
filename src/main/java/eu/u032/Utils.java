@@ -9,8 +9,12 @@ import java.util.*;
 
 public class Utils {
 
+    public static String[] splitArgs(String args) {
+        return args.split("\\s+");
+    }
+
     public static Member getMemberFromArgs(CommandEvent event) {
-        String[] args = event.getArgs().split("\\s+");
+        String[] args = splitArgs(event.getArgs());
         Member member = null;
 
         if (!event.getMessage().getMentionedMembers().isEmpty()) {
@@ -22,41 +26,61 @@ public class Utils {
         return member;
     }
 
+    public static String getArgsAsString(String[] args, int start) {
+        return getArgsAsString(args, start, false);
+    }
+
+    public static String getArgsAsString(String[] args, int start, boolean isOneArg) {
+        StringBuilder argsString = new StringBuilder();
+
+        for (int i = start; i < args.length; i++) {
+            argsString.append(args[i]).append(" ");
+            if (isOneArg) break;
+        }
+
+        return argsString.toString();
+    }
+
     public static void help(CommandEvent event) {
-        EmbedBuilder embed = new EmbedBuilder().setColor(event.getMember().getColor());
+        String args = event.getArgs();
+        String prefix = event.getClient().getPrefix();
+        EmbedBuilder embed = new EmbedBuilder().setColor(event.getMember().getColorRaw());
 
-        List<String> categories = new LinkedList<>();
+        List<String> categoriesList = new LinkedList<>();
 
-        for (Command command : event.getClient().getCommands())
-            categories.add(command.getCategory().getName());
+        for (Command command : event.getClient().getCommands()) {
+            if (command.getCategory() == null) continue;
+            categoriesList.add(command.getCategory().getName());
+        }
 
-        Set<String> categoriesSet = new LinkedHashSet<>(categories);
+        Set<String> categories = new LinkedHashSet<>(categoriesList);
 
-        if (event.getArgs().isEmpty()) {
-            StringBuilder cmdStr = new StringBuilder();
+        if (args.isEmpty()) {
+            StringBuilder commands = new StringBuilder();
 
-            for (String category : categoriesSet) {
+            for (String category : categories) {
                 for (Command command : event.getClient().getCommands()) {
                     if (command.isHidden()) continue;
                     if (command.getCategory().getName().equals(category)) {
-                        cmdStr.append("`")
-                                .append(event.getClient().getPrefix())
+                        commands.append("`")
+                                .append(prefix)
                                 .append(command.getName())
                                 .append("` ");
                     }
                 }
-                embed.addField(category, cmdStr.toString(), false);
-                cmdStr = new StringBuilder();
+                embed.addField(category, commands.toString(), false);
+                commands = new StringBuilder();
             }
+
             event.reply(embed.build());
             return;
         } else {
             for (String category : categories) {
-                if (category.toLowerCase().startsWith(event.getArgs().toLowerCase())) {
+                if (category.toLowerCase().startsWith(args.toLowerCase())) {
                     for (Command cmd : event.getClient().getCommands()) {
-                        if (cmd.isHidden() || cmd.isOwnerCommand()) continue;
+                        if (cmd.isHidden()) continue;
                         if (cmd.getCategory().getName().equals(category))
-                            embed.addField(event.getClient().getPrefix() + cmd.getName(), cmd.getHelp(), false);
+                            embed.addField(prefix + cmd.getName(), cmd.getHelp(), false);
                     }
                     embed.setTitle("Commands of category " + category);
                     event.reply(embed.build());
@@ -64,21 +88,16 @@ public class Utils {
                 }
             }
             for (Command cmd : event.getClient().getCommands()) {
-                if (cmd.getName().toLowerCase().startsWith(event.getArgs().toLowerCase()) && !cmd.isHidden() && !cmd.isOwnerCommand()) {
+                if (cmd.getName().toLowerCase().startsWith(args.toLowerCase()) && !cmd.isHidden()) {
                     embed.setTitle("Information of command " + cmd.getName());
-                    embed.setDescription(String.format("`%s%s %s`\n%s",
-                            event.getClient().getPrefix(),
-                            cmd.getName(),
-                            cmd.getArguments(),
-                            cmd.getHelp()
-                    ));
+                    embed.setDescription("`" + prefix + cmd.getName() + " " + cmd.getArguments() + "`\n" + cmd.getHelp());
                     event.reply(embed.build());
                     return;
                 }
             }
         }
 
-        event.replyError("Command or category **" + event.getArgs() + "** not found.");
+        event.replyError("Command or category **" + args + "** not found.");
     }
 
 }
