@@ -1,6 +1,6 @@
 package eu.u032.BotEvents;
 
-import eu.u032.Config;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
@@ -8,8 +8,6 @@ import net.dv8tion.jda.api.events.guild.invite.GuildInviteDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
-import java.util.Date;
-import java.util.Objects;
 
 public class InviteEvents extends ListenerAdapter {
 
@@ -24,11 +22,8 @@ public class InviteEvents extends ListenerAdapter {
                 .setAuthor(user.getAsTag(), null, user.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#89d561"))
                 .setDescription(String.format("%s created an [invite](%s)", user.getAsMention(), invite.getUrl()))
-                .setFooter("ID: " + user.getId())
-                .setTimestamp(new Date().toInstant());
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+                .setFooter("ID: " + user.getId());
+        Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -36,11 +31,8 @@ public class InviteEvents extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Invite deleted")
                 .setColor(Color.decode("#89d561"))
-                .setDescription(String.format("Invite `%s` deleted", event.getCode()))
-                .setTimestamp(new Date().toInstant());
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+                .setDescription(String.format("Invite `%s` deleted", event.getCode()));
+        Utils.sendLog(event.getGuild(), embed);
     }
 
 }

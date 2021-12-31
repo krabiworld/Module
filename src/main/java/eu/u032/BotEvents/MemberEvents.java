@@ -1,6 +1,6 @@
 package eu.u032.BotEvents;
 
-import eu.u032.Config;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -9,8 +9,6 @@ import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameE
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
-import java.util.Date;
-import java.util.Objects;
 
 public class MemberEvents extends ListenerAdapter {
 
@@ -24,11 +22,8 @@ public class MemberEvents extends ListenerAdapter {
                 .setDescription(String.format("%s joined to server!", member.getAsMention()))
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(member.getGuild().getMemberCount()), true)
-                .setFooter("ID: " + member.getId())
-                .setTimestamp(new Date().toInstant());
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+                .setFooter("ID: " + member.getId());
+        Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -44,11 +39,8 @@ public class MemberEvents extends ListenerAdapter {
                 .addField("Joined at", String.format("<t:%s>", member.getTimeJoined().toEpochSecond()), true)
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(event.getGuild().getMemberCount()), true)
-                .setFooter("ID: " + member.getId())
-                .setTimestamp(new Date().toInstant());
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+                .setFooter("ID: " + member.getId());
+        Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -65,14 +57,11 @@ public class MemberEvents extends ListenerAdapter {
                 .setAuthor("Nickname for " + member.getUser().getAsTag() + action, null, member.getEffectiveAvatarUrl())
                 .setColor(member.getColor())
                 .addField("Before", before, true)
-                .setFooter("ID: " + member.getId())
-                .setTimestamp(new Date().toInstant());
+                .setFooter("ID: " + member.getId());
 
         if (after != null) embed.addField("After", after, true);
 
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+        Utils.sendLog(event.getGuild(), embed);
     }
 
 }

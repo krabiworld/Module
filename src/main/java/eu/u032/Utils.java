@@ -3,11 +3,20 @@ package eu.u032;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.*;
 
 public class Utils {
+
+    public static void sendLog(Guild guild, EmbedBuilder embed) {
+        embed.setTimestamp(new Date().toInstant());
+        TextChannel textChannel = guild.getTextChannelById(Config.getString("LOGS_CHANNEL"));
+        if (textChannel == null) return;
+        textChannel.sendMessageEmbeds(embed.build()).queue();
+    }
 
     public static String[] splitArgs(String args) {
         return args.split("\\s+");
@@ -26,16 +35,11 @@ public class Utils {
         return member;
     }
 
-    public static String getArgsAsString(String[] args, int start) {
-        return getArgsAsString(args, start, false);
-    }
-
-    public static String getArgsAsString(String[] args, int start, boolean isOneArg) {
+    public static String getReasonFromArgs(String[] args, int start) {
         StringBuilder argsString = new StringBuilder();
 
         for (int i = start; i < args.length; i++) {
             argsString.append(args[i]).append(" ");
-            if (isOneArg) break;
         }
 
         return argsString.toString();

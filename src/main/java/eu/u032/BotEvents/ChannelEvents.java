@@ -1,6 +1,6 @@
 package eu.u032.BotEvents;
 
-import eu.u032.Config;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -11,8 +11,6 @@ import net.dv8tion.jda.api.events.channel.voice.VoiceChannelDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
-import java.util.Date;
-import java.util.Objects;
 
 public class ChannelEvents extends ListenerAdapter {
 
@@ -24,11 +22,8 @@ public class ChannelEvents extends ListenerAdapter {
                 .setAuthor("Text Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
                 .setColor(Color.decode("#e94b3e"))
                 .addField("Text Channel", channel.getName(), false)
-                .setFooter("ID: " + channel.getId())
-                .setTimestamp(new Date().toInstant());
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+                .setFooter("ID: " + channel.getId());
+        Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -39,11 +34,8 @@ public class ChannelEvents extends ListenerAdapter {
                 .setAuthor("Text Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
                 .setColor(Color.decode("#89d561"))
                 .addField("Text Channel", channel.getName(), false)
-                .setFooter("ID: " + channel.getId())
-                .setTimestamp(new Date().toInstant());
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+                .setFooter("ID: " + channel.getId());
+        Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -54,11 +46,8 @@ public class ChannelEvents extends ListenerAdapter {
                 .setAuthor("Voice Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
                 .setColor(Color.decode("#e94b3e"))
                 .addField("Voice Channel", channel.getName(), false)
-                .setFooter("ID: " + channel.getId())
-                .setTimestamp(new Date().toInstant());
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+                .setFooter("ID: " + channel.getId());
+        Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -69,11 +58,8 @@ public class ChannelEvents extends ListenerAdapter {
                 .setAuthor("Voice Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
                 .setColor(Color.decode("#89d561"))
                 .addField("Voice Channel", channel.getName(), false)
-                .setFooter("ID: " + channel.getId())
-                .setTimestamp(new Date().toInstant());
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+                .setFooter("ID: " + channel.getId());
+        Utils.sendLog(event.getGuild(), embed);
     }
 
 }

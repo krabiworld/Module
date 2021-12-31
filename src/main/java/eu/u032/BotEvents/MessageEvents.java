@@ -2,6 +2,7 @@ package eu.u032.BotEvents;
 
 import eu.u032.Config;
 import eu.u032.MessageCache;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -36,25 +37,21 @@ public class MessageEvents extends ListenerAdapter {
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
                 .setColor(Color.decode("#e94b3e"))
                 .setDescription(String.format("Message from %s deleted in <#%s>", author.getAsMention(), msg.getChannel().getId()))
-                .setFooter("ID: " + author.getId())
-                .setTimestamp(new Date().toInstant());
+                .setFooter("ID: " + author.getId());
 
         if (!msg.getAttachments().isEmpty()) {
             StringBuilder message = new StringBuilder();
+            message.append(msg.getContentDisplay()).append("\n");
             for (Message.Attachment attachment : msg.getAttachments()) {
                 message.append(
                         String.format("File: [%s](%s)", attachment.getFileName(), attachment.getUrl())
                 ).append("\n");
             }
-            message.append(msg.getContentDisplay());
             embed.addField("Message content", message.toString(), false);
         } else {
             embed.addField("Message content", msg.getContentDisplay(), false);
         }
-
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+        Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -76,11 +73,8 @@ public class MessageEvents extends ListenerAdapter {
                 .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)", author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
                 .addField("Before", before.getContentDisplay(), false)
                 .addField("After", after.getContentDisplay(), false)
-                .setFooter("ID: " + author.getId())
-                .setTimestamp(new Date().toInstant());
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
-                .sendMessageEmbeds(embed.build())
-                .queue();
+                .setFooter("ID: " + author.getId());
+        Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -106,8 +100,9 @@ public class MessageEvents extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Deleted " + event.getMessageIds().size() + " messages!")
                 .setDescription("Deleted in channel " + event.getChannel().getAsMention())
-                .setColor(Color.decode("#e94b3e"));
-        Objects.requireNonNull(event.getJDA().getTextChannelById(Config.getString("LOGS_CHANNEL")))
+                .setColor(Color.decode("#e94b3e"))
+                .setTimestamp(new Date().toInstant());
+        Objects.requireNonNull(event.getGuild().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())
                 .addFile(deletedMessagesString.toString().getBytes(), ".txt")
                 .queue();

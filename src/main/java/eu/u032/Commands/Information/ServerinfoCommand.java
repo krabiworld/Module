@@ -22,6 +22,7 @@ public class ServerinfoCommand extends Command {
         Guild guild = event.getGuild();
         int online = 0, dnd = 0, idle = 0, offline = 0;
         int bots = guild.getMembers().stream().filter(m -> m.getUser().isBot()).toList().size();
+        String verLevel = guild.getVerificationLevel().name();
         long createdAt = guild.getTimeCreated().toEpochSecond();
 
         for (Member member : guild.getMembers()) {
@@ -35,7 +36,7 @@ public class ServerinfoCommand extends Command {
 
         String members = String.format("""
                         <:members:925771713197768714> Members: **%s**
-                        <:bots:925772193303003146> Bots: **%s**""",
+                        <:bots:926447286907719751> Bots: **%s**""",
                 guild.getMemberCount() - bots, bots
         );
         String channels = String.format("""
@@ -64,7 +65,7 @@ public class ServerinfoCommand extends Command {
                 .addField("Channels (" + (guild.getChannels().size() - guild.getCategories().size()) + ")", channels, true)
                 .addField("By Status", byStatus, true)
                 .addField("Owner", Objects.requireNonNull(guild.getOwner()).getAsMention(), true)
-                .addField("Verification Level", guild.getVerificationLevel().name(), true)
+                .addField("Verification Level", verLevel.charAt(0) + verLevel.substring(1).toLowerCase(), true)
                 .addField("Created at", "<t:" + createdAt + ":D> (<t:" + createdAt + ":R>)", true)
                 .setImage(guild.getBannerUrl())
                 .setFooter("ID: " + guild.getId());

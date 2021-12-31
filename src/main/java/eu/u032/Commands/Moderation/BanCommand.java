@@ -21,7 +21,7 @@ public class BanCommand extends Command {
     protected void execute(CommandEvent event) {
         String[] args = Utils.splitArgs(event.getArgs());
         Member member = Utils.getMemberFromArgs(event);
-        String reason = Utils.getArgsAsString(args, 1);
+        String reason = Utils.getReasonFromArgs(args, 1);
 
         if (args[0].isEmpty()) {
             event.replyError("Required arguments are missing!");
