@@ -23,6 +23,8 @@ public class UserCommand extends Command {
         String status;
         User.Profile profile = member.getUser().retrieveProfile().complete();
         StringBuilder activities = new StringBuilder();
+        long timeJoined = member.getTimeJoined().toEpochSecond();
+        long timeCreated = member.getTimeCreated().toEpochSecond();
 
         for (Activity activity : member.getActivities()) {
             if (activity.getType() == Activity.ActivityType.CUSTOM_STATUS) {
@@ -50,15 +52,19 @@ public class UserCommand extends Command {
             default -> "<:offline:925113750581817354>Offline";
         };
 
-        String description = String.format("**Username:** %s\n**Status:** %s\n%s**Joined at:** <t:%s>\n**Registered at:** <t:%s>",
+        String description = String.format("""
+                        **Username:** %s
+                        **Status:**%s
+                        %s**Joined at:** <t:%s> (<t:%s:R>)
+                        **Registered at:** <t:%s> (<t:%s:R>)""",
                 member.getUser().getAsTag(),
                 status, activities,
-                member.getTimeJoined().toEpochSecond(),
-                member.getTimeCreated().toEpochSecond()
+                timeJoined, timeJoined,
+                timeCreated, timeCreated
         );
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Information about " + member.getUser().getName())
+                .setAuthor("Information about " + member.getUser().getName(), null, member.getEffectiveAvatarUrl())
                 .setColor(member.getColorRaw())
                 .setDescription(description)
                 .setThumbnail(member.getEffectiveAvatarUrl())

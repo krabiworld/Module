@@ -52,10 +52,9 @@ public class Bot {
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_INVITES,
                         GatewayIntent.GUILD_PRESENCES,
-                        GatewayIntent.GUILD_EMOJIS,
                         GatewayIntent.DIRECT_MESSAGES)
                 .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY)
-                .disableCache(CacheFlag.VOICE_STATE)
+                .disableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE)
                 .setBulkDeleteSplittingEnabled(false)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(builder.build(),
