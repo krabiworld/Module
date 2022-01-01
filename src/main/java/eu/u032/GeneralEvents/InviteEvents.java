@@ -1,6 +1,5 @@
 package eu.u032.GeneralEvents;
 
-import eu.u032.Config;
 import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -19,7 +18,7 @@ public class InviteEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(user.getAsTag(), null, user.getEffectiveAvatarUrl())
-                .setColor(Config.getColorCreate())
+                .setColor(Utils.getColorCreate())
                 .setDescription(String.format("%s created an [invite](%s)", user.getAsMention(), invite.getUrl()))
                 .setFooter("ID: " + user.getId());
         Utils.sendLog(event.getGuild(), embed);
@@ -29,7 +28,7 @@ public class InviteEvents extends ListenerAdapter {
     public void onGuildInviteDelete(GuildInviteDeleteEvent event) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Invite deleted")
-                .setColor(Config.getColorDelete())
+                .setColor(Utils.getColorDelete())
                 .setDescription(String.format("Invite `%s` deleted", event.getCode()));
         Utils.sendLog(event.getGuild(), embed);
     }

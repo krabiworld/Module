@@ -34,7 +34,7 @@ public class MessageEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
-                .setColor(Config.getColorDelete())
+                .setColor(Utils.getColorDelete())
                 .setDescription(String.format("Message from %s deleted in <#%s>", author.getAsMention(), msg.getChannel().getId()))
                 .setFooter("ID: " + author.getId());
 
@@ -72,7 +72,7 @@ public class MessageEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
-                .setColor(Config.getColorUpdate())
+                .setColor(Utils.getColorUpdate())
                 .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)", author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
                 .addField("Before", before.getContentDisplay(), false)
                 .addField("After", after.getContentDisplay(), false)
@@ -103,7 +103,7 @@ public class MessageEvents extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Deleted " + event.getMessageIds().size() + " messages!")
                 .setDescription("Deleted in channel " + event.getChannel().getAsMention())
-                .setColor(Config.getColorDelete())
+                .setColor(Utils.getColorDelete())
                 .setTimestamp(new Date().toInstant());
         Objects.requireNonNull(event.getGuild().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())

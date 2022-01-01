@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class Utils {
     public static void help(CommandEvent event) {
         String args = event.getArgs();
         String prefix = event.getClient().getPrefix();
-        EmbedBuilder embed = new EmbedBuilder().setColor(Config.getColor());
+        EmbedBuilder embed = new EmbedBuilder().setColor(getColor()).setFooter(getCopyright());
 
         List<String> categoriesList = new LinkedList<>();
 
@@ -106,6 +107,26 @@ public class Utils {
         }
 
         event.replyError("Command or category **" + args + "** not found.");
+    }
+
+    public static Color getColor() {
+        return Color.decode(Config.getString("COLOR"));
+    }
+
+    public static Color getColorCreate() {
+        return Color.decode(Config.getString("COLOR_CREATE"));
+    }
+
+    public static Color getColorDelete() {
+        return Color.decode(Config.getString("COLOR_DELETE"));
+    }
+
+    public static Color getColorUpdate() {
+        return Color.decode(Config.getString("COLOR_UPDATE"));
+    }
+
+    public static String getCopyright() {
+        return "Copyright © 2022 — untled032, Headcrab";
     }
 
 }
