@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.*;
+import java.util.List;
 
 public class Utils {
 
@@ -48,7 +49,7 @@ public class Utils {
     public static void help(CommandEvent event) {
         String args = event.getArgs();
         String prefix = event.getClient().getPrefix();
-        EmbedBuilder embed = new EmbedBuilder().setColor(event.getMember().getColorRaw());
+        EmbedBuilder embed = new EmbedBuilder().setColor(Config.getColor());
 
         List<String> categoriesList = new LinkedList<>();
 
@@ -61,6 +62,7 @@ public class Utils {
 
         if (args.isEmpty()) {
             StringBuilder commands = new StringBuilder();
+            embed.setTitle("Available commands:");
 
             for (String category : categories) {
                 for (Command command : event.getClient().getCommands()) {
@@ -72,7 +74,7 @@ public class Utils {
                                 .append("` ");
                     }
                 }
-                embed.addField(category, commands.toString(), false);
+                embed.addField(category + " (" + prefix + "help " + category + ")", commands.toString(), false);
                 commands = new StringBuilder();
             }
 
@@ -94,7 +96,9 @@ public class Utils {
             for (Command cmd : event.getClient().getCommands()) {
                 if (cmd.getName().toLowerCase().startsWith(args.toLowerCase()) && !cmd.isHidden()) {
                     embed.setTitle("Information of command " + cmd.getName());
-                    embed.setDescription("`" + prefix + cmd.getName() + " " + cmd.getArguments() + "`\n" + cmd.getHelp());
+                    embed.setDescription(
+                            "`" + prefix + cmd.getName() + (cmd.getArguments() == null ? "" : " " + cmd.getArguments()) + "`\n" + cmd.getHelp()
+                    );
                     event.reply(embed.build());
                     return;
                 }

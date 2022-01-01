@@ -1,5 +1,6 @@
-package eu.u032.BotEvents;
+package eu.u032.GeneralEvents;
 
+import eu.u032.Config;
 import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -7,8 +8,6 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-
-import java.awt.*;
 
 public class MemberEvents extends ListenerAdapter {
 
@@ -18,7 +17,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
-                .setColor(Color.decode("#f7d724"))
+                .setColor(Config.getColorCreate())
                 .setDescription(String.format("%s joined to server!", member.getAsMention()))
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(member.getGuild().getMemberCount()), true)
@@ -34,7 +33,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
-                .setColor(Color.decode("#e94b3e"))
+                .setColor(Config.getColorDelete())
                 .setDescription(String.format("%s has left the server!", member.getAsMention()))
                 .addField("Joined at", String.format("<t:%s>", member.getTimeJoined().toEpochSecond()), true)
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
@@ -55,7 +54,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Nickname for " + member.getUser().getAsTag() + action, null, member.getEffectiveAvatarUrl())
-                .setColor(member.getColor())
+                .setColor(Config.getColorUpdate())
                 .addField("Before", before, true)
                 .setFooter("ID: " + member.getId());
 

@@ -1,5 +1,6 @@
-package eu.u032.BotEvents;
+package eu.u032.GeneralEvents;
 
+import eu.u032.Config;
 import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -10,8 +11,6 @@ import net.dv8tion.jda.api.events.channel.voice.VoiceChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.voice.VoiceChannelDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.awt.*;
-
 public class ChannelEvents extends ListenerAdapter {
 
     @Override
@@ -20,7 +19,7 @@ public class ChannelEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Text Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Color.decode("#e94b3e"))
+                .setColor(Config.getColorDelete())
                 .addField("Text Channel", channel.getName(), false)
                 .setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
@@ -32,7 +31,7 @@ public class ChannelEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Text Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Color.decode("#89d561"))
+                .setColor(Config.getColorCreate())
                 .addField("Text Channel", channel.getName(), false)
                 .setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
@@ -44,7 +43,7 @@ public class ChannelEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Voice Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Color.decode("#e94b3e"))
+                .setColor(Config.getColorDelete())
                 .addField("Voice Channel", channel.getName(), false)
                 .setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
@@ -56,7 +55,7 @@ public class ChannelEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Voice Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Color.decode("#89d561"))
+                .setColor(Config.getColorCreate())
                 .addField("Voice Channel", channel.getName(), false)
                 .setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
