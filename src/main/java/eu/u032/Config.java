@@ -3,8 +3,6 @@ package eu.u032;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-
 public enum Config {;
 
     private static final Dotenv dotenv = Dotenv.load();
@@ -19,22 +17,6 @@ public enum Config {;
 
     public static int getInt(@NotNull String key) {
         return Integer.parseInt(get(key));
-    }
-
-    public static Color getColor() {
-        return Color.decode(getString("COLOR"));
-    }
-
-    public static Color getColorCreate() {
-        return Color.decode(getString("COLOR_CREATE"));
-    }
-
-    public static Color getColorDelete() {
-        return Color.decode(getString("COLOR_DELETE"));
-    }
-
-    public static Color getColorUpdate() {
-        return Color.decode(getString("COLOR_UPDATE"));
     }
 
 //    private static String get(@NotNull String key, String defaultValue) {

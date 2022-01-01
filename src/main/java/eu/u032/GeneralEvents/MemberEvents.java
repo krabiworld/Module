@@ -1,6 +1,5 @@
 package eu.u032.GeneralEvents;
 
-import eu.u032.Config;
 import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,7 +16,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
-                .setColor(Config.getColorCreate())
+                .setColor(Utils.getColorCreate())
                 .setDescription(String.format("%s joined to server!", member.getAsMention()))
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(member.getGuild().getMemberCount()), true)
@@ -33,7 +32,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
-                .setColor(Config.getColorDelete())
+                .setColor(Utils.getColorDelete())
                 .setDescription(String.format("%s has left the server!", member.getAsMention()))
                 .addField("Joined at", String.format("<t:%s>", member.getTimeJoined().toEpochSecond()), true)
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
@@ -54,7 +53,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Nickname for " + member.getUser().getAsTag() + action, null, member.getEffectiveAvatarUrl())
-                .setColor(Config.getColorUpdate())
+                .setColor(Utils.getColorUpdate())
                 .addField("Before", before, true)
                 .setFooter("ID: " + member.getId());
 

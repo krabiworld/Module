@@ -2,7 +2,7 @@ package eu.u032.Commands.Information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Config;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -26,7 +26,7 @@ public class StatsCommand extends Command {
 
         int channelsCount = 0;
         for (Guild guild : jda.getGuilds()) {
-            channelsCount += guild.getChannels().size();
+            channelsCount += guild.getChannels().size() - guild.getCategories().size();
         }
 
         long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
@@ -47,11 +47,12 @@ public class StatsCommand extends Command {
         );
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("UASM Statistics")
-                .setColor(Config.getColor())
+                .setTitle("Bot Statistics")
+                .setColor(Utils.getColor())
                 .addField("Common", common, true)
                 .addField("Platform", platform, true)
-                .setFooter("Java: " + System.getProperty("java.version"));
+                .setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
+                .setFooter(Utils.getCopyright() + " • Java: " + System.getProperty("java.version"));
         event.reply(embed.build());
     }
 
