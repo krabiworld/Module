@@ -2,11 +2,11 @@ package eu.u032.Commands.Information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eu.u032.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 
-import java.awt.*;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -48,7 +48,7 @@ public class StatsCommand extends Command {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("UASM Statistics")
-                .setColor(Color.decode("#6196d5"))
+                .setColor(Config.getColor())
                 .addField("Common", common, true)
                 .addField("Platform", platform, true)
                 .setFooter("Java: " + System.getProperty("java.version"));

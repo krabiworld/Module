@@ -1,4 +1,4 @@
-package eu.u032.BotEvents;
+package eu.u032.GeneralEvents;
 
 import eu.u032.Config;
 import eu.u032.MessageCache;
@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.awt.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
@@ -35,22 +34,26 @@ public class MessageEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
-                .setColor(Color.decode("#e94b3e"))
+                .setColor(Config.getColorDelete())
                 .setDescription(String.format("Message from %s deleted in <#%s>", author.getAsMention(), msg.getChannel().getId()))
                 .setFooter("ID: " + author.getId());
 
+        if (!msg.getContentDisplay().isEmpty()) {
+            embed.addField("Message content", "```" + msg.getContentDisplay().replaceAll("```", "") + "```", false);
+        }
+
         if (!msg.getAttachments().isEmpty()) {
-            StringBuilder message = new StringBuilder();
-            message.append(msg.getContentDisplay()).append("\n");
+            StringBuilder attachments = new StringBuilder();
+
             for (Message.Attachment attachment : msg.getAttachments()) {
-                message.append(
-                        String.format("File: [%s](%s)", attachment.getFileName(), attachment.getUrl())
+                attachments.append(String.format("File: [%s](%s) ([Proxy](%s))",
+                        attachment.getFileName(), attachment.getUrl(), attachment.getProxyUrl())
                 ).append("\n");
             }
-            embed.addField("Message content", message.toString(), false);
-        } else {
-            embed.addField("Message content", msg.getContentDisplay(), false);
+
+            embed.addField("Attachments", attachments.toString(), false);
         }
+
         Utils.sendLog(event.getGuild(), embed);
     }
 
@@ -69,7 +72,7 @@ public class MessageEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
-                .setColor(Color.decode("#f7d724"))
+                .setColor(Config.getColorUpdate())
                 .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)", author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
                 .addField("Before", before.getContentDisplay(), false)
                 .addField("After", after.getContentDisplay(), false)
@@ -100,7 +103,7 @@ public class MessageEvents extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Deleted " + event.getMessageIds().size() + " messages!")
                 .setDescription("Deleted in channel " + event.getChannel().getAsMention())
-                .setColor(Color.decode("#e94b3e"))
+                .setColor(Config.getColorDelete())
                 .setTimestamp(new Date().toInstant());
         Objects.requireNonNull(event.getGuild().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())

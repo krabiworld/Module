@@ -1,10 +1,10 @@
 package eu.u032;
 
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import eu.u032.BotEvents.ChannelEvents;
-import eu.u032.BotEvents.InviteEvents;
-import eu.u032.BotEvents.MemberEvents;
-import eu.u032.BotEvents.MessageEvents;
+import eu.u032.GeneralEvents.ChannelEvents;
+import eu.u032.GeneralEvents.InviteEvents;
+import eu.u032.GeneralEvents.MemberEvents;
+import eu.u032.GeneralEvents.MessageEvents;
 import eu.u032.Commands.*;
 import eu.u032.Commands.Information.*;
 import eu.u032.Commands.Moderation.*;

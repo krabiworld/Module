@@ -2,11 +2,11 @@ package eu.u032.Commands.Information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eu.u032.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 
-import java.awt.*;
 import java.util.Objects;
 
 public class ServerinfoCommand extends Command {
@@ -59,7 +59,7 @@ public class ServerinfoCommand extends Command {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(guild.getName())
-                .setColor(Color.decode("#6196d5"))
+                .setColor(Config.getColor())
                 .setThumbnail(guild.getIconUrl())
                 .addField("Members (" + guild.getMemberCount() + ")", members, true)
                 .addField("Channels (" + (guild.getChannels().size() - guild.getCategories().size()) + ")", channels, true)
