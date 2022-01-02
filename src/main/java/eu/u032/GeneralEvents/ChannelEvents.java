@@ -59,5 +59,4 @@ public class ChannelEvents extends ListenerAdapter {
                 .setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
     }
-
 }

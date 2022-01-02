@@ -1,6 +1,5 @@
 package eu.u032;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -9,7 +8,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class Utils {
 
@@ -47,68 +45,6 @@ public class Utils {
         return argsString.toString();
     }
 
-    public static void help(CommandEvent event) {
-        String args = event.getArgs();
-        String prefix = event.getClient().getPrefix();
-        EmbedBuilder embed = new EmbedBuilder().setColor(getColor()).setFooter(getCopyright());
-
-        List<String> categoriesList = new LinkedList<>();
-
-        for (Command command : event.getClient().getCommands()) {
-            if (command.getCategory() == null) continue;
-            categoriesList.add(command.getCategory().getName());
-        }
-
-        Set<String> categories = new LinkedHashSet<>(categoriesList);
-
-        if (args.isEmpty()) {
-            StringBuilder commands = new StringBuilder();
-            embed.setTitle("Available commands:");
-
-            for (String category : categories) {
-                for (Command command : event.getClient().getCommands()) {
-                    if (command.isHidden()) continue;
-                    if (command.getCategory().getName().equals(category)) {
-                        commands.append("`")
-                                .append(prefix)
-                                .append(command.getName())
-                                .append("` ");
-                    }
-                }
-                embed.addField(category + " (" + prefix + "help " + category + ")", commands.toString(), false);
-                commands = new StringBuilder();
-            }
-
-            event.reply(embed.build());
-            return;
-        } else {
-            for (String category : categories) {
-                if (category.toLowerCase().startsWith(args.toLowerCase())) {
-                    for (Command cmd : event.getClient().getCommands()) {
-                        if (cmd.isHidden()) continue;
-                        if (cmd.getCategory().getName().equals(category))
-                            embed.addField(prefix + cmd.getName(), cmd.getHelp(), false);
-                    }
-                    embed.setTitle("Commands of category " + category);
-                    event.reply(embed.build());
-                    return;
-                }
-            }
-            for (Command cmd : event.getClient().getCommands()) {
-                if (cmd.getName().toLowerCase().startsWith(args.toLowerCase()) && !cmd.isHidden()) {
-                    embed.setTitle("Information of command " + cmd.getName());
-                    embed.setDescription(
-                            "`" + prefix + cmd.getName() + (cmd.getArguments() == null ? "" : " " + cmd.getArguments()) + "`\n" + cmd.getHelp()
-                    );
-                    event.reply(embed.build());
-                    return;
-                }
-            }
-        }
-
-        event.replyError("Command or category **" + args + "** not found.");
-    }
-
     public static Color getColor() {
         return Color.decode(Config.getString("COLOR"));
     }
@@ -128,5 +64,4 @@ public class Utils {
     public static String getCopyright() {
         return "Copyright © 2022 — untled032, Headcrab";
     }
-
 }

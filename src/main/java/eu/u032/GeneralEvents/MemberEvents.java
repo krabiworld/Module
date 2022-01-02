@@ -3,10 +3,15 @@ package eu.u032.GeneralEvents;
 import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.util.List;
 
 public class MemberEvents extends ListenerAdapter {
 
@@ -62,4 +67,37 @@ public class MemberEvents extends ListenerAdapter {
         Utils.sendLog(event.getGuild(), embed);
     }
 
+    @Override
+    public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
+        List<Role> roles = event.getRoles();
+        StringBuilder addedRoles = new StringBuilder();
+
+        for (Role role : roles) {
+            addedRoles.append(role.getAsMention()).append(" ");
+        }
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setTitle("Added role(s) for " + event.getUser().getName())
+                .setColor(Utils.getColorCreate())
+                .setDescription(addedRoles.toString())
+                .setFooter("ID: " + event.getUser().getId());
+        Utils.sendLog(event.getGuild(), embed);
+    }
+
+    @Override
+    public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
+        List<Role> roles = event.getRoles();
+        StringBuilder removedRoles = new StringBuilder();
+
+        for (Role role : roles) {
+            removedRoles.append(role.getAsMention()).append(" ");
+        }
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setTitle("Removed role(s) for " + event.getUser().getName())
+                .setColor(Utils.getColorDelete())
+                .setDescription(removedRoles.toString())
+                .setFooter("ID: " + event.getUser().getId());
+        Utils.sendLog(event.getGuild(), embed);
+    }
 }

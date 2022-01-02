@@ -102,7 +102,7 @@ public class MessageEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Deleted " + event.getMessageIds().size() + " messages!")
-                .setDescription("Deleted in channel " + event.getChannel().getAsMention())
+                .setDescription("Deleted in " + event.getChannel().getAsMention())
                 .setColor(Utils.getColorDelete())
                 .setTimestamp(new Date().toInstant());
         Objects.requireNonNull(event.getGuild().getTextChannelById(Config.getString("LOGS_CHANNEL")))
@@ -110,5 +110,4 @@ public class MessageEvents extends ListenerAdapter {
                 .addFile(deletedMessagesString.toString().getBytes(), ".txt")
                 .queue();
     }
-
 }

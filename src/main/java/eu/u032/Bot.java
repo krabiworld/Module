@@ -27,13 +27,14 @@ public class Bot {
                 .setActivity(Activity.competing("JDA"))
                 .setStatus(OnlineStatus.IDLE)
                 .setEmojis("✅", "⚠️", "❌")
-                .setHelpConsumer(Utils::help)
+                .useHelpBuilder(false)
                 .addCommands(
                         new EvalCommand(),
                         // Information
                         new ServerinfoCommand(),
                         new UserCommand(),
                         new StatsCommand(),
+                        new HelpCommand(),
                         // Moderation
                         new MuteCommand(),
                         new UnmuteCommand(),
@@ -64,5 +65,4 @@ public class Bot {
                         new MessageEvents())
                 .build();
     }
-
 }

@@ -32,5 +32,4 @@ public class UnbanCommand extends Command {
             event.replyError(e.getMessage());
         }
     }
-
 }

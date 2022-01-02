@@ -45,5 +45,4 @@ public class MuteCommand extends Command {
             event.replyError(e.getMessage());
         }
     }
-
 }

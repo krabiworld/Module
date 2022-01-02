@@ -39,5 +39,4 @@ public class BanCommand extends Command {
             event.replyError(e.getMessage());
         }
     }
-
 }

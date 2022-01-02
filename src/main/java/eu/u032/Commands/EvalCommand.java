@@ -28,5 +28,4 @@ public class EvalCommand extends Command {
             }
         });
     }
-
 }

@@ -19,7 +19,7 @@ public class UserCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        Member member = Utils.getMemberFromArgs(event) != null ? Utils.getMemberFromArgs(event) : event.getMember();
+        Member member = Utils.getMemberFromArgs(event) == null ? event.getMember() : Utils.getMemberFromArgs(event);
         String status;
         User.Profile profile = member.getUser().retrieveProfile().complete();
         StringBuilder activities = new StringBuilder();
@@ -29,20 +29,19 @@ public class UserCommand extends Command {
         for (Activity activity : member.getActivities()) {
             if (activity.getType() == Activity.ActivityType.CUSTOM_STATUS) {
                 activities.append("**Custom Status:** ")
-                        .append(activity.getEmoji() == null ? "" : activity.getEmoji().getAsMention())
-                        .append(" ").append(activity.getName());
+                        .append(activity.getEmoji() == null ? "" : activity.getEmoji().getAsMention() + " ");
             }
             if (activity.getType() == Activity.ActivityType.DEFAULT)
-                activities.append("**Playing:** ").append(activity.getName());
+                activities.append("**Playing:** ");
             if (activity.getType() == Activity.ActivityType.COMPETING)
-                activities.append("**Competing:** ").append(activity.getName());
+                activities.append("**Competing in:** ");
             if (activity.getType() == Activity.ActivityType.LISTENING)
-                activities.append("**Listening:** ").append(activity.getName());
+                activities.append("**Listening to:** ");
             if (activity.getType() == Activity.ActivityType.STREAMING)
-                activities.append("**Streaming:** ").append(activity.getName());
+                activities.append("**Streaming:** ");
             if (activity.getType() == Activity.ActivityType.WATCHING)
-                activities.append("**Watching:** ").append(activity.getName());
-            activities.append("\n");
+                activities.append("**Watching:** ");
+            activities.append(activity.getName()).append("\n");
         }
 
         status = switch (member.getOnlineStatus()) {
@@ -74,5 +73,4 @@ public class UserCommand extends Command {
 
         event.reply(embed.build());
     }
-
 }

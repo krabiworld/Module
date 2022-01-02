@@ -45,5 +45,4 @@ public class UnmuteCommand extends Command {
             event.replyError(e.getMessage());
         }
     }
-
 }
