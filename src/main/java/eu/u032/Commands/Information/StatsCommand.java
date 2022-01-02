@@ -55,5 +55,4 @@ public class StatsCommand extends Command {
                 .setFooter(Utils.getCopyright() + " • Java: " + System.getProperty("java.version"));
         event.reply(embed.build());
     }
-
 }

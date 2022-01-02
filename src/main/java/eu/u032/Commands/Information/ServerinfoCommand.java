@@ -66,5 +66,4 @@ public class ServerinfoCommand extends Command {
                 .setFooter("ID: " + guild.getId());
         event.reply(embed.build());
     }
-
 }

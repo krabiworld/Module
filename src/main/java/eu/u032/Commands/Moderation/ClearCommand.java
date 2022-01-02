@@ -65,5 +65,4 @@ public class ClearCommand extends Command {
             event.replyError(e.getMessage());
         }
     }
-
 }

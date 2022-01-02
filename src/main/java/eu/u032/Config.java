@@ -166,5 +166,4 @@ public enum Config {;
 //        }
 //        return charArray;
 //    }
-
 }

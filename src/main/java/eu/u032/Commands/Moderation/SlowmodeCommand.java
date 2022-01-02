@@ -30,5 +30,4 @@ public class SlowmodeCommand extends Command {
             event.replyError(e.getMessage());
         }
     }
-
 }

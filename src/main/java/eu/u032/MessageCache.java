@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-// Author https://gist.github.com/Starrysparklez/3da0d67241d8185315e4fdc012f8aca7
+// Author: https://gist.github.com/Starrysparklez/3da0d67241d8185315e4fdc012f8aca7
 public class MessageCache {
 
     public static final ArrayList<Message> messages = new ArrayList<>();
@@ -24,5 +24,4 @@ public class MessageCache {
         for (Message message : messages) if (message.getIdLong() == messageId) result = message;
         return result;
     }
-
 }

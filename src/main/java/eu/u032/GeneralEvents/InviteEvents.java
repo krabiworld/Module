@@ -32,5 +32,4 @@ public class InviteEvents extends ListenerAdapter {
                 .setDescription(String.format("Invite `%s` deleted", event.getCode()));
         Utils.sendLog(event.getGuild(), embed);
     }
-
 }

@@ -25,5 +25,4 @@ public class AvatarCommand extends Command {
                 .setImage(member.getEffectiveAvatarUrl() + "?size=512");
         event.reply(embed.build());
     }
-
 }
