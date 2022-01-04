@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 public class MuteCommand extends Command {
-
     public MuteCommand() {
         this.name = "mute";
         this.help = "Mute member on whole server";

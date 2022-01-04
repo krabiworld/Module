@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.guild.invite.GuildInviteDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class InviteEvents extends ListenerAdapter {
-
     @Override
     public void onGuildInviteCreate(GuildInviteCreateEvent event) {
         Invite invite = event.getInvite();
@@ -18,7 +17,7 @@ public class InviteEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(user.getAsTag(), null, user.getEffectiveAvatarUrl())
-                .setColor(Utils.getColorCreate())
+                .setColor(Utils.getColorGreen())
                 .setDescription(String.format("%s created an [invite](%s)", user.getAsMention(), invite.getUrl()))
                 .setFooter("ID: " + user.getId());
         Utils.sendLog(event.getGuild(), embed);
@@ -28,7 +27,7 @@ public class InviteEvents extends ListenerAdapter {
     public void onGuildInviteDelete(GuildInviteDeleteEvent event) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Invite deleted")
-                .setColor(Utils.getColorDelete())
+                .setColor(Utils.getColorRed())
                 .setDescription(String.format("Invite `%s` deleted", event.getCode()));
         Utils.sendLog(event.getGuild(), embed);
     }

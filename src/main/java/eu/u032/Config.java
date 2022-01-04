@@ -4,7 +4,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.jetbrains.annotations.NotNull;
 
 public enum Config {;
-
     private static final Dotenv dotenv = Dotenv.load();
 
     private static String get(@NotNull String key) {

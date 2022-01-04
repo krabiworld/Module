@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ClearCommand extends Command {
-
     public ClearCommand() {
         this.name = "clear";
         this.help = "Clear last messages in current channel";

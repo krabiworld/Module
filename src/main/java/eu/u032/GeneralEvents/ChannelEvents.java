@@ -11,14 +11,13 @@ import net.dv8tion.jda.api.events.channel.voice.VoiceChannelDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class ChannelEvents extends ListenerAdapter {
-
     @Override
     public void onTextChannelDelete(TextChannelDeleteEvent event) {
         TextChannel channel = event.getChannel();
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Text Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Utils.getColorDelete())
+                .setColor(Utils.getColorRed())
                 .addField("Text Channel", channel.getName(), false)
                 .setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
@@ -30,7 +29,7 @@ public class ChannelEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Text Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Utils.getColorCreate())
+                .setColor(Utils.getColorGreen())
                 .addField("Text Channel", channel.getName(), false)
                 .setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
@@ -42,7 +41,7 @@ public class ChannelEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Voice Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Utils.getColorDelete())
+                .setColor(Utils.getColorRed())
                 .addField("Voice Channel", channel.getName(), false)
                 .setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
@@ -54,7 +53,7 @@ public class ChannelEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Voice Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Utils.getColorCreate())
+                .setColor(Utils.getColorGreen())
                 .addField("Voice Channel", channel.getName(), false)
                 .setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);

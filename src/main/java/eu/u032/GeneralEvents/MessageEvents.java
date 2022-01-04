@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.List;
 
 public class MessageEvents extends ListenerAdapter {
-
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         if (event.getAuthor().isBot() || event.getAuthor().isSystem()) return;
@@ -34,7 +33,7 @@ public class MessageEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
-                .setColor(Utils.getColorDelete())
+                .setColor(Utils.getColorRed())
                 .setDescription(String.format("Message from %s deleted in <#%s>", author.getAsMention(), msg.getChannel().getId()))
                 .setFooter("ID: " + author.getId());
 
@@ -72,7 +71,7 @@ public class MessageEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
-                .setColor(Utils.getColorUpdate())
+                .setColor(Utils.getColorYellow())
                 .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)", author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
                 .addField("Before", before.getContentDisplay(), false)
                 .addField("After", after.getContentDisplay(), false)
@@ -103,7 +102,7 @@ public class MessageEvents extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Deleted " + event.getMessageIds().size() + " messages!")
                 .setDescription("Deleted in " + event.getChannel().getAsMention())
-                .setColor(Utils.getColorDelete())
+                .setColor(Utils.getColorRed())
                 .setTimestamp(new Date().toInstant());
         Objects.requireNonNull(event.getGuild().getTextChannelById(Config.getString("LOGS_CHANNEL")))
                 .sendMessageEmbeds(embed.build())

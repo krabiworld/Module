@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.entities.Member;
 import java.util.Objects;
 
 public class ServerinfoCommand extends Command {
-
     public ServerinfoCommand() {
         this.name = "serverinfo";
         this.help = "Server information";

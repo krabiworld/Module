@@ -5,7 +5,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.Permission;
 
 public class SlowmodeCommand extends Command {
-
     public SlowmodeCommand() {
         this.name = "slowmode";
         this.help = "Set slowmode in current channel";

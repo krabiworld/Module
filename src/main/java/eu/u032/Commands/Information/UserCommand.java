@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
 public class UserCommand extends Command {
-
     public UserCommand() {
         this.name = "user";
         this.help = "User information";
@@ -27,10 +26,9 @@ public class UserCommand extends Command {
         long timeCreated = member.getTimeCreated().toEpochSecond();
 
         for (Activity activity : member.getActivities()) {
-            if (activity.getType() == Activity.ActivityType.CUSTOM_STATUS) {
+            if (activity.getType() == Activity.ActivityType.CUSTOM_STATUS)
                 activities.append("**Custom Status:** ")
                         .append(activity.getEmoji() == null ? "" : activity.getEmoji().getAsMention() + " ");
-            }
             if (activity.getType() == Activity.ActivityType.DEFAULT)
                 activities.append("**Playing:** ");
             if (activity.getType() == Activity.ActivityType.COMPETING)
@@ -51,16 +49,11 @@ public class UserCommand extends Command {
             default -> "<:offline:925113750581817354>Offline";
         };
 
-        String description = String.format("""
-                        **Username:** %s
-                        **Status:**%s
-                        %s**Joined at:** <t:%s> (<t:%s:R>)
-                        **Registered at:** <t:%s> (<t:%s:R>)""",
+        String description = String.format("**Username:** %s\n**Status:**%s\n%s**Joined at:** <t:%s:D> (<t:%s:R>)\n**Registered at:** <t:%s:D> (<t:%s:R>)",
                 member.getUser().getAsTag(),
                 status, activities,
                 timeJoined, timeJoined,
-                timeCreated, timeCreated
-        );
+                timeCreated, timeCreated);
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Information about " + member.getUser().getName(), null, member.getEffectiveAvatarUrl())
