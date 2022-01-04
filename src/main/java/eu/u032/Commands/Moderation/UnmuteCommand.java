@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 public class UnmuteCommand extends Command {
-
     public UnmuteCommand() {
         this.name = "unmute";
         this.help = "Unmute member on whole server";

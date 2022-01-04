@@ -7,7 +7,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 public class EvalCommand extends Command {
-
     public EvalCommand() {
         this.name = "eval";
         this.ownerCommand = true;
@@ -16,15 +15,13 @@ public class EvalCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getChannel().sendTyping().queue();
         event.async(() -> {
-            ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
-            scriptEngine.put("event", event);
-            String args = event.getArgs();
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+            engine.put("event", event);
             try {
-                event.replySuccess("Evaluated Successfully:\n```" + scriptEngine.eval(args) + "```");
+                event.replySuccess("Evaluated Successfully:\n```" + engine.eval(event.getArgs()) + "```");
             } catch (Exception e) {
-                event.replyError("Error! " + e.getMessage());
+                event.replyError(e.getMessage());
             }
         });
     }

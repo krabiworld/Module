@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 
 public class AvatarCommand extends Command {
-
     public AvatarCommand() {
         this.name = "avatar";
         this.help = "Show avatar of member";

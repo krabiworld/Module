@@ -19,7 +19,6 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import javax.security.auth.login.LoginException;
 
 public class Bot {
-
     public static void main(String[] args) throws LoginException {
         CommandClientBuilder builder = new CommandClientBuilder()
                 .setOwnerId(Config.getString("OWNER_ID"))

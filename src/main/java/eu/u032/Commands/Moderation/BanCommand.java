@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 
 public class BanCommand extends Command {
-
     public BanCommand() {
         this.name = "ban";
         this.help = "Ban member from server";

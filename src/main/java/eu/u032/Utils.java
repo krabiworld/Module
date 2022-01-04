@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.*;
 
 public class Utils {
+    private static final int year = Calendar.getInstance().get(Calendar.YEAR);
 
     public static void sendLog(Guild guild, EmbedBuilder embed) {
         embed.setTimestamp(new Date().toInstant());
@@ -49,19 +50,19 @@ public class Utils {
         return Color.decode(Config.getString("COLOR"));
     }
 
-    public static Color getColorCreate() {
-        return Color.decode(Config.getString("COLOR_CREATE"));
+    public static Color getColorGreen() {
+        return Color.decode(Config.getString("COLOR_GREEN"));
     }
 
-    public static Color getColorDelete() {
-        return Color.decode(Config.getString("COLOR_DELETE"));
+    public static Color getColorRed() {
+        return Color.decode(Config.getString("COLOR_RED"));
     }
 
-    public static Color getColorUpdate() {
-        return Color.decode(Config.getString("COLOR_UPDATE"));
+    public static Color getColorYellow() {
+        return Color.decode(Config.getString("COLOR_YELLOW"));
     }
 
     public static String getCopyright() {
-        return "Copyright © 2022 — untled032, Headcrab";
+        return "© " + year + " untled032, Headcrab";
     }
 }

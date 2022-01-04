@@ -13,7 +13,6 @@ import static eu.u032.Utils.getColor;
 import static eu.u032.Utils.getCopyright;
 
 public class HelpCommand extends Command {
-
     public HelpCommand() {
         this.name = "help";
         this.help = "This message";

@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 
 public class KickCommand extends Command {
-
     public KickCommand() {
         this.name = "kick";
         this.help = "Kick member from server";

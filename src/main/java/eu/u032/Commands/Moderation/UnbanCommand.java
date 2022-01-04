@@ -6,7 +6,6 @@ import eu.u032.Utils;
 import net.dv8tion.jda.api.Permission;
 
 public class UnbanCommand extends Command {
-
     public UnbanCommand() {
         this.name = "unban";
         this.help = "Unban member from server";

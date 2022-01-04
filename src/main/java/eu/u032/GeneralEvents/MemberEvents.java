@@ -14,14 +14,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.List;
 
 public class MemberEvents extends ListenerAdapter {
-
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         Member member = event.getMember();
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
-                .setColor(Utils.getColorCreate())
+                .setColor(Utils.getColorGreen())
                 .setDescription(String.format("%s joined to server!", member.getAsMention()))
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
                 .addField("Member count", String.valueOf(member.getGuild().getMemberCount()), true)
@@ -37,7 +36,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
-                .setColor(Utils.getColorDelete())
+                .setColor(Utils.getColorRed())
                 .setDescription(String.format("%s has left the server!", member.getAsMention()))
                 .addField("Joined at", String.format("<t:%s>", member.getTimeJoined().toEpochSecond()), true)
                 .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
@@ -58,7 +57,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Nickname for " + member.getUser().getAsTag() + action, null, member.getEffectiveAvatarUrl())
-                .setColor(Utils.getColorUpdate())
+                .setColor(Utils.getColorYellow())
                 .addField("Before", before, true)
                 .setFooter("ID: " + member.getId());
 
@@ -78,7 +77,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Added role(s) for " + event.getUser().getName())
-                .setColor(Utils.getColorCreate())
+                .setColor(Utils.getColorGreen())
                 .setDescription(addedRoles.toString())
                 .setFooter("ID: " + event.getUser().getId());
         Utils.sendLog(event.getGuild(), embed);
@@ -95,7 +94,7 @@ public class MemberEvents extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Removed role(s) for " + event.getUser().getName())
-                .setColor(Utils.getColorDelete())
+                .setColor(Utils.getColorRed())
                 .setDescription(removedRoles.toString())
                 .setFooter("ID: " + event.getUser().getId());
         Utils.sendLog(event.getGuild(), embed);
