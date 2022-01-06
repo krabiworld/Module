@@ -1,4 +1,4 @@
-package eu.u032.GeneralEvents;
+package eu.u032.logging;
 
 import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;

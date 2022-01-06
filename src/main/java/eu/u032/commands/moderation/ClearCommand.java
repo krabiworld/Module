@@ -1,10 +1,11 @@
-package eu.u032.Commands.Moderation;
+package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.time.OffsetDateTime;
 import java.util.LinkedList;
@@ -17,7 +18,7 @@ public class ClearCommand extends Command {
         this.arguments = "<count>";
         this.category = new Category("Moderation");
         this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
-        this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
+        this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE, Permission.MESSAGE_ATTACH_FILES};
     }
 
     @Override
@@ -32,8 +33,10 @@ public class ClearCommand extends Command {
             event.getMessage().delete().queue();
 
             List<Message> messages = new LinkedList<>();
+            List<Message> delMessages = new LinkedList<>();
             MessageHistory history = event.getChannel().getHistory();
             OffsetDateTime dateTime = event.getMessage().getTimeCreated().minusHours(335);
+            TextChannel channel = event.getTextChannel();
 
             while (count > 100) {
                 messages.addAll(history.retrievePast(100).complete());
@@ -46,7 +49,6 @@ public class ClearCommand extends Command {
 
             if (count > 0) messages.addAll(history.retrievePast(count).complete());
 
-            List<Message> delMessages = new LinkedList<>();
             for (Message message : messages) {
                 if (message.getTimeCreated().isBefore(dateTime)) break;
                 if (message.isPinned()) continue;
@@ -55,9 +57,9 @@ public class ClearCommand extends Command {
 
             int index = 0;
             while (index < delMessages.size()) {
-                if (index + 100 > delMessages.size()) {
-                    event.getTextChannel().deleteMessages(delMessages.subList(index, delMessages.size())).complete();
-                } else event.getTextChannel().deleteMessages(delMessages.subList(index, index + 100)).complete();
+                if (index + 100 > delMessages.size())
+                    channel.deleteMessages(delMessages.subList(index, delMessages.size())).complete();
+                else channel.deleteMessages(delMessages.subList(index, index + 100)).complete();
                 index += 100;
             }
         } catch (Exception e) {
