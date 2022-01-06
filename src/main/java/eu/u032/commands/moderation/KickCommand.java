@@ -1,4 +1,4 @@
-package eu.u032.Commands.Moderation;
+package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -19,8 +19,9 @@ public class KickCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         String[] args = Utils.splitArgs(event.getArgs());
-        Member member = Utils.getMemberFromArgs(event);
-        String reason = Utils.getReasonFromArgs(args, 1);
+        String memberId = Utils.getId(args[0], Utils.MEMBER);
+        Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
+        String reason = Utils.getGluedArg(args, 1);
 
         if (args[0].isEmpty()) {
             event.replyError("Required arguments are missing!");
@@ -31,11 +32,7 @@ public class KickCommand extends Command {
             return;
         }
 
-        try {
-            event.getGuild().kick(member, reason).queue();
-            event.reactSuccess();
-        } catch (Exception e) {
-            event.replyError(e.getMessage());
-        }
+        event.getGuild().kick(member, reason).queue();
+        event.reactSuccess();
     }
 }

@@ -1,4 +1,4 @@
-package eu.u032.Commands.Utilities;
+package eu.u032.commands.utilities;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -16,11 +16,20 @@ public class AvatarCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        Member member = Utils.getMemberFromArgs(event) != null ? Utils.getMemberFromArgs(event) : event.getMember();
+        String memberId = Utils.getId(event.getArgs(), Utils.MEMBER);
+        Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
+
+        if (event.getArgs().isEmpty()) {
+            member = event.getMember();
+        }
+        if (member == null) {
+            event.replyError("Member not found.");
+            return;
+        }
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Avatar of " + member.getUser().getName())
-                .setColor(member.getColorRaw())
+                .setColor(member.getColor())
                 .setImage(member.getEffectiveAvatarUrl() + "?size=512");
         event.reply(embed.build());
     }

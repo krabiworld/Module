@@ -1,14 +1,15 @@
 package eu.u032;
 
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import eu.u032.GeneralEvents.ChannelEvents;
-import eu.u032.GeneralEvents.InviteEvents;
-import eu.u032.GeneralEvents.MemberEvents;
-import eu.u032.GeneralEvents.MessageEvents;
-import eu.u032.Commands.*;
-import eu.u032.Commands.Information.*;
-import eu.u032.Commands.Moderation.*;
-import eu.u032.Commands.Utilities.AvatarCommand;
+import eu.u032.commands.utilities.EmoteCommand;
+import eu.u032.logging.ChannelEvents;
+import eu.u032.logging.InviteEvents;
+import eu.u032.logging.MemberEvents;
+import eu.u032.logging.MessageEvents;
+import eu.u032.commands.*;
+import eu.u032.commands.information.*;
+import eu.u032.commands.moderation.*;
+import eu.u032.commands.utilities.AvatarCommand;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -43,18 +44,20 @@ public class Bot {
                         new BanCommand(),
                         new UnbanCommand(),
                         // Utilities
-                        new AvatarCommand()
+                        new AvatarCommand(),
+                        new EmoteCommand()
                 );
 
         JDABuilder
-                .createDefault(Config.getString("DISCORD_TOKEN"),
+                .createDefault(Config.getString("TOKEN"),
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_INVITES,
                         GatewayIntent.GUILD_PRESENCES,
-                        GatewayIntent.DIRECT_MESSAGES)
-                .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY)
-                .disableCache(CacheFlag.VOICE_STATE, CacheFlag.EMOTE)
+                        GatewayIntent.DIRECT_MESSAGES,
+                        GatewayIntent.GUILD_EMOJIS)
+                .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY, CacheFlag.EMOTE)
+                .disableCache(CacheFlag.VOICE_STATE)
                 .setBulkDeleteSplittingEnabled(false)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(builder.build(),
@@ -62,6 +65,7 @@ public class Bot {
                         new ChannelEvents(),
                         new MemberEvents(),
                         new MessageEvents())
+                .useSharding(0, 1)
                 .build();
     }
 }

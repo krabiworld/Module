@@ -11,7 +11,7 @@ public enum Config {;
     }
 
     public static String getString(@NotNull String key) {
-        return dotenv.get(key.toUpperCase());
+        return dotenv.get(key);
     }
 
     public static int getInt(@NotNull String key) {
@@ -23,7 +23,7 @@ public enum Config {;
 //    }
 
 //    public static String getString(@NotNull String key, String defaultValue) {
-//        return dotenv.get(key.toUpperCase(), defaultValue);
+//        return dotenv.get(key, defaultValue);
 //    }
 
 //    public static int getInt(@NotNull String key, int defaultValue) {

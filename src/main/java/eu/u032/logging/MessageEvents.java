@@ -1,4 +1,4 @@
-package eu.u032.GeneralEvents;
+package eu.u032.logging;
 
 import eu.u032.Config;
 import eu.u032.MessageCache;
@@ -34,11 +34,13 @@ public class MessageEvents extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
                 .setColor(Utils.getColorRed())
-                .setDescription(String.format("Message from %s deleted in <#%s>", author.getAsMention(), msg.getChannel().getId()))
+                .setDescription(String.format("Message from %s deleted in <#%s>",
+                        author.getAsMention(), msg.getChannel().getId()))
                 .setFooter("ID: " + author.getId());
 
         if (!msg.getContentDisplay().isEmpty()) {
-            embed.addField("Message content", "```" + msg.getContentDisplay().replaceAll("```", "") + "```", false);
+            embed.addField("Message content", "```" + msg.getContentDisplay()
+                    .replaceAll("```", "") + "```", false);
         }
 
         if (!msg.getAttachments().isEmpty()) {
@@ -72,7 +74,8 @@ public class MessageEvents extends ListenerAdapter {
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
                 .setColor(Utils.getColorYellow())
-                .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)", author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
+                .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)",
+                        author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
                 .addField("Before", before.getContentDisplay(), false)
                 .addField("After", after.getContentDisplay(), false)
                 .setFooter("ID: " + author.getId());

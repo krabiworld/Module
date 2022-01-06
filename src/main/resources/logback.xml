@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss} %boldCyan(%-34.-34thread) %red(%10.10X{jda.shard}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n</pattern>
-        </encoder>
-    </appender>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+        %d{HH:mm} %boldCyan(%26.26thread) %red(%7X{jda.shard}) %boldGreen(%-16.-16logger{0}) %highlight(%5level) %msg%n
+      </pattern>
+    </encoder>
+  </appender>
 
-    <root level="info">
-        <appender-ref ref="STDOUT" />
-    </root>
+  <root level="info">
+		<appender-ref ref="STDOUT" />
+  </root>
 </configuration>

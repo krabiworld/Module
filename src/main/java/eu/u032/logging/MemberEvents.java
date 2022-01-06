@@ -1,4 +1,4 @@
-package eu.u032.GeneralEvents;
+package eu.u032.logging;
 
 import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -19,11 +19,13 @@ public class MemberEvents extends ListenerAdapter {
         Member member = event.getMember();
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
+                .setAuthor(member.getUser().getAsTag(), null, member.getEffectiveAvatarUrl())
                 .setColor(Utils.getColorGreen())
-                .setDescription(String.format("%s joined to server!", member.getAsMention()))
-                .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
-                .addField("Member count", String.valueOf(member.getGuild().getMemberCount()), true)
+                .setDescription(member.getAsMention() + " joined to server!")
+                .addField("Registered at",
+                        String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
+                .addField("Member count",
+                        String.valueOf(member.getGuild().getMemberCount()), true)
                 .setFooter("ID: " + member.getId());
         Utils.sendLog(event.getGuild(), embed);
     }
@@ -35,12 +37,15 @@ public class MemberEvents extends ListenerAdapter {
         if (member == null) return;
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(member.getUser().getAsTag(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
+                .setAuthor(member.getUser().getAsTag(), null, member.getEffectiveAvatarUrl())
                 .setColor(Utils.getColorRed())
-                .setDescription(String.format("%s has left the server!", member.getAsMention()))
-                .addField("Joined at", String.format("<t:%s>", member.getTimeJoined().toEpochSecond()), true)
-                .addField("Registered at", String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
-                .addField("Member count", String.valueOf(event.getGuild().getMemberCount()), true)
+                .setDescription(member.getAsMention() + " has left the server!")
+                .addField("Joined at", 
+                        String.format("<t:%s>", member.getTimeJoined().toEpochSecond()), true)
+                .addField("Registered at",
+                        String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
+                .addField("Member count",
+                        String.valueOf(event.getGuild().getMemberCount()), true)
                 .setFooter("ID: " + member.getId());
         Utils.sendLog(event.getGuild(), embed);
     }
@@ -56,7 +61,8 @@ public class MemberEvents extends ListenerAdapter {
         if (after == null) action = " was reset";
 
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Nickname for " + member.getUser().getAsTag() + action, null, member.getEffectiveAvatarUrl())
+                .setAuthor("Nickname for " + member.getUser().getAsTag() + action,
+                        null, member.getEffectiveAvatarUrl())
                 .setColor(Utils.getColorYellow())
                 .addField("Before", before, true)
                 .setFooter("ID: " + member.getId());

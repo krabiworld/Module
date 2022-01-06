@@ -1,4 +1,4 @@
-package eu.u032.Commands.Moderation;
+package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -8,10 +8,10 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
-public class MuteCommand extends Command {
-    public MuteCommand() {
-        this.name = "mute";
-        this.help = "Mute member on whole server";
+public class UnmuteCommand extends Command {
+    public UnmuteCommand() {
+        this.name = "unmute";
+        this.help = "Unmute member on whole server";
         this.arguments = "<@Member | ID>";
         this.category = new Category("Moderation");
         this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
@@ -21,8 +21,12 @@ public class MuteCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         String[] args = Utils.splitArgs(event.getArgs());
-        Member member = Utils.getMemberFromArgs(event);
-        Role muteRole = event.getGuild().getRoleById(Config.getString("MUTE_ROLE"));
+
+        String muteId = Config.getString("MUTE_ROLE");
+        Role muteRole = muteId.isEmpty() ? null : event.getGuild().getRoleById(muteId);
+
+        String memberId = Utils.getId(args[0], Utils.MEMBER);
+        Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
 
         if (muteRole == null) {
             event.replyError("Mute role is not set.");
@@ -36,12 +40,12 @@ public class MuteCommand extends Command {
             event.replyError("Member not found.");
             return;
         }
-
-        try {
-            event.getGuild().addRoleToMember(member, muteRole).queue();
-            event.reactSuccess();
-        } catch (Exception e) {
-            event.replyError(e.getMessage());
+        if (!Utils.hasRole(muteRole, member)) {
+            event.replyError("This member was not muted.");
+            return;
         }
+
+        event.getGuild().removeRoleFromMember(member, muteRole).queue();
+        event.reactSuccess();
     }
 }

@@ -1,13 +1,11 @@
-package eu.u032.Commands.Information;
+package eu.u032.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import static eu.u032.Utils.getColor;
 import static eu.u032.Utils.getCopyright;
@@ -24,41 +22,47 @@ public class HelpCommand extends Command {
     protected void execute(CommandEvent event) {
         String args = event.getArgs();
         String prefix = event.getClient().getPrefix();
+        List<Command> commands = event.getClient().getCommands();
         EmbedBuilder embed = new EmbedBuilder().setColor(getColor()).setFooter(getCopyright());
+        List<String> categories = new LinkedList<>();
 
-        List<String> categoriesList = new LinkedList<>();
-
-        for (Command command : event.getClient().getCommands()) {
-            if (command.getCategory() == null) continue;
-            categoriesList.add(command.getCategory().getName());
+        categoriesLoop:
+        for (Command cmd : commands) {
+            if (cmd.getCategory() == null) continue;
+            for (String category : categories) {
+                // if command already exists in "categories" - continue
+                if (category.equals(cmd.getCategory().getName())) continue categoriesLoop;
+            }
+            categories.add(cmd.getCategory().getName());
         }
 
-        Set<String> categories = new LinkedHashSet<>(categoriesList);
-
+        // if "args" is empty - get all commands
         if (args.isEmpty()) {
-            StringBuilder commands = new StringBuilder();
+            StringBuilder commandsBuilder = new StringBuilder();
             embed.setTitle("Available commands:");
 
             for (String category : categories) {
-                for (Command command : event.getClient().getCommands()) {
-                    if (command.isHidden()) continue;
-                    if (command.getCategory().getName().equals(category)) {
-                        commands.append("`")
+                for (Command cmd : commands) {
+                    if (cmd.isHidden()) continue;
+                    if (cmd.getCategory().getName().equals(category)) {
+                        commandsBuilder.append("`")
                                 .append(prefix)
-                                .append(command.getName())
+                                .append(cmd.getName())
                                 .append("` ");
                     }
                 }
-                embed.addField(category + " (" + prefix + "help " + category + ")", commands.toString(), false);
-                commands = new StringBuilder();
+                embed.addField(category + " (" + prefix + "help " + category + ")",
+                        commandsBuilder.toString(),
+                        false);
+                commandsBuilder = new StringBuilder();
             }
 
             event.reply(embed.build());
-            return;
         } else {
             for (String category : categories) {
+                // if match found with name of category
                 if (category.toLowerCase().startsWith(args.toLowerCase())) {
-                    for (Command cmd : event.getClient().getCommands()) {
+                    for (Command cmd : commands) {
                         if (cmd.isHidden()) continue;
                         if (cmd.getCategory().getName().equals(category))
                             embed.addField(prefix + cmd.getName(), cmd.getHelp(), false);
@@ -68,18 +72,19 @@ public class HelpCommand extends Command {
                     return;
                 }
             }
-            for (Command cmd : event.getClient().getCommands()) {
+            for (Command cmd : commands) {
+                // if match found with name of command
                 if (cmd.getName().toLowerCase().startsWith(args.toLowerCase()) && !cmd.isHidden()) {
                     embed.setTitle("Information of command " + cmd.getName());
-                    embed.setDescription(
-                            "`" + prefix + cmd.getName() + (cmd.getArguments() == null ? "" : " " + cmd.getArguments()) + "`\n" + cmd.getHelp()
-                    );
+                    embed.setDescription("`" + prefix + cmd.getName() +
+                            (cmd.getArguments() == null ? "" : " " + cmd.getArguments()) + "`\n" +
+                            cmd.getHelp());
                     event.reply(embed.build());
                     return;
                 }
             }
-        }
 
-        event.replyError("Command or category **" + args + "** not found.");
+            event.replyError("Command or category **" + args + "** not found.");
+        }
     }
 }
