@@ -14,9 +14,9 @@ public class EvalCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    protected void execute(final CommandEvent event) {
         event.async(() -> {
-            ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+            final ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.put("event", event);
             try {
                 event.replySuccess("Evaluated Successfully:\n```" + engine.eval(event.getArgs()) + "```");

@@ -21,8 +21,8 @@ public class UserCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        String memberId = Utils.getId(event.getArgs(), Utils.MEMBER);
+    protected void execute(final CommandEvent event) {
+        final String memberId = Utils.getId(event.getArgs(), Utils.MEMBER);
         Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
 
         if (event.getArgs().isEmpty()) {
@@ -33,30 +33,30 @@ public class UserCommand extends Command {
             return;
         }
 
-        User.Profile profile = member.getUser().retrieveProfile().complete();
+        final User.Profile profile = member.getUser().retrieveProfile().complete();
 
-        String description = String.format("**Username:** %s\n%s%s%s%s",
-                member.getUser().getAsTag(),
-                getStatus(member.getOnlineStatus()),
-                getActivities(member.getActivities()),
-                getJoinedAt(member.getTimeJoined()),
-                getRegisteredAt(member.getTimeCreated()));
+        final String description = String.format("**Username:** %s\n%s%s%s%s",
+			member.getUser().getAsTag(),
+			getStatus(member.getOnlineStatus()),
+			getActivities(member.getActivities()),
+			getJoinedAt(member.getTimeJoined()),
+			getRegisteredAt(member.getTimeCreated()));
 
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Information about " + member.getUser().getName(),
-                        null, member.getEffectiveAvatarUrl())
-                .setColor(member.getColor())
-                .setDescription(description)
-                .setThumbnail(member.getEffectiveAvatarUrl())
-                .setFooter("ID: " + member.getId());
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setAuthor("Information about " + member.getUser().getName(),
+				null, member.getEffectiveAvatarUrl())
+			.setColor(member.getColor())
+			.setDescription(description)
+			.setThumbnail(member.getEffectiveAvatarUrl())
+			.setFooter("ID: " + member.getId());
 
         if (profile.getBannerUrl() != null) embed.setImage(profile.getBannerUrl() + "?size=512");
 
         event.reply(embed.build());
     }
 
-    private String getStatus(OnlineStatus onlineStatus) {
-         String status = switch (onlineStatus) {
+    private String getStatus(final OnlineStatus onlineStatus) {
+         final String status = switch (onlineStatus) {
             case ONLINE -> "<:online:925113750598598736>Online";
             case IDLE -> "<:idle:925113750254682133>Idle";
             case DO_NOT_DISTURB -> "<:dnd:925113750896398406>Do Not Disturb";
@@ -65,12 +65,12 @@ public class UserCommand extends Command {
         return "**Status:**" + status + "\n";
     }
 
-    private String getActivities(List<Activity> activityList) {
-        StringBuilder activities = new StringBuilder();
+    private String getActivities(final List<Activity> activityList) {
+        final StringBuilder activities = new StringBuilder();
         for (Activity activity : activityList) {
             if (activity.getType() == Activity.ActivityType.CUSTOM_STATUS)
                 activities.append("**Custom Status:** ")
-                        .append(activity.getEmoji() == null ? "" : activity.getEmoji().getAsMention() + " ");
+					.append(activity.getEmoji() == null ? "" : activity.getEmoji().getAsMention() + " ");
             if (activity.getType() == Activity.ActivityType.DEFAULT)
                 activities.append("**Playing:** ");
             if (activity.getType() == Activity.ActivityType.COMPETING)
@@ -86,13 +86,13 @@ public class UserCommand extends Command {
         return activities.toString();
     }
 
-    private String getJoinedAt(OffsetDateTime time) {
+    private String getJoinedAt(final OffsetDateTime time) {
         return String.format("**Joined at:** <t:%s:D> (<t:%s:R>)\n",
-                time.toEpochSecond(), time.toEpochSecond());
+			time.toEpochSecond(), time.toEpochSecond());
     }
 
-    private String getRegisteredAt(OffsetDateTime time) {
+    private String getRegisteredAt(final OffsetDateTime time) {
         return String.format("**Registered at:** <t:%s:D> (<t:%s:R>)",
-                time.toEpochSecond(), time.toEpochSecond());
+			time.toEpochSecond(), time.toEpochSecond());
     }
 }

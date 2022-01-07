@@ -16,8 +16,8 @@ public class UnbanCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        String[] args = Utils.splitArgs(event.getArgs());
+    protected void execute(final CommandEvent event) {
+        final String[] args = Utils.splitArgs(event.getArgs());
 
         if (args[0].isEmpty()) {
             event.replyError("Required arguments are missing!");

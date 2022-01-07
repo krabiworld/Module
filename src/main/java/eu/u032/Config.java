@@ -4,17 +4,17 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.jetbrains.annotations.NotNull;
 
 public enum Config {;
-    private static final Dotenv dotenv = Dotenv.load();
+    private static final Dotenv DOTENV = Dotenv.load();
 
-    private static String get(@NotNull String key) {
-        return dotenv.get(key);
+    private static String get(@NotNull final String key) {
+        return DOTENV.get(key);
     }
 
-    public static String getString(@NotNull String key) {
-        return dotenv.get(key);
+    public static String getString(@NotNull final String key) {
+        return DOTENV.get(key);
     }
 
-    public static int getInt(@NotNull String key) {
+    public static int getInt(@NotNull final String key) {
         return Integer.parseInt(get(key));
     }
 

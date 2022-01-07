@@ -15,8 +15,8 @@ public class AvatarCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        String memberId = Utils.getId(event.getArgs(), Utils.MEMBER);
+    protected void execute(final CommandEvent event) {
+        final String memberId = Utils.getId(event.getArgs(), Utils.MEMBER);
         Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
 
         if (event.getArgs().isEmpty()) {
@@ -27,7 +27,7 @@ public class AvatarCommand extends Command {
             return;
         }
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Avatar of " + member.getUser().getName())
                 .setColor(member.getColor())
                 .setImage(member.getEffectiveAvatarUrl() + "?size=512");

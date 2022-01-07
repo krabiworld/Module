@@ -15,15 +15,15 @@ public class SlowmodeCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        String args = event.getArgs();
+    protected void execute(final CommandEvent event) {
+        final String args = event.getArgs();
 
         if (args.isEmpty()) {
             event.replyError("Required arguments are missing!");
             return;
         }
 
-        int interval = Integer.parseInt(args);
+        final int interval = Integer.parseInt(args);
 
         if (interval < 0 || interval > 21600) {
             event.replyError("Specify in seconds from 0 (off) to 21600.");

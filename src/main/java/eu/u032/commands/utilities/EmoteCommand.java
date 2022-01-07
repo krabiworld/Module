@@ -15,12 +15,11 @@ public class EmoteCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        String args = event.getArgs();
-        String emoteId = Utils.getId(args, Utils.EMOJI);
-        Emote emote = emoteId.isEmpty() ? null : event.getGuild().getEmoteById(emoteId);
+    protected void execute(final CommandEvent event) {
+        final String emoteId = Utils.getId(event.getArgs(), Utils.EMOJI);
+        final Emote emote = emoteId.isEmpty() ? null : event.getGuild().getEmoteById(emoteId);
 
-        if (args.isEmpty()) {
+        if (event.getArgs().isEmpty()) {
             event.replyError("Required arguments are missing!");
             return;
         }
@@ -29,7 +28,7 @@ public class EmoteCommand extends Command {
             return;
         }
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Emote " + emote.getName(), emote.getImageUrl())
                 .setColor(Utils.getColor())
                 .setImage(emote.getImageUrl())

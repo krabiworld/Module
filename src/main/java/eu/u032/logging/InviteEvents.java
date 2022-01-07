@@ -9,26 +9,26 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class InviteEvents extends ListenerAdapter {
     @Override
-    public void onGuildInviteCreate(GuildInviteCreateEvent event) {
-        Invite invite = event.getInvite();
-        User user = event.getInvite().getInviter();
+    public void onGuildInviteCreate(final GuildInviteCreateEvent event) {
+        final Invite invite = event.getInvite();
+        final User user = event.getInvite().getInviter();
 
         if (user == null) return;
 
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(user.getAsTag(), null, user.getEffectiveAvatarUrl())
-                .setColor(Utils.getColorGreen())
-                .setDescription(String.format("%s created an [invite](%s)", user.getAsMention(), invite.getUrl()))
-                .setFooter("ID: " + user.getId());
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setAuthor(user.getAsTag(), null, user.getEffectiveAvatarUrl())
+			.setColor(Utils.getColorGreen())
+			.setDescription(String.format("%s created an [invite](%s)", user.getAsMention(), invite.getUrl()))
+			.setFooter("ID: " + user.getId());
         Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
-    public void onGuildInviteDelete(GuildInviteDeleteEvent event) {
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Invite deleted")
-                .setColor(Utils.getColorRed())
-                .setDescription(String.format("Invite `%s` deleted", event.getCode()));
+    public void onGuildInviteDelete(final GuildInviteDeleteEvent event) {
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setAuthor("Invite deleted")
+			.setColor(Utils.getColorRed())
+			.setDescription(String.format("Invite `%s` deleted", event.getCode()));
         Utils.sendLog(event.getGuild(), embed);
     }
 }

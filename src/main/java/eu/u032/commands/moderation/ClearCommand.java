@@ -22,7 +22,7 @@ public class ClearCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    protected void execute(final CommandEvent event) {
         int count = Integer.parseInt(event.getArgs());
         if (count < 2 || count > 1000 || event.getArgs().isEmpty()) {
             event.replyError("The number of messages must be no less than 2 and no more than 1000.");
@@ -32,11 +32,11 @@ public class ClearCommand extends Command {
         try {
             event.getMessage().delete().queue();
 
-            List<Message> messages = new LinkedList<>();
-            List<Message> delMessages = new LinkedList<>();
-            MessageHistory history = event.getChannel().getHistory();
-            OffsetDateTime dateTime = event.getMessage().getTimeCreated().minusHours(335);
-            TextChannel channel = event.getTextChannel();
+            final List<Message> messages = new LinkedList<>();
+            final List<Message> delMessages = new LinkedList<>();
+            final MessageHistory history = event.getChannel().getHistory();
+            final OffsetDateTime dateTime = event.getMessage().getTimeCreated().minusHours(335);
+            final TextChannel channel = event.getTextChannel();
 
             while (count > 100) {
                 messages.addAll(history.retrievePast(100).complete());
@@ -49,7 +49,7 @@ public class ClearCommand extends Command {
 
             if (count > 0) messages.addAll(history.retrievePast(count).complete());
 
-            for (Message message : messages) {
+            for (final Message message : messages) {
                 if (message.getTimeCreated().isBefore(dateTime)) break;
                 if (message.isPinned()) continue;
                 delMessages.add(message);
@@ -57,9 +57,11 @@ public class ClearCommand extends Command {
 
             int index = 0;
             while (index < delMessages.size()) {
-                if (index + 100 > delMessages.size())
-                    channel.deleteMessages(delMessages.subList(index, delMessages.size())).complete();
-                else channel.deleteMessages(delMessages.subList(index, index + 100)).complete();
+                if (index + 100 > delMessages.size()) {
+					channel.deleteMessages(delMessages.subList(index, delMessages.size())).complete();
+				} else {
+					channel.deleteMessages(delMessages.subList(index, index + 100)).complete();
+				}
                 index += 100;
             }
         } catch (Exception e) {

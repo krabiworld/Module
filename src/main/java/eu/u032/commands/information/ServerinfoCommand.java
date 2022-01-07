@@ -18,69 +18,71 @@ public class ServerinfoCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        Guild guild = event.getGuild();
-        EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("Information about " + guild.getName())
-                .setColor(Utils.getColor())
-                .setThumbnail(guild.getIconUrl())
-                .setImage(guild.getBannerUrl())
-                .setFooter("ID: " + guild.getId())
+    protected void execute(final CommandEvent event) {
+        final Guild guild = event.getGuild();
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setTitle("Information about " + guild.getName())
+			.setColor(Utils.getColor())
+			.setThumbnail(guild.getIconUrl())
+			.setImage(guild.getBannerUrl())
+			.setFooter("ID: " + guild.getId())
 
-                .addField(getMembersField(guild))
-                .addField(getChannelsField(guild))
-                .addField(getByStatusField(guild))
-                .addField(getOwnerField(guild))
-                .addField(getVerificationLevelField(guild.getVerificationLevel()))
-                .addField(getCreatedAtField(guild));
+			.addField(getMembersField(guild))
+			.addField(getChannelsField(guild))
+			.addField(getByStatusField(guild))
+			.addField(getOwnerField(guild))
+			.addField(getVerificationLevelField(guild.getVerificationLevel()))
+			.addField(getCreatedAtField(guild));
         event.reply(embed.build());
     }
 
-    private MessageEmbed.Field getMembersField(Guild guild) {
+    private MessageEmbed.Field getMembersField(final Guild guild) {
         long botCount = 0, memberCount = 0;
-        for (Member member : guild.getMembers()) {
+        for (final Member member : guild.getMembers()) {
             if (member.getUser().isBot()) botCount++;
             else memberCount++;
         }
         String members = "<:members:926844061707546654> Members: **" + memberCount + "**\n" +
-                "<:bots:926844061703364648> Bots: **" + botCount + "**";
+			"<:bots:926844061703364648> Bots: **" + botCount + "**";
         return new MessageEmbed.Field("Members (" + guild.getMemberCount() + ")", members, true);
     }
 
-    private MessageEmbed.Field getChannelsField(Guild guild) {
-        long channelCount = guild.getChannels().size() - guild.getCategories().size();
-        StringBuilder channels = new StringBuilder();
+    private MessageEmbed.Field getChannelsField(final Guild guild) {
+        final long channelCount = guild.getChannels().size() - guild.getCategories().size();
+        final StringBuilder channels = new StringBuilder();
         if (!guild.getTextChannels().isEmpty()) {
             channels.append("<:text:926844062198276136> Text: **")
-                    .append(guild.getTextChannels().size()).append("**\n");
+				.append(guild.getTextChannels().size()).append("**\n");
         }
         if (!guild.getVoiceChannels().isEmpty()) {
             channels.append("<:voice:926844062504464444> Voice: **")
-                    .append(guild.getVoiceChannels().size()).append("**\n");
+				.append(guild.getVoiceChannels().size()).append("**\n");
         }
         if (!guild.getStageChannels().isEmpty()) {
             channels.append("<:stage:926844062252818522> Stage: **")
-                    .append(guild.getStageChannels().size()).append("**\n");
+				.append(guild.getStageChannels().size()).append("**\n");
         }
         if (!guild.getStoreChannels().isEmpty()) {
             channels.append("<:store:926844062160519178> Store: **")
-                    .append(guild.getStageChannels().size()).append("**\n");
+				.append(guild.getStageChannels().size()).append("**\n");
         }
         return new MessageEmbed.Field("Channels (" + channelCount + ")", channels.toString(), true);
     }
 
-    private MessageEmbed.Field getByStatusField(Guild guild) {
+    private MessageEmbed.Field getByStatusField(final Guild guild) {
         long online = 0, dnd = 0, idle = 0, offline = 0;
-        for (Member member : guild.getMembers()) {
+		final StringBuilder byStatus = new StringBuilder();
+
+		for (final Member member : guild.getMembers()) {
             switch (member.getOnlineStatus()) {
                 case ONLINE -> online++;
                 case OFFLINE, INVISIBLE -> offline++;
                 case IDLE -> idle++;
                 case DO_NOT_DISTURB -> dnd++;
             }
-        }
-        StringBuilder byStatus = new StringBuilder();
-        if (online > 0) {
+		}
+
+		if (online > 0) {
             byStatus.append("<:online:925113750598598736>Online: **").append(online).append("**\n");
         }
         if (idle > 0) {
@@ -95,20 +97,20 @@ public class ServerinfoCommand extends Command {
         return new MessageEmbed.Field("By Status", byStatus.toString(), true);
     }
 
-    private MessageEmbed.Field getOwnerField(Guild guild) {
+    private MessageEmbed.Field getOwnerField(final Guild guild) {
         return new MessageEmbed.Field("Owner",
-                Objects.requireNonNull(guild.getOwner()).getUser().getAsMention(), true);
+			Objects.requireNonNull(guild.getOwner()).getUser().getAsMention(), true);
     }
 
-    private MessageEmbed.Field getVerificationLevelField(Guild.VerificationLevel level) {
-        String verificationLevel = level.name().charAt(0) + level.name().substring(1).toLowerCase()
-                .replace("_", " ");
+    private MessageEmbed.Field getVerificationLevelField(final Guild.VerificationLevel level) {
+        final String verificationLevel = level.name().charAt(0) + level.name().substring(1).toLowerCase()
+			.replace("_", " ");
         return new MessageEmbed.Field("Verification Level", verificationLevel, true);
     }
 
-    private MessageEmbed.Field getCreatedAtField(Guild guild) {
-        long timeCreated = guild.getTimeCreated().toEpochSecond();
-        String createdAt = "<t:" + timeCreated + ":D> (<t:" + timeCreated + ":R>)";
+    private MessageEmbed.Field getCreatedAtField(final Guild guild) {
+        final long timeCreated = guild.getTimeCreated().toEpochSecond();
+        final String createdAt = "<t:" + timeCreated + ":D> (<t:" + timeCreated + ":R>)";
         return new MessageEmbed.Field("Created at", createdAt, true);
     }
 }
