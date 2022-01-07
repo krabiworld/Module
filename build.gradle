@@ -1,13 +1,13 @@
 plugins {
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
+	id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'com.heroku.sdk.heroku-gradle' version '2.0.0'
 }
 
 mainClassName = 'eu.u032.Bot'
-group 'eu.u032'
-version '1.0'
+group = 'eu.u032'
+version = '1.0'
 
 repositories {
     mavenCentral()
@@ -19,12 +19,11 @@ repositories {
 }
 
 dependencies {
-    implementation('net.dv8tion:JDA:4.4.0_350')
-    implementation('com.sedmelluq:lavaplayer:1.3.78')
-    implementation('io.github.cdimascio:dotenv-java:2.2.3')
-    implementation('com.jagrosh:jda-utilities:3.0.5')
-    implementation('ch.qos.logback:logback-classic:1.2.10')
-    implementation('org.openjdk.nashorn:nashorn-core:15.3')
+    implementation 'net.dv8tion:JDA:4.4.0_350'
+    implementation 'io.github.cdimascio:dotenv-java:2.2.3'
+    implementation 'com.jagrosh:jda-utilities:3.0.5'
+    implementation 'ch.qos.logback:logback-classic:1.2.10'
+    implementation 'org.openjdk.nashorn:nashorn-core:15.3'
 }
 
 heroku {
@@ -33,24 +32,6 @@ heroku {
     includes = ['.env', 'build/libs/UASM-1.0-all.jar']
     includeBuildDir = false
     processTypes(worker: 'java -jar build/libs/UASM-1.0-all.jar')
-}
-
-task dist(type: Jar) {
-    from files(sourceSets.main.output.classesDirs)
-    from files(sourceSets.main.output.resourcesDir)
-    from {configurations.runtimeClasspath.collect{ it.isDirectory() ? it : zipTree(it) }}
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    archiveFileName = 'Build.jar'
-
-    if(project.hasProperty('version')) {
-        archiveVersion.set(project.getProperties().get('version').toString())
-    } else {
-        archiveVersion.set('snapshot')
-    }
-    manifest {
-        attributes 'Main-Class': mainClassName
-    }
 }
 
 compileJava.options.encoding = 'UTF-8'

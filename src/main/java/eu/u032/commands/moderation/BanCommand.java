@@ -17,11 +17,13 @@ public class BanCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        String[] args = Utils.splitArgs(event.getArgs());
-        String memberId = Utils.getId(args[0], Utils.MEMBER);
-        Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
-        String reason = Utils.getGluedArg(args, 1);
+    protected void execute(final CommandEvent event) {
+        final String[] args = Utils.splitArgs(event.getArgs());
+
+		final String memberId = Utils.getId(args[0], Utils.MEMBER);
+        final Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
+
+		final String reason = Utils.getGluedArg(args, 1);
 
         if (args[0].isEmpty()) {
             event.replyError("Required arguments are missing!");

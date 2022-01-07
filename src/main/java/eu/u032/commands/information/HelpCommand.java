@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static eu.u032.Utils.getColor;
-import static eu.u032.Utils.getCopyright;
 
 public class HelpCommand extends Command {
     public HelpCommand() {
@@ -19,17 +18,17 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        String args = event.getArgs();
-        String prefix = event.getClient().getPrefix();
-        List<Command> commands = event.getClient().getCommands();
-        EmbedBuilder embed = new EmbedBuilder().setColor(getColor()).setFooter(getCopyright());
-        List<String> categories = new LinkedList<>();
+    protected void execute(final CommandEvent event) {
+        final String args = event.getArgs();
+        final String prefix = event.getClient().getPrefix();
+        final List<Command> commands = event.getClient().getCommands();
+        final EmbedBuilder embed = new EmbedBuilder().setColor(getColor());
+        final List<String> categories = new LinkedList<>();
 
         categoriesLoop:
-        for (Command cmd : commands) {
+        for (final Command cmd : commands) {
             if (cmd.getCategory() == null) continue;
-            for (String category : categories) {
+            for (final String category : categories) {
                 // if command already exists in "categories" - continue
                 if (category.equals(cmd.getCategory().getName())) continue categoriesLoop;
             }
@@ -41,8 +40,8 @@ public class HelpCommand extends Command {
             StringBuilder commandsBuilder = new StringBuilder();
             embed.setTitle("Available commands:");
 
-            for (String category : categories) {
-                for (Command cmd : commands) {
+            for (final String category : categories) {
+                for (final Command cmd : commands) {
                     if (cmd.isHidden()) continue;
                     if (cmd.getCategory().getName().equals(category)) {
                         commandsBuilder.append("`")
@@ -59,10 +58,10 @@ public class HelpCommand extends Command {
 
             event.reply(embed.build());
         } else {
-            for (String category : categories) {
+            for (final String category : categories) {
                 // if match found with name of category
                 if (category.toLowerCase().startsWith(args.toLowerCase())) {
-                    for (Command cmd : commands) {
+                    for (final Command cmd : commands) {
                         if (cmd.isHidden()) continue;
                         if (cmd.getCategory().getName().equals(category))
                             embed.addField(prefix + cmd.getName(), cmd.getHelp(), false);
@@ -72,7 +71,7 @@ public class HelpCommand extends Command {
                     return;
                 }
             }
-            for (Command cmd : commands) {
+            for (final Command cmd : commands) {
                 // if match found with name of command
                 if (cmd.getName().toLowerCase().startsWith(args.toLowerCase()) && !cmd.isHidden()) {
                     embed.setTitle("Information of command " + cmd.getName());

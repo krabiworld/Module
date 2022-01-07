@@ -19,36 +19,36 @@ import java.util.List;
 
 public class MessageEvents extends ListenerAdapter {
     @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    public void onGuildMessageReceived(final GuildMessageReceivedEvent event) {
         if (event.getAuthor().isBot() || event.getAuthor().isSystem()) return;
         MessageCache.addMessage(event.getMessage());
     }
 
     @Override
-    public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
+    public void onGuildMessageDelete(final GuildMessageDeleteEvent event) {
         if (MessageCache.getMessage(event.getMessageIdLong()) == null) return;
 
-        Message msg = MessageCache.getMessage(event.getMessageIdLong());
-        User author = Objects.requireNonNull(msg).getAuthor();
+        final Message msg = MessageCache.getMessage(event.getMessageIdLong());
+        final User author = Objects.requireNonNull(msg).getAuthor();
 
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
-                .setColor(Utils.getColorRed())
-                .setDescription(String.format("Message from %s deleted in <#%s>",
-                        author.getAsMention(), msg.getChannel().getId()))
-                .setFooter("ID: " + author.getId());
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
+			.setColor(Utils.getColorRed())
+			.setDescription(String.format("Message from %s deleted in <#%s>",
+				author.getAsMention(), msg.getChannel().getId()))
+			.setFooter("ID: " + author.getId());
 
         if (!msg.getContentDisplay().isEmpty()) {
             embed.addField("Message content", "```" + msg.getContentDisplay()
-                    .replaceAll("```", "") + "```", false);
+				.replaceAll("```", "") + "```", false);
         }
 
         if (!msg.getAttachments().isEmpty()) {
-            StringBuilder attachments = new StringBuilder();
+            final StringBuilder attachments = new StringBuilder();
 
-            for (Message.Attachment attachment : msg.getAttachments()) {
+            for (final Message.Attachment attachment : msg.getAttachments()) {
                 attachments.append(String.format("File: [%s](%s) ([Proxy](%s))",
-                        attachment.getFileName(), attachment.getUrl(), attachment.getProxyUrl())
+					attachment.getFileName(), attachment.getUrl(), attachment.getProxyUrl())
                 ).append("\n");
             }
 
@@ -59,50 +59,50 @@ public class MessageEvents extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+    public void onGuildMessageUpdate(final GuildMessageUpdateEvent event) {
         if (MessageCache.getMessage(event.getMessageIdLong()) == null) return;
 
-        Message before = MessageCache.getMessage(event.getMessageIdLong());
+        final Message before = MessageCache.getMessage(event.getMessageIdLong());
 
         if (before == null) return;
 
-        Message after = event.getMessage();
-        User author = after.getAuthor();
+        final Message after = event.getMessage();
+        final User author = after.getAuthor();
 
         MessageCache.addMessage(after);
 
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
-                .setColor(Utils.getColorYellow())
-                .setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)",
-                        author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
-                .addField("Before", before.getContentDisplay(), false)
-                .addField("After", after.getContentDisplay(), false)
-                .setFooter("ID: " + author.getId());
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
+			.setColor(Utils.getColorYellow())
+			.setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)",
+				author.getAsMention(), after.getChannel().getId(), after.getJumpUrl()))
+			.addField("Before", before.getContentDisplay(), false)
+			.addField("After", after.getContentDisplay(), false)
+			.setFooter("ID: " + author.getId());
         Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
-    public void onMessageBulkDelete(MessageBulkDeleteEvent event) {
-        List<String> deletedMessages = new ArrayList<>();
+    public void onMessageBulkDelete(final MessageBulkDeleteEvent event) {
+        final List<String> deletedMessages = new ArrayList<>();
 
-        for (String messageId : event.getMessageIds()) {
-            Message message = MessageCache.getMessage(Long.parseLong(messageId));
+        for (final String messageId : event.getMessageIds()) {
+            final Message message = MessageCache.getMessage(Long.parseLong(messageId));
             if (message == null) continue;
             deletedMessages.add(String.format("%s %s: %s\n",
-                    message.getTimeCreated().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)),
-                    message.getAuthor().getAsTag(),
-                    message.getContentDisplay()
+				message.getTimeCreated().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)),
+				message.getAuthor().getAsTag(),
+				message.getContentDisplay()
             ));
         }
 
         Collections.reverse(deletedMessages);
-        StringBuilder deletedMessagesString = new StringBuilder();
-        for (String message : deletedMessages) {
+        final StringBuilder deletedMessagesString = new StringBuilder();
+        for (final String message : deletedMessages) {
             deletedMessagesString.append(message);
         }
 
-        EmbedBuilder embed = new EmbedBuilder()
+        final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Deleted " + event.getMessageIds().size() + " messages!")
                 .setDescription("Deleted in " + event.getChannel().getAsMention())
                 .setColor(Utils.getColorRed())

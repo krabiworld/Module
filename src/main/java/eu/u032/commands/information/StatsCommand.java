@@ -20,45 +20,43 @@ public class StatsCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        JDA jda = event.getJDA();
-        EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("Bot Statistics")
-                .setColor(Utils.getColor())
-                .setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
-                .setFooter(Utils.getCopyright() +
-                        " • Java: " + System.getProperty("java.version") +
-                        " • JDA: " + JDAInfo.VERSION)
+	protected void execute(final CommandEvent event) {
+		final JDA jda = event.getJDA();
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setTitle("Bot Statistics")
+			.setColor(Utils.getColor())
+			.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
+			.setFooter("Java: " + System.getProperty("java.version") + " • JDA: " + JDAInfo.VERSION)
 
-                .addField(getCommonField(jda))
-                .addField(getPlatformField(jda));
+			.addField(getCommonField(jda))
+			.addField(getPlatformField(jda));
         event.reply(embed.build());
     }
 
-    private MessageEmbed.Field getCommonField(JDA jda) {
+    private MessageEmbed.Field getCommonField(final JDA jda) {
         long channelsCount = 0;
-        for (Guild guild : jda.getGuilds()) {
+        for (final Guild guild : jda.getGuilds()) {
             channelsCount += guild.getChannels().size();
         }
-        String common = String.format("**Servers:** %s\n**Users:** %s\n**Channels:** %s",
-                jda.getGuilds().size(), jda.getUsers().size(), channelsCount);
+        final String common = String.format("**Servers:** %s\n**Users:** %s\n**Channels:** %s",
+			jda.getGuilds().size(), jda.getUsers().size(), channelsCount);
         return new MessageEmbed.Field("Common", common, true);
     }
 
-    private MessageEmbed.Field getPlatformField(JDA jda) {
-        long totalMemory = Runtime.getRuntime().totalMemory();
-        long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
+    private MessageEmbed.Field getPlatformField(final JDA jda) {
+        final long totalMemory = Runtime.getRuntime().totalMemory();
+        final long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
 
-        String uptimeFormatted = String.format("%2d days, %2d hours, %2d min.",
-                TimeUnit.MILLISECONDS.toDays(uptime),
-                TimeUnit.MILLISECONDS.toHours(uptime) % TimeUnit.DAYS.toHours(1),
-                TimeUnit.MILLISECONDS.toMinutes(uptime) % TimeUnit.HOURS.toMinutes(1));
+        final String uptimeFormatted = String.format("%2d days, %2d hours, %2d min.",
+			TimeUnit.MILLISECONDS.toDays(uptime),
+			TimeUnit.MILLISECONDS.toHours(uptime) % TimeUnit.DAYS.toHours(1),
+			TimeUnit.MILLISECONDS.toMinutes(uptime) % TimeUnit.HOURS.toMinutes(1));
 
-        String platform = String.format("**Memory Usage:** %sMB / %sMB\n**Ping:** %s ms\n**Uptime:** %s",
-                (totalMemory - Runtime.getRuntime().freeMemory()) / 1024 / 1024,
-                totalMemory / 1024 / 1024,
-                jda.getGatewayPing(),
-                uptimeFormatted);
+        final String platform = String.format("**Memory Usage:** %sMB / %sMB\n**Ping:** %s ms\n**Uptime:** %s",
+			(totalMemory - Runtime.getRuntime().freeMemory()) / 1024 / 1024,
+			totalMemory / 1024 / 1024,
+			jda.getGatewayPing(),
+			uptimeFormatted);
         return new MessageEmbed.Field("Platform", platform, true);
     }
 }

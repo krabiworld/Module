@@ -12,50 +12,50 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class ChannelEvents extends ListenerAdapter {
     @Override
-    public void onTextChannelDelete(TextChannelDeleteEvent event) {
-        TextChannel channel = event.getChannel();
+    public void onTextChannelDelete(final TextChannelDeleteEvent event) {
+        final TextChannel channel = event.getChannel();
 
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Text Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Utils.getColorRed())
-                .addField("Text Channel", channel.getName(), false)
-                .setFooter("ID: " + channel.getId());
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setAuthor("Text Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
+			.setColor(Utils.getColorRed())
+			.addField("Text Channel", channel.getName(), false)
+			.setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
-    public void onTextChannelCreate(TextChannelCreateEvent event) {
-        TextChannel channel = event.getChannel();
+    public void onTextChannelCreate(final TextChannelCreateEvent event) {
+        final TextChannel channel = event.getChannel();
 
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Text Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Utils.getColorGreen())
-                .addField("Text Channel", channel.getName(), false)
-                .setFooter("ID: " + channel.getId());
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setAuthor("Text Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
+			.setColor(Utils.getColorGreen())
+			.addField("Text Channel", channel.getName(), false)
+			.setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
-    public void onVoiceChannelDelete(VoiceChannelDeleteEvent event) {
-        VoiceChannel channel = event.getChannel();
+    public void onVoiceChannelDelete(final VoiceChannelDeleteEvent event) {
+        final VoiceChannel channel = event.getChannel();
 
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Voice Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Utils.getColorRed())
-                .addField("Voice Channel", channel.getName(), false)
-                .setFooter("ID: " + channel.getId());
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setAuthor("Voice Channel Deleted", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
+			.setColor(Utils.getColorRed())
+			.addField("Voice Channel", channel.getName(), false)
+			.setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
     }
 
     @Override
-    public void onVoiceChannelCreate(VoiceChannelCreateEvent event) {
-        VoiceChannel channel = event.getChannel();
+    public void onVoiceChannelCreate(final VoiceChannelCreateEvent event) {
+        final VoiceChannel channel = event.getChannel();
 
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Voice Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
-                .setColor(Utils.getColorGreen())
-                .addField("Voice Channel", channel.getName(), false)
-                .setFooter("ID: " + channel.getId());
+        final EmbedBuilder embed = new EmbedBuilder()
+			.setAuthor("Voice Channel Created", event.getGuild().getIconUrl(), event.getGuild().getIconUrl())
+			.setColor(Utils.getColorGreen())
+			.addField("Voice Channel", channel.getName(), false)
+			.setFooter("ID: " + channel.getId());
         Utils.sendLog(event.getGuild(), embed);
     }
 }

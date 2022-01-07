@@ -19,14 +19,14 @@ public class MuteCommand extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        String[] args = Utils.splitArgs(event.getArgs());
+    protected void execute(final CommandEvent event) {
+        final String[] args = Utils.splitArgs(event.getArgs());
 
-        String muteId = Config.getString("MUTE_ROLE");
-        Role muteRole = muteId.isEmpty() ? null : event.getGuild().getRoleById(muteId);
+        final String muteId = Config.getString("MUTE_ROLE");
+        final Role muteRole = muteId.isEmpty() ? null : event.getGuild().getRoleById(muteId);
 
-        String memberId = Utils.getId(args[0], Utils.MEMBER);
-        Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
+        final String memberId = Utils.getId(args[0], Utils.MEMBER);
+        final Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
 
         if (muteRole == null) {
             event.replyError("Mute role is not set.");
@@ -40,7 +40,7 @@ public class MuteCommand extends Command {
             event.replyError("Member not found.");
             return;
         }
-        if (Utils.hasRole(muteRole, member)) {
+        if (Utils.hasRole(member, muteRole)) {
             event.replyError("This member already muted.");
             return;
         }
