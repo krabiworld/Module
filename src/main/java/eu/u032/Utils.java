@@ -1,20 +1,47 @@
+/*
+ * UASM Discord Bot.
+ * Copyright (C) 2022 untled032, Headcrab
+
+ * UASM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * UASM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with UASM. If not, see https://www.gnu.org/licenses/.
+ */
 package eu.u032;
 
+import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 
 import java.awt.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
+	// Patterns for searching emoji, member or channel mention.
 	public static final Pattern EMOJI = Pattern.compile(":(\\d+)>");
     public static final Pattern MEMBER = Pattern.compile("<@!(\\d+)>");
     // public static final Pattern CHANNEL = Pattern.compile("<#(\\d+)>");
+
+	public static void sendError(final CommandEvent event, final String error) {
+		event.reactError();
+		event.replyError(error, m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
+	}
+
+	public static void sendSuccess(final CommandEvent event, final String success) {
+		event.reactSuccess();
+		event.replySuccess(success, m -> m.delete().queueAfter(20, TimeUnit.SECONDS));
+	}
 
 	public static void sendLog(final Guild guild, final EmbedBuilder embed) {
 		embed.setTimestamp(new Date().toInstant());

@@ -1,7 +1,25 @@
+/*
+ * UASM Discord Bot.
+ * Copyright (C) 2022 untled032, Headcrab
+
+ * UASM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * UASM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with UASM. If not, see https://www.gnu.org/licenses/.
+ */
 package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eu.u032.Utils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
@@ -25,7 +43,7 @@ public class ClearCommand extends Command {
     protected void execute(final CommandEvent event) {
         int count = Integer.parseInt(event.getArgs());
         if (count < 2 || count > 1000 || event.getArgs().isEmpty()) {
-            event.replyError("The number of messages must be no less than 2 and no more than 1000.");
+			Utils.sendError(event, "The number of messages must be no less than 2 and no more than 1000.");
             return;
         }
 

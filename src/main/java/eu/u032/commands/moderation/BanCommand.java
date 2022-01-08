@@ -1,3 +1,20 @@
+/*
+ * UASM Discord Bot.
+ * Copyright (C) 2022 untled032, Headcrab
+
+ * UASM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * UASM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with UASM. If not, see https://www.gnu.org/licenses/.
+ */
 package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
@@ -26,19 +43,33 @@ public class BanCommand extends Command {
 		final String reason = Utils.getGluedArg(args, 1);
 
         if (args[0].isEmpty()) {
-            event.replyError("Required arguments are missing!");
+			Utils.sendError(event, "Required arguments are missing!");
             return;
         }
         if (member == null) {
-            event.replyError("Member not found.");
+			Utils.sendError(event, "Member not found.");
             return;
         }
+		if (member == event.getSelfMember()) {
+			Utils.sendError(event, "You cannot ban me.");
+			return;
+		}
+		if (member == event.getMember()) {
+			Utils.sendError(event, "You cannot ban yourself.");
+			return;
+		}
+		if (event.getMember().getRoles().get(0).getPosition() <= member.getRoles().get(0).getPosition()) {
+			Utils.sendError(event, "I cannot ban a member with a role equal to or higher than yours.");
+			return;
+		}
 
         try {
-            event.getGuild().ban(member, 0, reason).queue();
-            event.reactSuccess();
-        } catch (Exception e) {
-            event.replyError(e.getMessage());
+			event.getGuild().ban(member, 0, reason).queue();
+			Utils.sendSuccess(event, String.format("**%s** banned by moderator **%s**%s",
+				member.getUser().getAsTag(), event.getMember().getEffectiveName(),
+				reason.isEmpty() ? "." : " with reason: " + reason));
+        } catch (final Exception e) {
+            Utils.sendError(event, e.getMessage());
         }
     }
 }
