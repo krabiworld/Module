@@ -47,7 +47,7 @@ public class EvalCommand extends Command {
             try {
                 event.replySuccess("Evaluated Successfully:\n```" + engine.eval(event.getArgs()) + "```");
             } catch (final Exception e) {
-                event.replyError(e.getMessage());
+                Utils.sendError(event, e.getMessage());
             }
         });
     }

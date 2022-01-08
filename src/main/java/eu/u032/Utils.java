@@ -29,21 +29,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-	// Patterns for searching emoji, member or channel mention.
+	/** Emoji mention. */
 	public static final Pattern EMOJI = Pattern.compile(":(\\d+)>");
+	/** Member mention */
     public static final Pattern MEMBER = Pattern.compile("<@!(\\d+)>");
-    // public static final Pattern CHANNEL = Pattern.compile("<#(\\d+)>");
 
+	//public static final Pattern CHANNEL = Pattern.compile("<#(\\d+)>");
+
+	/** React and send error message, after 10 seconds message has been deleted. */
 	public static void sendError(final CommandEvent event, final String error) {
 		event.reactError();
 		event.replyError(error, m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
 	}
 
+	/** React and send success message, after 20 seconds message has been deleted. */
 	public static void sendSuccess(final CommandEvent event, final String success) {
 		event.reactSuccess();
 		event.replySuccess(success, m -> m.delete().queueAfter(20, TimeUnit.SECONDS));
 	}
 
+	/** Send log message with addition of timestamp to embed. */
 	public static void sendLog(final Guild guild, final EmbedBuilder embed) {
 		embed.setTimestamp(new Date().toInstant());
 
@@ -55,10 +60,12 @@ public class Utils {
         textChannel.sendMessageEmbeds(embed.build()).queue();
     }
 
+	/** Will return split arguments. */
     public static String[] splitArgs(final String args) {
         return args.split("\\s+");
     }
 
+	/** Will return id of mention member, channel, emoji. */
     public static String getId(final String arg, final Pattern pattern) {
         final Matcher matcher = pattern.matcher(arg);
 
@@ -71,6 +78,7 @@ public class Utils {
         return "";
     }
 
+	/** Will return glued args. */
     public static String getGluedArg(final String[] args, final int start) {
         final StringBuilder arg = new StringBuilder();
 
@@ -81,6 +89,7 @@ public class Utils {
         return arg.toString();
     }
 
+	/** Check if member has a role. */
     public static boolean hasRole(final Member member, final Role role) {
         for (final Role memberRole : member.getRoles()) {
             if (memberRole == role) return true;
@@ -88,18 +97,22 @@ public class Utils {
         return false;
     }
 
+	/** Get main color from config file. */
     public static Color getColor() {
         return Color.decode(Config.getString("COLOR"));
     }
 
+	/** Get green color from config file. */
     public static Color getColorGreen() {
         return Color.decode(Config.getString("COLOR_GREEN"));
     }
 
+	/** Get red color from config file. */
     public static Color getColorRed() {
         return Color.decode(Config.getString("COLOR_RED"));
     }
 
+	/** Get yellow color from config file. */
     public static Color getColorYellow() {
         return Color.decode(Config.getString("COLOR_YELLOW"));
     }

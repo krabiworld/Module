@@ -31,7 +31,7 @@ import static eu.u032.Utils.getColor;
 public class HelpCommand extends Command {
     public HelpCommand() {
         this.name = "help";
-        this.help = "This message";
+        this.help = "List of all commands and category";
         this.arguments = "[command/category]";
         this.category = new Category("Information");
     }
@@ -64,14 +64,13 @@ public class HelpCommand extends Command {
                     if (cmd.isHidden()) continue;
                     if (cmd.getCategory().getName().equals(category)) {
                         commandsBuilder.append("`")
-                                .append(prefix)
-                                .append(cmd.getName())
-                                .append("` ");
+							.append(prefix)
+							.append(cmd.getName())
+							.append("` ");
                     }
                 }
                 embed.addField(category + " (" + prefix + "help " + category + ")",
-                        commandsBuilder.toString(),
-                        false);
+					commandsBuilder.toString(), false);
                 commandsBuilder = new StringBuilder();
             }
 
@@ -95,8 +94,8 @@ public class HelpCommand extends Command {
                 if (cmd.getName().toLowerCase().startsWith(args.toLowerCase()) && !cmd.isHidden()) {
                     embed.setTitle("Information of command " + cmd.getName());
                     embed.setDescription("`" + prefix + cmd.getName() +
-                            (cmd.getArguments() == null ? "" : " " + cmd.getArguments()) + "`\n" +
-                            cmd.getHelp());
+						(cmd.getArguments().isEmpty() ? "" : " " + cmd.getArguments()) + "`\n" +
+						cmd.getHelp());
                     event.reply(embed.build());
                     return;
                 }
