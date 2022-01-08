@@ -15,38 +15,41 @@
  * You should have received a copy of the GNU General Public License
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
-package eu.u032.commands.moderation;
+package eu.u032.commands.utilities;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Utils;
-import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Emote;
 
-public class UnbanCommand extends Command {
-    public UnbanCommand() {
-        this.name = "unban";
-        this.help = "Unban member from server";
-        this.arguments = "<ID>";
-        this.category = new Category("Moderation");
-        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
-        this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
+public class EmojiCommand extends Command {
+    public EmojiCommand() {
+        this.name = "emoji";
+        this.help = "Information about emoji";
+        this.arguments = "<@Emoji | ID>";
+        this.category = new Category("Utilities");
     }
 
     @Override
     protected void execute(final CommandEvent event) {
-        final String[] args = Utils.splitArgs(event.getArgs());
+        final String emojiId = Utils.getId(event.getArgs(), Utils.EMOJI);
+        final Emote emoji = emojiId.isEmpty() ? null : event.getGuild().getEmoteById(emojiId);
 
-        if (args[0].isEmpty()) {
+        if (event.getArgs().isEmpty()) {
 			Utils.sendError(event, "Required arguments are missing!");
             return;
         }
-
-        try {
-            event.getGuild().unban(args[0]).queue();
-			Utils.sendSuccess(event, String.format("Member with id **%s** unbanned by moderator **%s**.",
-				args[0], event.getMember().getEffectiveName()));
-        } catch (final Exception e) {
-            event.replyError(e.getMessage());
+        if (emoji == null) {
+			Utils.sendError(event, "Emoji is not found.");
+            return;
         }
+
+        final EmbedBuilder embed = new EmbedBuilder()
+                .setTitle("Emoji " + emoji.getName(), emoji.getImageUrl())
+                .setColor(Utils.getColor())
+                .setImage(emoji.getImageUrl())
+                .setFooter("ID: " + emoji.getId());
+        event.reply(embed.build());
     }
 }
