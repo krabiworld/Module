@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
+
 package eu.u032;
 
 import net.dv8tion.jda.api.entities.Message;
