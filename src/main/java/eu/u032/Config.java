@@ -28,10 +28,12 @@ public enum Config {;
         return DOTENV.get(key);
     }
 
+	/** Get value as {@link String} */
     public static String getString(@NotNull final String key) {
-        return DOTENV.get(key);
+        return get(key);
     }
 
+	/** Get value as {@link Integer} */
     public static int getInt(@NotNull final String key) {
         return Integer.parseInt(get(key));
     }
