@@ -16,4 +16,4 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-rootProject.name = 'UASM'
+rootProject.name = "UASM"

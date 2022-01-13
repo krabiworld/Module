@@ -20,57 +20,63 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils;
+import eu.u032.utils.ArgsUtil;
+import eu.u032.utils.GeneralUtil;
+import eu.u032.utils.MsgUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+
+import static eu.u032.Constants.*;
 
 public class BanCommand extends Command {
     public BanCommand() {
         this.name = "ban";
         this.help = "Ban member from server";
         this.arguments = "<@Member | ID> [reason]";
-        this.category = new Category("Moderation");
+        this.category = MODERATION;
         this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
         this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
     }
 
     @Override
     protected void execute(final CommandEvent event) {
-        final String[] args = Utils.splitArgs(event.getArgs());
+		if (GeneralUtil.isNotMod(event)) {
+			return;
+		}
+		if (event.getArgs().isEmpty()) {
+			MsgUtil.sendError(event, MISSING_ARGS);
+			return;
+		}
 
-		final String memberId = Utils.getId(args[0], Utils.MEMBER);
-        final Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
+		final String[] args = ArgsUtil.split(event.getArgs());
+		final Member member = ArgsUtil.getMember(event, args[0]);
+		final String reason = ArgsUtil.getGluedArg(args, 1);
 
-		final String reason = Utils.getGluedArg(args, 1);
-
-        if (args[0].isEmpty()) {
-			Utils.sendError(event, "Required arguments are missing!");
-            return;
-        }
         if (member == null) {
-			Utils.sendError(event, "Member not found.");
+			MsgUtil.sendError(event, MEMBER_NOT_FOUND);
             return;
         }
 		if (member == event.getSelfMember()) {
-			Utils.sendError(event, "You cannot ban me.");
+			MsgUtil.sendError(event, MsgUtil.getTemplate(CANNOT_ME, "ban"));
 			return;
 		}
 		if (member == event.getMember()) {
-			Utils.sendError(event, "You cannot ban yourself.");
+			MsgUtil.sendError(event, MsgUtil.getTemplate(CANNOT_YOURSELF, "ban"));
 			return;
 		}
-		if (event.getMember().getRoles().get(0).getPosition() <= member.getRoles().get(0).getPosition()) {
-			Utils.sendError(event, "I cannot ban a member with a role equal to or higher than yours.");
+		if (GeneralUtil.checkRolePosition(member, event.getMember())) {
+			MsgUtil.sendError(event, MsgUtil.getTemplate(ROLE_POSITION, "ban"));
 			return;
 		}
 
         try {
 			event.getGuild().ban(member, 0, reason).queue();
-			Utils.sendSuccess(event, String.format("**%s** banned by moderator **%s**%s",
-				member.getUser().getAsTag(), event.getMember().getEffectiveName(),
+			MsgUtil.sendSuccess(event, String.format("**%s** banned by moderator **%s**%s",
+				member.getUser().getAsTag(),
+				event.getMember().getEffectiveName(),
 				reason.isEmpty() ? "." : " with reason: " + reason));
         } catch (final Exception e) {
-            Utils.sendError(event, e.getMessage());
+            MsgUtil.sendError(event, e.getMessage());
         }
     }
 }

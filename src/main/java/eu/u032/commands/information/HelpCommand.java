@@ -20,28 +20,28 @@ package eu.u032.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils;
+import eu.u032.Constants;
+import eu.u032.utils.GeneralUtil;
+import eu.u032.utils.MsgUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import static eu.u032.Utils.getColor;
 
 public class HelpCommand extends Command {
     public HelpCommand() {
         this.name = "help";
         this.help = "List of all commands and category";
         this.arguments = "[command/category]";
-        this.category = new Category("Information");
+        this.category = Constants.INFORMATION;
     }
 
     @Override
     protected void execute(final CommandEvent event) {
         final String args = event.getArgs();
-        final String prefix = event.getClient().getPrefix();
+        final String prefix = GeneralUtil.getPrefix(event.getGuild());
         final List<Command> commands = event.getClient().getCommands();
-        final EmbedBuilder embed = new EmbedBuilder().setColor(getColor());
+        final EmbedBuilder embed = new EmbedBuilder().setColor(Constants.COLOR);
         final List<String> categories = new LinkedList<>();
 
         categoriesLoop:
@@ -54,7 +54,7 @@ public class HelpCommand extends Command {
             categories.add(cmd.getCategory().getName());
         }
 
-        // if "args" is empty - get all commands
+        // if "args" is empty - getTemplate all commands
         if (args.isEmpty()) {
             StringBuilder commandsBuilder = new StringBuilder();
             embed.setTitle("Available commands:");
@@ -101,7 +101,7 @@ public class HelpCommand extends Command {
                 }
             }
 
-			Utils.sendError(event, "Command or category **" + args + "** not found.");
+			MsgUtil.sendError(event, "Command or category **" + args + "** not found.");
         }
     }
 }

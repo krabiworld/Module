@@ -33,85 +33,84 @@ public enum Config {;
         return get(key);
     }
 
-	/** Get value as {@link Integer} */
-    public static int getInt(@NotNull final String key) {
-        return Integer.parseInt(get(key));
-    }
+//    public static int getInt(@NotNull final String key) {
+//        return Integer.parseInt(getTemplate(key));
+//    }
 
-//    private static String get(@NotNull String key, String defaultValue) {
-//        return dotenv.get(key, defaultValue);
+//    private static String getTemplate(@NotNull String key, String defaultValue) {
+//        return dotenv.getTemplate(key, defaultValue);
 //    }
 
 //    public static String getString(@NotNull String key, String defaultValue) {
-//        return dotenv.get(key, defaultValue);
+//        return dotenv.getTemplate(key, defaultValue);
 //    }
 
 //    public static int getInt(@NotNull String key, int defaultValue) {
-//        return Integer.parseInt(get(key, Integer.toString(defaultValue)));
+//        return Integer.parseInt(getTemplate(key, Integer.toString(defaultValue)));
 //    }
 
 //    public static boolean getBoolean(@NotNull String key) {
-//        return Boolean.parseBoolean(get(key));
+//        return Boolean.parseBoolean(getTemplate(key));
 //    }
 
 //    public static boolean getBoolean(@NotNull String key, boolean defaultValue) {
-//        return Boolean.parseBoolean(get(key, Boolean.toString(defaultValue)));
+//        return Boolean.parseBoolean(getTemplate(key, Boolean.toString(defaultValue)));
 //    }
 
 //    public static double getDouble(@NotNull String key) {
-//        return Double.parseDouble(get(key));
+//        return Double.parseDouble(getTemplate(key));
 //    }
 
 //    public static double getDouble(@NotNull String key, double defaultValue) {
-//        return Double.parseDouble(get(key, Double.toString(defaultValue)));
+//        return Double.parseDouble(getTemplate(key, Double.toString(defaultValue)));
 //    }
 
 //    public static long getLong(@NotNull String key) {
-//        return Long.parseLong(get(key));
+//        return Long.parseLong(getTemplate(key));
 //    }
 
 //    public static long getLong(@NotNull String key, long defaultValue) {
-//        return Long.parseLong(get(key, Long.toString(defaultValue)));
+//        return Long.parseLong(getTemplate(key, Long.toString(defaultValue)));
 //    }
 
 //    public static float getFloat(@NotNull String key) {
-//        return Float.parseFloat(get(key));
+//        return Float.parseFloat(getTemplate(key));
 //    }
 
 //    public static float getFloat(@NotNull String key, float defaultValue) {
-//        return Float.parseFloat(get(key, Float.toString(defaultValue)));
+//        return Float.parseFloat(getTemplate(key, Float.toString(defaultValue)));
 //    }
 
 //    public static short getShort(@NotNull String key) {
-//        return Short.parseShort(get(key));
+//        return Short.parseShort(getTemplate(key));
 //    }
 
 //    public static short getShort(@NotNull String key, short defaultValue) {
-//        return Short.parseShort(get(key, Short.toString(defaultValue)));
+//        return Short.parseShort(getTemplate(key, Short.toString(defaultValue)));
 //    }
 
 //    public static byte getByte(@NotNull String key) {
-//        return Byte.parseByte(get(key));
+//        return Byte.parseByte(getTemplate(key));
 //    }
 
 //    public static byte getByte(@NotNull String key, byte defaultValue) {
-//        return Byte.parseByte(get(key, Byte.toString(defaultValue)));
+//        return Byte.parseByte(getTemplate(key, Byte.toString(defaultValue)));
 //    }
 
 //    public static char getChar(@NotNull String key) {
-//        return get(key).charAt(0);
+//        return getTemplate(key).charAt(0);
 //    }
 
 //    public static char getChar(@NotNull String key, char defaultValue) {
-//        return get(key, Character.toString(defaultValue)).charAt(0);
+//        return getTemplate(key, Character.toString(defaultValue)).charAt(0);
 //    }
 
 //    public static String @NotNull [] getStringArray(@NotNull String key) {
-//        return get(key).split(",");
+//        return getTemplate(key).split(",");
 //    }
 
 //    public static String @NotNull [] getStringArray(@NotNull String key, String[] defaultValue) {
-//        return get(key, String.join(",", defaultValue)).split(",");
+//        return getTemplate(key, String.join(",", defaultValue)).split(",");
 //    }
 
 //    public static int @NotNull [] getIntArray(@NotNull String key) {

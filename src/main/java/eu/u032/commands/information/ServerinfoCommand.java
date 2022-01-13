@@ -20,7 +20,6 @@ package eu.u032.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -28,19 +27,22 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.util.Objects;
 
+import static eu.u032.Constants.*;
+
 public class ServerinfoCommand extends Command {
     public ServerinfoCommand() {
         this.name = "serverinfo";
         this.help = "Server information";
-        this.category = new Category("Information");
+        this.category = INFORMATION;
     }
 
     @Override
     protected void execute(final CommandEvent event) {
-        final Guild guild = event.getGuild();
+		final Guild guild = event.getGuild();
+
         final EmbedBuilder embed = new EmbedBuilder()
 			.setTitle("Information about " + guild.getName())
-			.setColor(Utils.getColor())
+			.setColor(COLOR)
 			.setThumbnail(guild.getIconUrl())
 			.setImage(guild.getBannerUrl())
 			.setFooter("ID: " + guild.getId())
@@ -60,8 +62,8 @@ public class ServerinfoCommand extends Command {
             if (member.getUser().isBot()) botCount++;
             else memberCount++;
         }
-        String members = "<:members:926844061707546654> Members: **" + memberCount + "**\n" +
-			"<:bots:926844061703364648> Bots: **" + botCount + "**";
+        String members = MEMBERS + " Members: **" + memberCount + "**\n" +
+			BOTS + " Bots: **" + botCount + "**";
         return new MessageEmbed.Field("Members (" + guild.getMemberCount() + ")", members, true);
     }
 
@@ -69,19 +71,19 @@ public class ServerinfoCommand extends Command {
         final long channelCount = guild.getChannels().size() - guild.getCategories().size();
         final StringBuilder channels = new StringBuilder();
         if (!guild.getTextChannels().isEmpty()) {
-            channels.append("<:text:926844062198276136> Text: **")
+            channels.append(TEXT + " Text: **")
 				.append(guild.getTextChannels().size()).append("**\n");
         }
         if (!guild.getVoiceChannels().isEmpty()) {
-            channels.append("<:voice:926844062504464444> Voice: **")
+            channels.append(VOICE + " Voice: **")
 				.append(guild.getVoiceChannels().size()).append("**\n");
         }
         if (!guild.getStageChannels().isEmpty()) {
-            channels.append("<:stage:926844062252818522> Stage: **")
+            channels.append(STAGE + " Stage: **")
 				.append(guild.getStageChannels().size()).append("**\n");
         }
         if (!guild.getStoreChannels().isEmpty()) {
-            channels.append("<:store:926844062160519178> Store: **")
+            channels.append(STORE + " Store: **")
 				.append(guild.getStageChannels().size()).append("**\n");
         }
         return new MessageEmbed.Field("Channels (" + channelCount + ")", channels.toString(), true);
@@ -101,16 +103,16 @@ public class ServerinfoCommand extends Command {
 		}
 
 		if (online > 0) {
-            byStatus.append("<:online:925113750598598736>Online: **").append(online).append("**\n");
+            byStatus.append(ONLINE + "Online: **").append(online).append("**\n");
         }
         if (idle > 0) {
-            byStatus.append("<:idle:925113750254682133>Idle: **").append(idle).append("**\n");
+            byStatus.append(IDLE + "Idle: **").append(idle).append("**\n");
         }
         if (dnd > 0) {
-            byStatus.append("<:dnd:925113750896398406>Do Not Disturb: **").append(dnd).append("**\n");
+            byStatus.append(DND + "Do Not Disturb: **").append(dnd).append("**\n");
         }
         if (offline > 0) {
-            byStatus.append("<:offline:925113750581817354>Offline: **").append(offline).append("**\n");
+            byStatus.append(OFFLINE + "Offline: **").append(offline).append("**\n");
         }
         return new MessageEmbed.Field("By Status", byStatus.toString(), true);
     }

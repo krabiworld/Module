@@ -29,13 +29,11 @@ import java.util.ArrayList;
 public class MessageCache {
     public static final ArrayList<Message> MESSAGES = new ArrayList<>();
 
-	public static final int MESSAGE_CACHE = Config.getInt("MAX_MSG_CACHE");
-
     public static void addMessage(@Nonnull final Message message) {
         for (final Message msg : MESSAGES) {
 			if (msg.getIdLong() == message.getIdLong()) MESSAGES.set(MESSAGES.indexOf(msg), message);
 		}
-		if (MESSAGES.size() + 1 > MESSAGE_CACHE) MESSAGES.remove(0);
+		if (MESSAGES.size() + 1 > Constants.MAX_MESSAGE_CACHE) MESSAGES.remove(0);
         MESSAGES.add(message);
     }
 

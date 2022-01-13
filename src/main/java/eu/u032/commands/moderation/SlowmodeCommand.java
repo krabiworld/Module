@@ -20,7 +20,9 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils;
+import eu.u032.Constants;
+import eu.u032.utils.GeneralUtil;
+import eu.u032.utils.MsgUtil;
 import net.dv8tion.jda.api.Permission;
 
 public class SlowmodeCommand extends Command {
@@ -28,33 +30,35 @@ public class SlowmodeCommand extends Command {
         this.name = "slowmode";
         this.help = "Set slowmode in current channel";
         this.arguments = "<duration>";
-        this.category = new Category("Moderation");
+        this.category = Constants.MODERATION;
         this.userPermissions = new Permission[]{Permission.MANAGE_CHANNEL};
         this.botPermissions = new Permission[]{Permission.MANAGE_CHANNEL};
     }
 
     @Override
     protected void execute(final CommandEvent event) {
-        final String args = event.getArgs();
-
-        if (args.isEmpty()) {
-			Utils.sendError(event, "Required arguments are missing!");
+		if (GeneralUtil.isNotMod(event)) {
+			return;
+		}
+		if (event.getArgs().isEmpty()) {
+			MsgUtil.sendError(event, Constants.MISSING_ARGS);
             return;
         }
 
-        final int interval = Integer.parseInt(args);
+        final int interval = Integer.parseInt(event.getArgs());
 
         if (interval < 0 || interval > 21600) {
-			Utils.sendError(event, "Specify in seconds from 0 (off) to 21600.");
+			MsgUtil.sendError(event, "Specify in seconds from 0 (off) to 21600.");
             return;
         }
         if (event.getTextChannel().getSlowmode() == interval) {
-			Utils.sendError(event, "This value already set.");
+			MsgUtil.sendError(event, "This value already set.");
             return;
         }
 
         event.getTextChannel().getManager().setSlowmode(interval).queue();
-		Utils.sendSuccess(event, String.format("Slowmode for channel %s changed to **%s**.",
-			event.getTextChannel().getAsMention(), interval));
+		MsgUtil.sendSuccess(event, String.format("Slowmode for channel %s changed to **%s**.",
+			event.getTextChannel().getAsMention(),
+			interval));
     }
 }

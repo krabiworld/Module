@@ -20,7 +20,8 @@ package eu.u032.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils;
+import com.jagrosh.jdautilities.commons.JDAUtilitiesInfo;
+import eu.u032.Constants;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
@@ -28,26 +29,27 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.lang.management.ManagementFactory;
-import java.util.concurrent.TimeUnit;
+import java.time.*;
 
 public class StatsCommand extends Command {
     public StatsCommand() {
         this.name = "stats";
         this.help = "Bot statistics";
-        this.category = new Category("Information");
+        this.category = Constants.INFORMATION;
     }
 
     @Override
 	protected void execute(final CommandEvent event) {
 		final JDA jda = event.getJDA();
+
         final EmbedBuilder embed = new EmbedBuilder()
 			.setTitle("Bot Statistics")
-			.setColor(Utils.getColor())
+			.setColor(Constants.COLOR)
 			.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
-			.setFooter("Java: " + System.getProperty("java.version") + " • JDA: " + JDAInfo.VERSION)
 
 			.addField(getCommonField(jda))
-			.addField(getPlatformField(jda));
+			.addField(getPlatformField(jda))
+			.addField(getVersionField());
         event.reply(embed.build());
     }
 
@@ -63,18 +65,21 @@ public class StatsCommand extends Command {
 
     private MessageEmbed.Field getPlatformField(final JDA jda) {
         final long totalMemory = Runtime.getRuntime().totalMemory();
-        final long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
+		final long uptime = OffsetDateTime.ofInstant(
+			Instant.ofEpochMilli(ManagementFactory.getRuntimeMXBean().getStartTime()), ZoneId.systemDefault())
+			.toEpochSecond();
 
-        final String uptimeFormatted = String.format("%2d days, %2d hours, %2d min.",
-			TimeUnit.MILLISECONDS.toDays(uptime),
-			TimeUnit.MILLISECONDS.toHours(uptime) % TimeUnit.DAYS.toHours(1),
-			TimeUnit.MILLISECONDS.toMinutes(uptime) % TimeUnit.HOURS.toMinutes(1));
-
-        final String platform = String.format("**Memory Usage:** %sMB / %sMB\n**Ping:** %s ms\n**Uptime:** %s",
+        final String platform = String.format("**Memory Usage:** %sMB / %sMB\n**Ping:** %s ms\n**Uptime:** <t:%s:R>",
 			(totalMemory - Runtime.getRuntime().freeMemory()) / 1024 / 1024,
 			totalMemory / 1024 / 1024,
 			jda.getGatewayPing(),
-			uptimeFormatted);
+			uptime);
         return new MessageEmbed.Field("Platform", platform, true);
     }
+
+	private MessageEmbed.Field getVersionField() {
+		final String version = String.format("**Java:** %s\n**JDA:** %s\n**JDA-Utilities:** %s",
+			System.getProperty("java.version"), JDAInfo.VERSION, JDAUtilitiesInfo.VERSION);
+		return new MessageEmbed.Field("Version", version, true);
+	}
 }

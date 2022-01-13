@@ -16,45 +16,52 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.commands.moderation;
+package eu.u032.commands.settings;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
+import eu.u032.GuildManager;
 import eu.u032.utils.ArgsUtil;
 import eu.u032.utils.GeneralUtil;
 import eu.u032.utils.MsgUtil;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Role;
 
-public class UnbanCommand extends Command {
-    public UnbanCommand() {
-        this.name = "unban";
-        this.help = "Unban member from server";
-        this.arguments = "<ID>";
-        this.category = Constants.MODERATION;
-        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
-        this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
-    }
+import java.util.Objects;
 
-    @Override
-    protected void execute(final CommandEvent event) {
-		if (GeneralUtil.isNotMod(event)) {
-			return;
-		}
+public class MuteroleCommand extends Command {
+	final GuildManager manager;
+
+	public MuteroleCommand(GuildManager manager) {
+		this.manager = manager;
+		this.name = "muterole";
+		this.help = "Set mute role";
+		this.arguments = "<@Role | ID>";
+		this.category = Constants.SETTINGS;
+		this.userPermissions = new Permission[]{Permission.MANAGE_SERVER};
+	}
+
+	@Override
+	protected void execute(final CommandEvent event) {
 		if (event.getArgs().isEmpty()) {
 			MsgUtil.sendError(event, Constants.MISSING_ARGS);
 			return;
 		}
 
-		final String[] args = ArgsUtil.split(event.getArgs());
+		final Role role = ArgsUtil.getRole(event, event.getArgs());
+		final Role muteRole = GeneralUtil.getMuteRole(event.getGuild());
 
-        try {
-            event.getGuild().unban(args[0]).queue();
-			MsgUtil.sendSuccess(event, String.format("Member with id **%s** unbanned by moderator **%s**.",
-				args[0],
-				event.getMember().getEffectiveName()));
-        } catch (final Exception e) {
-            event.replyError(e.getMessage());
-        }
-    }
+		if (role == null) {
+			MsgUtil.sendError(event, "Role not found.");
+			return;
+		}
+		if (role.getIdLong() == (muteRole == null ? 0 : muteRole.getIdLong())) {
+			MsgUtil.sendError(event, "This role already set.");
+		}
+
+		manager.setMute(event.getGuild(), role.getIdLong());
+
+		MsgUtil.sendSuccess(event, "Mute role changed to **" + role.getName() + "**");
+	}
 }
