@@ -20,7 +20,9 @@ package eu.u032.commands.utilities;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils;
+import eu.u032.Constants;
+import eu.u032.utils.ArgsUtil;
+import eu.u032.utils.MsgUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 
@@ -29,19 +31,18 @@ public class AvatarCommand extends Command {
         this.name = "avatar";
         this.help = "Show avatar of member";
         this.arguments = "[@Member | ID]";
-        this.category = new Category("Utilities");
+        this.category = Constants.UTILITIES;
     }
 
     @Override
     protected void execute(final CommandEvent event) {
-        final String memberId = Utils.getId(event.getArgs(), Utils.MEMBER);
-        Member member = memberId.isEmpty() ? null : event.getGuild().getMemberById(memberId);
+		Member member = event.getMember();
 
-        if (event.getArgs().isEmpty()) {
-            member = event.getMember();
+        if (!event.getArgs().isEmpty()) {
+            member = ArgsUtil.getMember(event, event.getArgs());
         }
         if (member == null) {
-            Utils.sendError(event, "Member not found.");
+            MsgUtil.sendError(event, Constants.MEMBER_NOT_FOUND);
             return;
         }
 

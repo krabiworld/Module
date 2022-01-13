@@ -2,3 +2,4 @@ build
 .gradle
 .env
 .idea
+src/main/resources/hibernate.cfg.xml

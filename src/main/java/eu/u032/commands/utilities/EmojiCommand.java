@@ -20,7 +20,9 @@ package eu.u032.commands.utilities;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils;
+import eu.u032.Constants;
+import eu.u032.utils.ArgsUtil;
+import eu.u032.utils.MsgUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emote;
 
@@ -29,26 +31,26 @@ public class EmojiCommand extends Command {
         this.name = "emoji";
         this.help = "Information about emoji";
         this.arguments = "<@Emoji | ID>";
-        this.category = new Category("Utilities");
+        this.category = Constants.UTILITIES;
     }
 
     @Override
     protected void execute(final CommandEvent event) {
-        final String emojiId = Utils.getId(event.getArgs(), Utils.EMOJI);
-        final Emote emoji = emojiId.isEmpty() ? null : event.getGuild().getEmoteById(emojiId);
+		if (event.getArgs().isEmpty()) {
+			MsgUtil.sendError(event, Constants.MISSING_ARGS);
+			return;
+		}
 
-        if (event.getArgs().isEmpty()) {
-			Utils.sendError(event, "Required arguments are missing!");
-            return;
-        }
+        final Emote emoji = ArgsUtil.getEmote(event, event.getArgs());
+
         if (emoji == null) {
-			Utils.sendError(event, "Emoji is not found.");
+			MsgUtil.sendError(event, "Emoji not found.");
             return;
         }
 
         final EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Emoji " + emoji.getName(), emoji.getImageUrl())
-                .setColor(Utils.getColor())
+                .setColor(Constants.COLOR)
                 .setImage(emoji.getImageUrl())
                 .setFooter("ID: " + emoji.getId());
         event.reply(embed.build());

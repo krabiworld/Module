@@ -20,7 +20,9 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.Utils;
+import eu.u032.Constants;
+import eu.u032.utils.GeneralUtil;
+import eu.u032.utils.MsgUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
@@ -35,16 +37,23 @@ public class ClearCommand extends Command {
         this.name = "clear";
         this.help = "Clear last messages in current channel";
         this.arguments = "<count>";
-        this.category = new Category("Moderation");
+        this.category = Constants.MODERATION;
         this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
         this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE, Permission.MESSAGE_ATTACH_FILES};
     }
 
     @Override
     protected void execute(final CommandEvent event) {
+		if (GeneralUtil.isNotMod(event)) {
+			return;
+		}
+		if (event.getArgs().isEmpty()) {
+			MsgUtil.sendError(event, Constants.MISSING_ARGS);
+			return;
+		}
         int count = Integer.parseInt(event.getArgs());
         if (count < 2 || count > 1000 || event.getArgs().isEmpty()) {
-			Utils.sendError(event, "The number of messages must be no less than 2 and no more than 1000.");
+			MsgUtil.sendError(event, "The number of messages must be no less than 2 and no more than 1000.");
             return;
         }
 
