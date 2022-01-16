@@ -20,68 +20,60 @@ package eu.u032;
 
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
-import eu.u032.models.GuildModel;
+import eu.u032.model.GuildModel;
+import eu.u032.service.GuildService;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Guild;
-import org.hibernate.Session;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import static eu.u032.utils.SessionFactoryUtil.getSessionFactory;
-
-public class GuildManager implements GuildSettingsManager {
+public class GuildManager extends ListenerAdapter implements GuildSettingsManager<GuildManager.GuildSettings> {
+	private final static GuildService guildService = new GuildService();
 
 	@Override
-	public GuildSettings getSettings(Guild guild) {
-		Session session = getSessionFactory().openSession();
-		GuildModel guildModel = session.get(GuildModel.class, guild.getIdLong());
-		session.close();
-		return new GuildSettings(guildModel);
+	public void onGuildJoin(final GuildJoinEvent event) {
+		if (guildService.findById(event.getGuild().getIdLong()) != null) return;
+
+		final GuildModel guildModel = new GuildModel();
+		guildModel.setId(event.getGuild().getIdLong());
+
+		guildService.save(guildModel);
 	}
 
-	public void setPrefix(Guild guild, String prefix) {
-		Session session = getSessionFactory().openSession();
+	@Override
+	public GuildSettings getSettings(final Guild guild) {
+		return new GuildSettings(new GuildService().findById(guild.getIdLong()));
+	}
 
-		GuildModel guildModel = session.get(GuildModel.class, guild.getIdLong());
+	public void setPrefix(final Guild guild, final String prefix) {
+		final GuildModel guildModel = guildService.findById(guild.getIdLong());
 		guildModel.setPrefix(prefix);
 
-		session.update(guildModel);
-		session.flush();
-		session.close();
+		guildService.update(guildModel);
 	}
 
-	public void setLogs(Guild guild, long logsId) {
-		Session session = getSessionFactory().openSession();
-
-		GuildModel guildModel = session.get(GuildModel.class, guild.getIdLong());
+	public void setLogs(final Guild guild, final long logsId) {
+		final GuildModel guildModel = guildService.findById(guild.getIdLong());
 		guildModel.setLogs(logsId);
 
-		session.update(guildModel);
-		session.flush();
-		session.close();
+		guildService.update(guildModel);
 	}
 
-	public void setMute(Guild guild, long muteId) {
-		Session session = getSessionFactory().openSession();
-
-		GuildModel guildModel = session.get(GuildModel.class, guild.getIdLong());
+	public void setMute(final Guild guild, final long muteId) {
+		final GuildModel guildModel = guildService.findById(guild.getIdLong());
 		guildModel.setMute(muteId);
 
-		session.update(guildModel);
-		session.flush();
-		session.close();
+		guildService.update(guildModel);
 	}
 
-	public void setMod(Guild guild, long modId) {
-		Session session = getSessionFactory().openSession();
-
-		GuildModel guildModel = session.get(GuildModel.class, guild.getIdLong());
+	public void setMod(final Guild guild, final long modId) {
+		final GuildModel guildModel = guildService.findById(guild.getIdLong());
 		guildModel.setMod(modId);
 
-		session.update(guildModel);
-		session.flush();
-		session.close();
+		guildService.update(guildModel);
 	}
 
 	@Getter

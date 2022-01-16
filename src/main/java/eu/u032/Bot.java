@@ -21,17 +21,17 @@ package eu.u032;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import eu.u032.commands.owner.EvalCommand;
+import eu.u032.commands.owner.OwnerCommand;
 import eu.u032.commands.settings.ModroleCommand;
 import eu.u032.commands.settings.PrefixCommand;
 import eu.u032.commands.settings.LogsCommand;
 import eu.u032.commands.settings.MuteroleCommand;
-import eu.u032.events.GuildEvents;
 import eu.u032.logging.*;
 import eu.u032.commands.information.*;
 import eu.u032.commands.moderation.*;
 import eu.u032.commands.utilities.*;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -46,7 +46,6 @@ public class Bot {
 			.setOwnerId(Config.getString("OWNER_ID"))
 			.setPrefix(Constants.PREFIX)
 			.setActivity(null)
-			.setStatus(OnlineStatus.IDLE)
 			.setEmojis("✅", "⚠", "❌")
 			.useHelpBuilder(false)
 			.setGuildSettingsManager(manager)
@@ -72,6 +71,9 @@ public class Bot {
 				new LogsCommand(manager),
 				new MuteroleCommand(manager),
 				new ModroleCommand(manager),
+				// Owner
+				new EvalCommand(),
+				new OwnerCommand(),
 				// Utilities
 				new AvatarCommand(),
 				new EmojiCommand())
@@ -82,17 +84,15 @@ public class Bot {
 			.enableIntents(GatewayIntent.GUILD_MEMBERS,
 				GatewayIntent.GUILD_MESSAGES,
 				GatewayIntent.GUILD_PRESENCES,
-				GatewayIntent.DIRECT_MESSAGES,
-				GatewayIntent.GUILD_EMOJIS)
+				GatewayIntent.DIRECT_MESSAGES)
 			.enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY, CacheFlag.EMOTE)
 			.disableCache(CacheFlag.VOICE_STATE)
 			.setBulkDeleteSplittingEnabled(false)
 			.setMemberCachePolicy(MemberCachePolicy.ALL)
 			.useSharding(0, 1)
-			.addEventListeners(eventWaiter, builder,
+			.addEventListeners(eventWaiter, builder, manager,
 				new MemberEvents(),
-				new MessageEvents(),
-				new GuildEvents())
+				new MessageEvents())
 			.build();
     }
 }

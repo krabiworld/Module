@@ -21,8 +21,8 @@ package eu.u032.commands.information;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -34,9 +34,9 @@ import java.util.List;
 
 public class UserCommand extends Command {
     public UserCommand() {
-        this.name = "user";
-        this.help = "User information";
-        this.arguments = "[@Member | ID]";
+        this.name = MessageUtil.getMessage("command.user.name");
+        this.help = MessageUtil.getMessage("command.user.help");
+        this.arguments = MessageUtil.getMessage("command.user.arguments");
         this.category = Constants.INFORMATION;
     }
 
@@ -48,7 +48,7 @@ public class UserCommand extends Command {
             member = ArgsUtil.getMember(event, event.getArgs());
         }
         if (member == null) {
-			MsgUtil.sendError(event, Constants.MEMBER_NOT_FOUND);
+			MessageUtil.sendErrorMessage(event, "error.member.not.found");
             return;
         }
 

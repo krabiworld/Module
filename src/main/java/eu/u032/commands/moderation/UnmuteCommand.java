@@ -20,21 +20,20 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.Constants;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
-import static eu.u032.Constants.*;
-
 public class UnmuteCommand extends Command {
     public UnmuteCommand() {
-        this.name = "unmute";
-        this.help = "Unmute member on whole server";
-        this.arguments = "<@Member | ID>";
-        this.category = MODERATION;
+		this.name = MessageUtil.getMessage("command.unmute.name");
+		this.help = MessageUtil.getMessage("command.unmute.help");
+		this.arguments = MessageUtil.getMessage("command.unmute.arguments");
+        this.category = Constants.MODERATION;
         this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
         this.botPermissions = new Permission[]{Permission.MANAGE_ROLES};
     }
@@ -42,10 +41,11 @@ public class UnmuteCommand extends Command {
     @Override
     protected void execute(final CommandEvent event) {
 		if (GeneralUtil.isNotMod(event)) {
+			MessageUtil.sendError(event, "error.not.mod");
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
 			return;
 		}
 
@@ -54,24 +54,24 @@ public class UnmuteCommand extends Command {
 		final Member member = ArgsUtil.getMember(event, args[0]);
 
 		if (muteRole == null) {
-			MsgUtil.sendError(event, MUTE_NOT_SET);
+			MessageUtil.sendError(event, "error.role.mute.not.set");
 			return;
 		}
         if (member == null) {
-			MsgUtil.sendError(event, MEMBER_NOT_FOUND);
+			MessageUtil.sendError(event, "error.member.not.found");
             return;
         }
-		if (GeneralUtil.checkRolePosition(member, event.getMember())) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(ROLE_POSITION, "unmute"));
+		if (GeneralUtil.isRoleHigher(member, event.getMember())) {
+			MessageUtil.sendError(event, "error.role.position", "unmute");
 			return;
 		}
         if (!GeneralUtil.hasRole(member, muteRole)) {
-			MsgUtil.sendError(event, "This member was not muted.");
+			MessageUtil.sendError(event, "command.unmute.error.not.muted");
             return;
         }
 
         event.getGuild().removeRoleFromMember(member, muteRole).queue();
-		MsgUtil.sendSuccess(event, String.format("**%s** unmuted by moderator **%s**.",
+		MessageUtil.sendSuccessMessage(event, String.format("**%s** unmuted by moderator **%s**.",
 			member.getUser().getAsTag(),
 			event.getMember().getEffectiveName()));
     }

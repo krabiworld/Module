@@ -20,11 +20,10 @@ package eu.u032.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.commons.JDAUtilitiesInfo;
 import eu.u032.Constants;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
@@ -33,8 +32,8 @@ import java.time.*;
 
 public class StatsCommand extends Command {
     public StatsCommand() {
-        this.name = "stats";
-        this.help = "Bot statistics";
+        this.name = MessageUtil.getMessage("command.stats.name");
+        this.help = MessageUtil.getMessage("command.stats.help");
         this.category = Constants.INFORMATION;
     }
 
@@ -47,39 +46,29 @@ public class StatsCommand extends Command {
 			.setColor(Constants.COLOR)
 			.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
 
-			.addField(getCommonField(jda))
-			.addField(getPlatformField(jda))
-			.addField(getVersionField());
+			.addField(getMainField(jda))
+			.addField(getPlatformField(jda));
         event.reply(embed.build());
     }
 
-    private MessageEmbed.Field getCommonField(final JDA jda) {
+    private MessageEmbed.Field getMainField(final JDA jda) {
         long channelsCount = 0;
+
         for (final Guild guild : jda.getGuilds()) {
             channelsCount += guild.getChannels().size();
         }
         final String common = String.format("**Servers:** %s\n**Users:** %s\n**Channels:** %s",
 			jda.getGuilds().size(), jda.getUsers().size(), channelsCount);
-        return new MessageEmbed.Field("Common", common, true);
+        return new MessageEmbed.Field("Main", common, true);
     }
 
     private MessageEmbed.Field getPlatformField(final JDA jda) {
-        final long totalMemory = Runtime.getRuntime().totalMemory();
 		final long uptime = OffsetDateTime.ofInstant(
 			Instant.ofEpochMilli(ManagementFactory.getRuntimeMXBean().getStartTime()), ZoneId.systemDefault())
 			.toEpochSecond();
 
-        final String platform = String.format("**Memory Usage:** %sMB / %sMB\n**Ping:** %s ms\n**Uptime:** <t:%s:R>",
-			(totalMemory - Runtime.getRuntime().freeMemory()) / 1024 / 1024,
-			totalMemory / 1024 / 1024,
-			jda.getGatewayPing(),
-			uptime);
+        final String platform = String.format("**Ping:** %s ms\n**Uptime:** <t:%s:R>",
+			jda.getGatewayPing(), uptime);
         return new MessageEmbed.Field("Platform", platform, true);
     }
-
-	private MessageEmbed.Field getVersionField() {
-		final String version = String.format("**Java:** %s\n**JDA:** %s\n**JDA-Utilities:** %s",
-			System.getProperty("java.version"), JDAInfo.VERSION, JDAUtilitiesInfo.VERSION);
-		return new MessageEmbed.Field("Version", version, true);
-	}
 }

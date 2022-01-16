@@ -1,2 +1,2 @@
 # UASM
-Private Discord bot. [Server.](https://discord.gg/ffvp7d2sqd/)
+Multifunctional bot with moderation, information and utilities commands. [Server.](https://discord.gg/ffvp7d2sqd/)

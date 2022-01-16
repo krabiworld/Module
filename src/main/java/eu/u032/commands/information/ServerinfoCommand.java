@@ -20,6 +20,7 @@ package eu.u032.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -31,8 +32,8 @@ import static eu.u032.Constants.*;
 
 public class ServerinfoCommand extends Command {
     public ServerinfoCommand() {
-        this.name = "serverinfo";
-        this.help = "Server information";
+        this.name = MessageUtil.getMessage("command.serverinfo.name");
+        this.help = MessageUtil.getMessage("command.serverinfo.help");
         this.category = INFORMATION;
     }
 

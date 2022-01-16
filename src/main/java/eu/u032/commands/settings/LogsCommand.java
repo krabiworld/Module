@@ -22,9 +22,9 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
 import eu.u032.GuildManager;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -33,9 +33,9 @@ public class LogsCommand extends Command {
 
 	public LogsCommand(GuildManager manager) {
 		this.manager = manager;
-		this.name = "logs";
-		this.help = "On or off logs";
-		this.arguments = "<on / off> [@Channel | ID]";
+		this.name = MessageUtil.getMessage("command.logs.name");
+		this.help = MessageUtil.getMessage("command.logs.help");
+		this.arguments = MessageUtil.getMessage("command.logs.arguments");
 		this.category = Constants.SETTINGS;
 		this.userPermissions = new Permission[]{Permission.MANAGE_SERVER};
 	}
@@ -43,35 +43,37 @@ public class LogsCommand extends Command {
 	@Override
 	protected void execute(final CommandEvent event) {
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, Constants.MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
 			return;
 		}
 
 		final String[] args = ArgsUtil.split(event.getArgs());
 
-		if (args[0].equals("off")) {
+		if (args[0].startsWith("off")) {
 			if (GeneralUtil.getLogsChannel(event.getGuild()) == null) {
-				MsgUtil.sendError(event, "Logs already disabled.");
+				MessageUtil.sendError(event, "command.logs.error.already.disabled");
 				return;
 			}
 			manager.setLogs(event.getGuild(), 0);
-			MsgUtil.sendSuccess(event, "Logs are disabled.");
+			MessageUtil.sendSuccessMessage(event, "Logs are disabled.");
 		} else if (args[0].startsWith("on")) {
 			if (args.length <= 1) {
-				MsgUtil.sendError(event, Constants.MISSING_ARGS);
+				MessageUtil.sendError(event, "error.missing.args");
 				return;
 			}
 
 			final TextChannel channel = ArgsUtil.getChannel(event, args[1]);
 
 			if (channel == null) {
-				MsgUtil.sendError(event, "Channel not found.");
+				MessageUtil.sendError(event, "error.channel.not.found");
 				return;
 			}
 
 			manager.setLogs(event.getGuild(), channel.getIdLong());
 
-			MsgUtil.sendSuccess(event, "Logs channel changed to " + channel.getAsMention());
+			MessageUtil.sendSuccess(event, "command.logs.success.changed", channel.getAsMention());
+		} else {
+			MessageUtil.sendError(event, "error.missing.args");
 		}
 	}
 }

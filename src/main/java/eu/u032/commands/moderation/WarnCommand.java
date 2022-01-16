@@ -20,33 +20,32 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.models.WarnModel;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.Constants;
+import eu.u032.model.WarnModel;
+import eu.u032.service.WarnService;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Member;
-import org.hibernate.Session;
 
 import java.util.Objects;
 
-import static eu.u032.Constants.*;
-import static eu.u032.utils.SessionFactoryUtil.getSessionFactory;
-
 public class WarnCommand extends Command {
 	public WarnCommand() {
-		this.name = "warn";
-		this.help = "Warn member";
-		this.arguments = "<@Member | ID> [reason]";
-		this.category = MODERATION;
+		this.name = MessageUtil.getMessage("command.warn.name");
+		this.help = MessageUtil.getMessage("command.warn.help");
+		this.arguments = MessageUtil.getMessage("command.warn.arguments");
+		this.category = Constants.MODERATION;
 	}
 
 	@Override
 	protected void execute(final CommandEvent event) {
 		if (GeneralUtil.isNotMod(event)) {
+			MessageUtil.sendError(event, "error.not.mod");
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
 			return;
 		}
 
@@ -55,33 +54,32 @@ public class WarnCommand extends Command {
 		final String reason = ArgsUtil.getGluedArg(args, 1);
 
 		if (member == null) {
-			MsgUtil.sendError(event, MEMBER_NOT_FOUND);
+			MessageUtil.sendError(event, "error.member.not.found");
 			return;
 		}
-		if (member == event.getSelfMember()) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(CANNOT_ME, "warn"));
+		if (member.getUser().isBot()) {
+			MessageUtil.sendError(event, "command.warn.error.cannot.bot");
 			return;
 		}
 		if (member == event.getMember()) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(CANNOT_YOURSELF, "warn"));
+			MessageUtil.sendError(event, "error.cannot.yourself", "warn");
 			return;
 		}
-		if (GeneralUtil.checkRolePosition(member, event.getMember())) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(ROLE_POSITION, "warn"));
+		if (GeneralUtil.isRoleHigher(member, event.getMember())) {
+			MessageUtil.sendError(event, "error.role.position", "warn");
 			return;
 		}
 
-		Session session = getSessionFactory().openSession();
+		WarnService warnService = new WarnService();
 
 		WarnModel warnModel = new WarnModel();
+		warnModel.setGuild(event.getGuild().getIdLong());
 		warnModel.setUser(member.getIdLong());
 		warnModel.setReason(reason);
 
-		session.save(warnModel);
-		session.flush();
-		session.close();
+		warnService.save(warnModel);
 
-		MsgUtil.sendSuccess(event, String.format("**%s** warned (ID: `#%s`) by moderator **%s**%s",
+		MessageUtil.sendSuccessMessage(event, String.format("**%s** warned (ID: `#%s`) by moderator **%s**%s",
 			member.getUser().getAsTag(),
 			warnModel.getId(),
 			Objects.requireNonNull(event.getMember()).getEffectiveName(),

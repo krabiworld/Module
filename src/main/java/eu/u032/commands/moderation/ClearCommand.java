@@ -21,8 +21,8 @@ package eu.u032.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
@@ -34,9 +34,9 @@ import java.util.List;
 
 public class ClearCommand extends Command {
     public ClearCommand() {
-        this.name = "clear";
-        this.help = "Clear last messages in current channel";
-        this.arguments = "<count>";
+        this.name = MessageUtil.getMessage("command.clear.name");
+        this.help = MessageUtil.getMessage("command.clear.help");
+        this.arguments = MessageUtil.getMessage("command.clear.arguments");
         this.category = Constants.MODERATION;
         this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
         this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE, Permission.MESSAGE_ATTACH_FILES};
@@ -45,15 +45,16 @@ public class ClearCommand extends Command {
     @Override
     protected void execute(final CommandEvent event) {
 		if (GeneralUtil.isNotMod(event)) {
+			MessageUtil.sendError(event, "error.not.mod");
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, Constants.MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
 			return;
 		}
         int count = Integer.parseInt(event.getArgs());
         if (count < 2 || count > 1000 || event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, "The number of messages must be no less than 2 and no more than 1000.");
+			MessageUtil.sendError(event, "command.clear.error.count");
             return;
         }
 

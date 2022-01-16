@@ -21,16 +21,16 @@ package eu.u032.commands.utilities;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 
 public class AvatarCommand extends Command {
     public AvatarCommand() {
-        this.name = "avatar";
-        this.help = "Show avatar of member";
-        this.arguments = "[@Member | ID]";
+		this.name = MessageUtil.getMessage("command.avatar.name");
+		this.help = MessageUtil.getMessage("command.avatar.help");
+		this.arguments = MessageUtil.getMessage("command.avatar.arguments");
         this.category = Constants.UTILITIES;
     }
 
@@ -42,7 +42,7 @@ public class AvatarCommand extends Command {
             member = ArgsUtil.getMember(event, event.getArgs());
         }
         if (member == null) {
-            MsgUtil.sendError(event, Constants.MEMBER_NOT_FOUND);
+            MessageUtil.sendError(event, "error.member.not.found");
             return;
         }
 

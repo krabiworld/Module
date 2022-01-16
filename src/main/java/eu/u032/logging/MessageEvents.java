@@ -20,7 +20,7 @@ package eu.u032.logging;
 
 import eu.u032.Constants;
 import eu.u032.MessageCache;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -73,7 +73,7 @@ public class MessageEvents extends ListenerAdapter {
             embed.addField("Attachments", attachments.toString(), false);
         }
 
-        MsgUtil.sendLog(event.getGuild(), embed);
+        MessageUtil.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class MessageEvents extends ListenerAdapter {
 			embed.addField("After", afterFormatted, false);
 		}
 
-		MsgUtil.sendLog(event.getGuild(), embed);
+		MessageUtil.sendLog(event.getGuild(), embed);
 	}
 
     @Override
@@ -131,6 +131,6 @@ public class MessageEvents extends ListenerAdapter {
                 .setTitle("Deleted " + event.getMessageIds().size() + " messages!")
                 .setDescription("Deleted in " + event.getChannel().getAsMention())
                 .setColor(Constants.COLOR_RED);
-		MsgUtil.sendLog(event.getGuild(), embed, deletedMessagesString.toString().getBytes());
+		MessageUtil.sendLog(event.getGuild(), embed, deletedMessagesString.toString().getBytes());
     }
 }

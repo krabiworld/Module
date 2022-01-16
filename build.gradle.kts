@@ -43,6 +43,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.10")
 	implementation("org.postgresql:postgresql:42.3.1")
 	implementation("org.hibernate:hibernate-core:5.6.3.Final")
+	implementation("org.codehaus.groovy:groovy:3.0.9")
 	compileOnly("org.projectlombok:lombok:1.18.22")
 	annotationProcessor("org.projectlombok:lombok:1.18.22")
 }

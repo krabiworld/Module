@@ -1,4 +1,4 @@
-package eu.u032.models;
+package eu.u032.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,15 +17,11 @@ public class GuildModel {
 	@Column(name = "guild_id")
 	private long id;
 
-	@Column(name = "prefix")
-	private String prefix;
+	private String prefix = "!";
 
-	@Column(name = "mute")
-	private long mute;
+	private long mute = 0;
 
-	@Column(name = "logs")
-	private long logs;
+	private long logs = 0;
 
-	@Column(name = "mod")
-	private long mod;
+	private long mod = 0;
 }

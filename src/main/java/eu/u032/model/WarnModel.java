@@ -1,4 +1,4 @@
-package eu.u032.models;
+package eu.u032.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,12 +12,13 @@ import javax.persistence.*;
 public class WarnModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
 	private long id;
+
+	@Column(name = "guild_id")
+	private long guild;
 
 	@Column(name = "user_id")
 	private long user;
 
-	@Column(name = "reason")
 	private String reason;
 }
