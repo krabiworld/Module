@@ -22,22 +22,20 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
 import eu.u032.GuildManager;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
-
-import java.util.Objects;
 
 public class MuteroleCommand extends Command {
 	final GuildManager manager;
 
 	public MuteroleCommand(GuildManager manager) {
 		this.manager = manager;
-		this.name = "muterole";
-		this.help = "Set mute role";
-		this.arguments = "<@Role | ID>";
+		this.name = MessageUtil.getMessage("command.muterole.name");
+		this.help = MessageUtil.getMessage("command.muterole.help");
+		this.arguments = MessageUtil.getMessage("command.muterole.arguments");
 		this.category = Constants.SETTINGS;
 		this.userPermissions = new Permission[]{Permission.MANAGE_SERVER};
 	}
@@ -45,7 +43,7 @@ public class MuteroleCommand extends Command {
 	@Override
 	protected void execute(final CommandEvent event) {
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, Constants.MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
 			return;
 		}
 
@@ -53,15 +51,15 @@ public class MuteroleCommand extends Command {
 		final Role muteRole = GeneralUtil.getMuteRole(event.getGuild());
 
 		if (role == null) {
-			MsgUtil.sendError(event, "Role not found.");
+			MessageUtil.sendError(event, "error.role.not.found");
 			return;
 		}
 		if (role.getIdLong() == (muteRole == null ? 0 : muteRole.getIdLong())) {
-			MsgUtil.sendError(event, "This role already set.");
+			MessageUtil.sendError(event, "error.role.already.set");
 		}
 
 		manager.setMute(event.getGuild(), role.getIdLong());
 
-		MsgUtil.sendSuccess(event, "Mute role changed to **" + role.getName() + "**");
+		MessageUtil.sendSuccessMessage(event, "Mute role changed to **" + role.getName() + "**");
 	}
 }

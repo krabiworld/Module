@@ -25,7 +25,7 @@ import java.awt.*;
 public class Constants {
 	// Bot
 	public static final int MAX_MESSAGE_CACHE = 500;
-	public static final String PREFIX = "m!";
+	public static final String PREFIX = ">>>";
 
 	// Colors
 	/** Main color. */
@@ -42,15 +42,6 @@ public class Constants {
 	public static final Category MODERATION = new Category("Moderation");
 	public static final Category SETTINGS = new Category("Settings");
 	public static final Category UTILITIES = new Category("Utilities");
-
-	// Messages
-	public static final String MUTE_NOT_SET = "Mute role is not set.";
-	public static final String MISSING_ARGS = "Required arguments are missing!";
-	public static final String MEMBER_NOT_FOUND = "Member not found.";
-	public static final String CANNOT_ME = "You cannot %s me.";
-	public static final String CANNOT_YOURSELF = "You cannot %s yourself.";
-	public static final String ROLE_POSITION = "I cannot %s member with role equal or higher than yours.";
-	public static final String NOT_MOD = "You are not a moderator.";
 
 	// Emojis
 	public static final String ONLINE = "<:online:925113750598598736>";

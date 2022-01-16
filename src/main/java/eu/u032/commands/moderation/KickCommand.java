@@ -20,22 +20,21 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.Constants;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 
 import java.util.Objects;
 
-import static eu.u032.Constants.*;
-
 public class KickCommand extends Command {
     public KickCommand() {
-        this.name = "kick";
-        this.help = "Kick member from server";
-        this.arguments = "<@Member | ID> [reason]";
-        this.category = MODERATION;
+        this.name = MessageUtil.getMessage("command.kick.name");
+        this.help = MessageUtil.getMessage("command.kick.help");
+        this.arguments = MessageUtil.getMessage("command.kick.arguments");
+        this.category = Constants.MODERATION;
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
         this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
     }
@@ -43,10 +42,11 @@ public class KickCommand extends Command {
     @Override
     protected void execute(final CommandEvent event) {
 		if (GeneralUtil.isNotMod(event)) {
+			MessageUtil.sendError(event, "error.not.mod");
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
 			return;
 		}
 
@@ -55,24 +55,24 @@ public class KickCommand extends Command {
 		final String reason = ArgsUtil.getGluedArg(args, 1);
 
         if (member == null) {
-			MsgUtil.sendError(event, MEMBER_NOT_FOUND);
+			MessageUtil.sendError(event, "error.member.not.found");
             return;
         }
 		if (member == event.getSelfMember()) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(CANNOT_ME, "kick"));
+			MessageUtil.sendError(event, "error.cannot.me", "kick");
 			return;
 		}
 		if (member == event.getMember()) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(CANNOT_YOURSELF, "kick"));
+			MessageUtil.sendError(event, "error.cannot.yourself", "kick");
 			return;
 		}
-		if (GeneralUtil.checkRolePosition(member, event.getMember())) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(ROLE_POSITION, "kick"));
+		if (GeneralUtil.isRoleHigher(member, event.getMember())) {
+			MessageUtil.sendError(event, "error.role.position", "kick");
 			return;
 		}
 
         event.getGuild().kick(member, reason).queue();
-        MsgUtil.sendSuccess(event, String.format("**%s** kicked by moderator **%s**%s",
+        MessageUtil.sendSuccessMessage(event, String.format("**%s** kicked by moderator **%s**%s",
 			member.getUser().getAsTag(),
 			Objects.requireNonNull(event.getMember()).getEffectiveName(),
 			reason.isEmpty() ? "." : " with reason: " + reason));

@@ -16,7 +16,7 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.utils;
+package eu.u032.util;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.GuildManager;
@@ -26,17 +26,30 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-public class MsgUtil {
+public class MessageUtil {
+	private final static Properties PROPERTIES = new Properties();
+
+	/** React and send error message from properties, after 10 seconds message has been deleted. */
+	public static void sendError(final CommandEvent event, final String key, final Object... args) {
+		sendErrorMessage(event, getMessage(key, args));
+	}
+
 	/** React and send error message, after 10 seconds message has been deleted. */
-	public static void sendError(final CommandEvent event, final String content) {
+	public static void sendErrorMessage(final CommandEvent event, final String content) {
 		event.reactError();
 		event.replyError(content, m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
 	}
 
+	/** React and send success message from properties, after 20 seconds message has been deleted. */
+	public static void sendSuccess(final CommandEvent event, final String key, final Object... args) {
+		sendSuccessMessage(event, getMessage(key, args));
+	}
+
 	/** React and send success message, after 20 seconds message has been deleted. */
-	public static void sendSuccess(final CommandEvent event, final String content) {
+	public static void sendSuccessMessage(final CommandEvent event, final String content) {
 		event.reactSuccess();
 		event.replySuccess(content, m -> m.delete().queueAfter(20, TimeUnit.SECONDS));
 	}
@@ -64,8 +77,22 @@ public class MsgUtil {
 		}
 	}
 
-	/** Add word to template. */
-	public static String getTemplate(String template, String word) {
-		return String.format(template, word);
+	private static String getProperty(String key) {
+		try {
+			PROPERTIES.load(MessageUtil.class.getResourceAsStream("/messages.properties"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return PROPERTIES.getProperty(key);
+	}
+
+	/** Get message from properties file. */
+	public static String getMessage(final String key, final Object... args) {
+		if (args == null) {
+			return getProperty(key);
+		} else {
+			return String.format(getProperty(key), args);
+		}
 	}
 }

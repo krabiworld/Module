@@ -21,16 +21,16 @@ package eu.u032.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 
 public class UnbanCommand extends Command {
     public UnbanCommand() {
-        this.name = "unban";
-        this.help = "Unban member from server";
-        this.arguments = "<ID>";
+		this.name = MessageUtil.getMessage("command.unban.name");
+		this.help = MessageUtil.getMessage("command.unban.help");
+		this.arguments = MessageUtil.getMessage("command.unban.arguments");
         this.category = Constants.MODERATION;
         this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
         this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
@@ -39,10 +39,15 @@ public class UnbanCommand extends Command {
     @Override
     protected void execute(final CommandEvent event) {
 		if (GeneralUtil.isNotMod(event)) {
+			MessageUtil.sendError(event, "error.not.mod");
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, Constants.MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
+			return;
+		}
+		if (!GeneralUtil.isBanned(event.getArgs(), event.getGuild())) {
+			MessageUtil.sendError(event, "command.unban.error.not.found");
 			return;
 		}
 
@@ -50,11 +55,11 @@ public class UnbanCommand extends Command {
 
         try {
             event.getGuild().unban(args[0]).queue();
-			MsgUtil.sendSuccess(event, String.format("Member with id **%s** unbanned by moderator **%s**.",
+			MessageUtil.sendSuccessMessage(event, String.format("Member with id **%s** unbanned by moderator **%s**.",
 				args[0],
 				event.getMember().getEffectiveName()));
         } catch (final Exception e) {
-            event.replyError(e.getMessage());
+            MessageUtil.sendErrorMessage(event, e.getMessage());
         }
     }
 }

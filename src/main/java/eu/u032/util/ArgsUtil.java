@@ -16,14 +16,11 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.utils;
+package eu.u032.util;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.entities.Emote;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 
 import java.util.List;
 
@@ -38,6 +35,15 @@ public class ArgsUtil {
 		List<Member> members = FinderUtil.findMembers(arg, event.getGuild());
 		for (final Member member : members) {
 			return member;
+		}
+		return null;
+	}
+
+	/** Get {@link User} from argument. */
+	public static User getUser(final CommandEvent event, final String arg) {
+		List<User> users = FinderUtil.findUsers(arg, event.getJDA());
+		for (final User user : users) {
+			return user;
 		}
 		return null;
 	}

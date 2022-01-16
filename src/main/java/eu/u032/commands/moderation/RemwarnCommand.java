@@ -20,54 +20,52 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.models.WarnModel;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.model.WarnModel;
+import eu.u032.service.WarnService;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Member;
-import org.hibernate.Session;
 
 import static eu.u032.Constants.*;
-import static eu.u032.utils.SessionFactoryUtil.getSessionFactory;
 
 public class RemwarnCommand extends Command {
 	public RemwarnCommand() {
-		this.name = "remwarn";
-		this.help = "Remove warn from member";
-		this.arguments = "<case>";
+		this.name = MessageUtil.getMessage("command.remwarn.name");
+		this.help = MessageUtil.getMessage("command.remwarn.help");
+		this.arguments = MessageUtil.getMessage("command.remwarn.arguments");
 		this.category = MODERATION;
 	}
 
 	@Override
 	protected void execute(final CommandEvent event) {
 		if (GeneralUtil.isNotMod(event)) {
+			MessageUtil.sendError(event, "error.not.mod");
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
 			return;
 		}
 
-		final Session session = getSessionFactory().openSession();
+		final WarnService warnService = new WarnService();
 
-		final WarnModel warnModel = session.find(WarnModel.class, Long.parseLong(event.getArgs()));
+		final WarnModel warnModel = warnService.findById(Long.parseLong(event.getArgs()));
 
-		if (warnModel == null) {
-			MsgUtil.sendError(event, "Warn not found.");
+		if (warnModel == null || warnModel.getGuild() != event.getGuild().getIdLong()) {
+			MessageUtil.sendError(event, "command.warn.error.not.found");
 			return;
 		}
 
 		final Member member = event.getGuild().getMemberById(warnModel.getUser());
 
 		if (member == null) {
-			MsgUtil.sendError(event, MEMBER_NOT_FOUND);
+			MessageUtil.sendError(event, "error.member.not.found");
 			return;
 		}
 
-		session.delete(warnModel);
-		session.flush();
-		session.close();
+		warnService.delete(warnModel);
 
-		MsgUtil.sendSuccess(event, String.format("Moderator **%s** removed warning (ID `%s`) to **%s**",
+		MessageUtil.sendSuccessMessage(event, String.format("Moderator **%s** removed warning (ID `%s`) to **%s**",
 			event.getMember().getEffectiveName(),
 			warnModel.getId(),
 			member.getUser().getAsTag()));

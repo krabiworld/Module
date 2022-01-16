@@ -16,30 +16,35 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.utils;
+package eu.u032.util;
 
-import eu.u032.models.GuildModel;
-import eu.u032.models.WarnModel;
+import eu.u032.model.GuildModel;
+import eu.u032.model.OwnerModel;
+import eu.u032.model.WarnModel;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-public class SessionFactoryUtil {
+public class HibernateUtil {
 	private static SessionFactory sessionFactory;
 
-	public static SessionFactory getSessionFactory() {
-		if (sessionFactory == null) {
-			try {
-				Configuration configuration = new Configuration().configure()
-					.addAnnotatedClass(GuildModel.class)
-					.addAnnotatedClass(WarnModel.class);
-				StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
-					.applySettings(configuration.getProperties());
-				sessionFactory = configuration.buildSessionFactory(builder.build());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+	private static final Configuration configuration = new Configuration().configure();
+
+	static {
+		try {
+			configuration
+				.addAnnotatedClass(GuildModel.class)
+				.addAnnotatedClass(WarnModel.class)
+				.addAnnotatedClass(OwnerModel.class);
+			StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
+				.applySettings(configuration.getProperties());
+			sessionFactory = configuration.buildSessionFactory(builder.build());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+	}
+
+	public static SessionFactory getSessionFactory() {
 		return sessionFactory;
 	}
 }

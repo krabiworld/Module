@@ -21,30 +21,30 @@ package eu.u032.commands.utilities;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emote;
 
 public class EmojiCommand extends Command {
     public EmojiCommand() {
-        this.name = "emoji";
-        this.help = "Information about emoji";
-        this.arguments = "<@Emoji | ID>";
+		this.name = MessageUtil.getMessage("command.emoji.name");
+		this.help = MessageUtil.getMessage("command.emoji.help");
+		this.arguments = MessageUtil.getMessage("command.emoji.arguments");
         this.category = Constants.UTILITIES;
     }
 
     @Override
     protected void execute(final CommandEvent event) {
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, Constants.MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
 			return;
 		}
 
         final Emote emoji = ArgsUtil.getEmote(event, event.getArgs());
 
         if (emoji == null) {
-			MsgUtil.sendError(event, "Emoji not found.");
+			MessageUtil.sendError(event, "error.emoji.not.found");
             return;
         }
 

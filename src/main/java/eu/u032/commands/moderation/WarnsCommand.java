@@ -20,29 +20,24 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.models.WarnModel;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.Constants;
+import eu.u032.model.WarnModel;
+import eu.u032.service.WarnService;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
-
 import java.util.List;
-
-import static eu.u032.Constants.*;
-import static eu.u032.utils.SessionFactoryUtil.getSessionFactory;
 
 public class WarnsCommand extends Command {
 	public WarnsCommand() {
-		this.name = "warns";
-		this.help = "Warns member";
-		this.arguments = "[@Member | ID]";
-		this.category = MODERATION;
+		this.name = MessageUtil.getMessage("command.warns.name");
+		this.help = MessageUtil.getMessage("command.warns.help");
+		this.arguments = MessageUtil.getMessage("command.warns.arguments");
+		this.category = Constants.MODERATION;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void execute(final CommandEvent event) {
 		Member member = event.getMember();
 
@@ -50,17 +45,16 @@ public class WarnsCommand extends Command {
 			member = ArgsUtil.getMember(event, event.getArgs());
 		}
 		if (member == null) {
-			MsgUtil.sendError(event, MEMBER_NOT_FOUND);
+			MessageUtil.sendError(event, "error.member.not.found");
+			return;
+		}
+		if (member.getUser().isBot()) {
+			MessageUtil.sendError(event, "command.warns.error.is.bot");
 			return;
 		}
 
-		final Session session = getSessionFactory().openSession();
-
-		final Query<WarnModel> query = session.createQuery("from WarnModel where user_id = :id")
-			.setParameter("id", member.getIdLong());
-		final List<WarnModel> warnModels = query.getResultList();
-
-		session.close();
+		final List<WarnModel> warnModels = new WarnService()
+			.findAllByGuildAndUser(event.getGuild().getIdLong(), member.getIdLong());
 
 		final StringBuilder warnsMessage = new StringBuilder("Warns count: " + warnModels.size() + "\n");
 		for (WarnModel warnModel : warnModels) {
@@ -72,7 +66,7 @@ public class WarnsCommand extends Command {
 
 		EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor(member.getUser().getAsTag(), null, member.getEffectiveAvatarUrl())
-			.setColor(COLOR)
+			.setColor(Constants.COLOR)
 			.setDescription(warnsMessage.isEmpty() ? "" : warnsMessage)
 			.setFooter("ID: " + member.getId());
 		event.reply(embed.build());

@@ -21,8 +21,8 @@ package eu.u032.commands.information;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.LinkedList;
@@ -30,9 +30,9 @@ import java.util.List;
 
 public class HelpCommand extends Command {
     public HelpCommand() {
-        this.name = "help";
-        this.help = "List of all commands and category";
-        this.arguments = "[command/category]";
+        this.name = MessageUtil.getMessage("command.help.name");
+        this.help = MessageUtil.getMessage("command.help.help");
+        this.arguments = MessageUtil.getMessage("command.help.arguments");
         this.category = Constants.INFORMATION;
     }
 
@@ -101,7 +101,7 @@ public class HelpCommand extends Command {
                 }
             }
 
-			MsgUtil.sendError(event, "Command or category **" + args + "** not found.");
+			MessageUtil.sendErrorMessage(event, "Command or category **" + args + "** not found.");
         }
     }
 }

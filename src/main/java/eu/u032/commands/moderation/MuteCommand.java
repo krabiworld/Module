@@ -20,9 +20,9 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.utils.ArgsUtil;
-import eu.u032.utils.GeneralUtil;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.ArgsUtil;
+import eu.u032.util.GeneralUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -31,9 +31,9 @@ import static eu.u032.Constants.*;
 
 public class MuteCommand extends Command {
     public MuteCommand() {
-        this.name = "mute";
-        this.help = "Mute member on whole server";
-        this.arguments = "<@Member | ID>";
+        this.name = MessageUtil.getMessage("command.mute.name");
+        this.help = MessageUtil.getMessage("command.mute.help");
+        this.arguments = MessageUtil.getMessage("command.mute.arguments");
         this.category = MODERATION;
 		this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
         this.botPermissions = new Permission[]{Permission.MANAGE_ROLES};
@@ -42,10 +42,11 @@ public class MuteCommand extends Command {
     @Override
     protected void execute(final CommandEvent event) {
 		if (GeneralUtil.isNotMod(event)) {
+			MessageUtil.sendError(event, "error.not.mod");
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MsgUtil.sendError(event, MISSING_ARGS);
+			MessageUtil.sendError(event, "error.missing.args");
 			return;
 		}
 
@@ -54,32 +55,32 @@ public class MuteCommand extends Command {
 		final Member member = ArgsUtil.getMember(event, args[0]);
 
 		if (muteRole == null) {
-			MsgUtil.sendError(event, MUTE_NOT_SET);
+			MessageUtil.sendError(event, "error.role.mute.not.set");
 			return;
 		}
         if (member == null) {
-			MsgUtil.sendError(event, MEMBER_NOT_FOUND);
+			MessageUtil.sendError(event, "error.member.not.found");
             return;
         }
-		if (member == event.getSelfMember()) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(CANNOT_ME, "mute"));
+		if (member.getUser().isBot()) {
+			MessageUtil.sendError(event, "error.cannot.bot", "mute");
 			return;
 		}
 		if (member == event.getMember()) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(CANNOT_YOURSELF, "mute"));
+			MessageUtil.sendError(event, "error.cannot.yourself", "mute");
 			return;
 		}
-		if (GeneralUtil.checkRolePosition(member, event.getMember())) {
-			MsgUtil.sendError(event, MsgUtil.getTemplate(ROLE_POSITION, "mute"));
+		if (GeneralUtil.isRoleHigher(member, event.getMember())) {
+			MessageUtil.sendError(event, "error.role.position", "mute");
 			return;
 		}
         if (GeneralUtil.hasRole(member, muteRole)) {
-			MsgUtil.sendError(event, "This member already muted.");
+			MessageUtil.sendError(event, "command.mute.error.already.muted");
             return;
         }
 
         event.getGuild().addRoleToMember(member, muteRole).queue();
-        MsgUtil.sendSuccess(event, String.format("**%s** muted by moderator **%s**.",
+        MessageUtil.sendSuccessMessage(event, String.format("**%s** muted by moderator **%s**.",
 			member.getUser().getAsTag(),
 			event.getMember().getEffectiveName()));
     }

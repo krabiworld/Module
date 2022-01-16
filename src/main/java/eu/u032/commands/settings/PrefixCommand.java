@@ -22,7 +22,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
 import eu.u032.GuildManager;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 
 public class PrefixCommand extends Command {
@@ -30,21 +30,22 @@ public class PrefixCommand extends Command {
 
 	public PrefixCommand(GuildManager manager) {
 		this.manager = manager;
-		this.name = "prefix";
-		this.help = "Change prefix on this server";
-		this.arguments = "<prefix>";
+		this.name = MessageUtil.getMessage("command.prefix.name");
+		this.help = MessageUtil.getMessage("command.prefix.help");
+		this.arguments = MessageUtil.getMessage("command.prefix.arguments");
 		this.category = Constants.SETTINGS;
 		this.userPermissions = new Permission[]{Permission.MANAGE_SERVER};
 	}
 
 	@Override
 	protected void execute(final CommandEvent event) {
-		if (event.getArgs().length() < 2 || event.getArgs().length() > 4) {
-			MsgUtil.sendError(event, "The prefix length should not be less than 2 and greater than 4.");
+		if (event.getArgs().length() < 1 || event.getArgs().length() > 4) {
+			MessageUtil.sendError(event, "command.prefix.error.length");
+			return;
 		}
 
 		manager.setPrefix(event.getGuild(), event.getArgs());
 
-		MsgUtil.sendSuccess(event, "Prefix changed to **" + event.getArgs() + "**");
+		MessageUtil.sendSuccessMessage(event, "Prefix changed to **" + event.getArgs() + "**");
 	}
 }

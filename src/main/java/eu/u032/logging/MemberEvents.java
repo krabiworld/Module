@@ -19,7 +19,7 @@
 package eu.u032.logging;
 
 import eu.u032.Constants;
-import eu.u032.utils.MsgUtil;
+import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -35,8 +35,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.List;
 
-import static eu.u032.Constants.BOTS;
-
 public class MemberEvents extends ListenerAdapter {
 	@Override
     public void onGuildMemberJoin(final GuildMemberJoinEvent event) {
@@ -45,14 +43,13 @@ public class MemberEvents extends ListenerAdapter {
         final EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor(member.getUser().getAsTag(), null, member.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_GREEN)
-			.setDescription(String.format("%s%s joined to server!",
-				member.getAsMention(), member.getUser().isBot() ? " " + BOTS : ""))
+			.setDescription(member.getAsMention() + " joined to server!")
 			.addField("Registered at",
 				String.format("<t:%s>", member.getTimeCreated().toEpochSecond()), true)
 			.addField("Member count",
 				String.valueOf(member.getGuild().getMemberCount()), true)
 			.setFooter("ID: " + member.getId());
-        MsgUtil.sendLog(event.getGuild(), embed);
+        MessageUtil.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -64,8 +61,7 @@ public class MemberEvents extends ListenerAdapter {
         final EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor(member.getUser().getAsTag(), null, member.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_RED)
-			.setDescription(String.format("%s%s has left the server!",
-				member.getAsMention(), member.getUser().isBot() ? " " + BOTS : ""))
+			.setDescription(member.getAsMention() + " has left the server!")
 			.addField("Joined at",
 				String.format("<t:%s>", member.getTimeJoined().toEpochSecond()), true)
 			.addField("Registered at",
@@ -73,7 +69,7 @@ public class MemberEvents extends ListenerAdapter {
 			.addField("Member count",
 				String.valueOf(event.getGuild().getMemberCount()), true)
 			.setFooter("ID: " + member.getId());
-        MsgUtil.sendLog(event.getGuild(), embed);
+        MessageUtil.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -95,7 +91,7 @@ public class MemberEvents extends ListenerAdapter {
 
         if (after != null) embed.addField("After", after, true);
 
-        MsgUtil.sendLog(event.getGuild(), embed);
+        MessageUtil.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -104,7 +100,7 @@ public class MemberEvents extends ListenerAdapter {
         final StringBuilder addedRoles = new StringBuilder();
 
         for (final Role role : roles) {
-            addedRoles.append(role.getAsMention()).append(" ");
+            addedRoles.append("`").append(role.getName()).append("` ");
         }
 
         final EmbedBuilder embed = new EmbedBuilder()
@@ -112,7 +108,7 @@ public class MemberEvents extends ListenerAdapter {
 			.setColor(Constants.COLOR_GREEN)
 			.setDescription(addedRoles.toString())
 			.setFooter("ID: " + event.getUser().getId());
-        MsgUtil.sendLog(event.getGuild(), embed);
+        MessageUtil.sendLog(event.getGuild(), embed);
     }
 
     @Override
@@ -121,7 +117,7 @@ public class MemberEvents extends ListenerAdapter {
         final StringBuilder removedRoles = new StringBuilder();
 
         for (final Role role : roles) {
-            removedRoles.append(role.getAsMention()).append(" ");
+			removedRoles.append("`").append(role.getName()).append("` ");
         }
 
         final EmbedBuilder embed = new EmbedBuilder()
@@ -129,7 +125,7 @@ public class MemberEvents extends ListenerAdapter {
 			.setColor(Constants.COLOR_RED)
 			.setDescription(removedRoles.toString())
 			.setFooter("ID: " + event.getUser().getId());
-        MsgUtil.sendLog(event.getGuild(), embed);
+        MessageUtil.sendLog(event.getGuild(), embed);
     }
 
 	@Override
@@ -140,7 +136,7 @@ public class MemberEvents extends ListenerAdapter {
 			.setAuthor(user.getAsTag() + " was banned", null, user.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_RED)
 			.setFooter("ID: " + user.getId());
-		MsgUtil.sendLog(event.getGuild(), embed);
+		MessageUtil.sendLog(event.getGuild(), embed);
 	}
 
 	@Override
@@ -151,6 +147,6 @@ public class MemberEvents extends ListenerAdapter {
 			.setAuthor(user.getAsTag() + " was unbanned", null, user.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_GREEN)
 			.setFooter("ID: " + user.getId());
-		MsgUtil.sendLog(event.getGuild(), embed);
+		MessageUtil.sendLog(event.getGuild(), embed);
 	}
 }
