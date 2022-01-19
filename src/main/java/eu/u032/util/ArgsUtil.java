@@ -1,5 +1,5 @@
 /*
- * UASM Discord Bot.
+ * Module Discord Bot.
  * Copyright (C) 2022 untled032, Headcrab
 
  * UASM is free software: you can redistribute it and/or modify
