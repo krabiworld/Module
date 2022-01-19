@@ -49,7 +49,7 @@ DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD="maximum"
 
-warnModel () {
+warn () {
     echo "$*"
 }
 
@@ -114,10 +114,10 @@ if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
         fi
         ulimit -n $MAX_FD
         if [ $? -ne 0 ] ; then
-            warnModel "Could not set maximum file descriptor limit: $MAX_FD"
+            warn "Could not set maximum file descriptor limit: $MAX_FD"
         fi
     else
-        warnModel "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
+        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
     fi
 fi
 

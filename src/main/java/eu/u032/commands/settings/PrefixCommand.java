@@ -21,12 +21,12 @@ package eu.u032.commands.settings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.GuildManager;
+import eu.u032.manager.GuildManager;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 
 public class PrefixCommand extends Command {
-	final GuildManager manager;
+	private final GuildManager manager;
 
 	public PrefixCommand(GuildManager manager) {
 		this.manager = manager;
@@ -38,7 +38,7 @@ public class PrefixCommand extends Command {
 	}
 
 	@Override
-	protected void execute(final CommandEvent event) {
+	protected void execute(CommandEvent event) {
 		if (event.getArgs().length() < 1 || event.getArgs().length() > 4) {
 			MessageUtil.sendError(event, "command.prefix.error.length");
 			return;

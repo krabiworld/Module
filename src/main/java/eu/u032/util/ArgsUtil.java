@@ -26,58 +26,58 @@ import java.util.List;
 
 public class ArgsUtil {
 	/** Will return split arguments. */
-    public static String[] split(final String args) {
+    public static String[] split(String args) {
         return args.split("\\s+");
     }
 
 	/** Get {@link Member} from argument. */
-	public static Member getMember(final CommandEvent event, final String arg) {
+	public static Member getMember(CommandEvent event, String arg) {
 		List<Member> members = FinderUtil.findMembers(arg, event.getGuild());
-		for (final Member member : members) {
+		for (Member member : members) {
 			return member;
 		}
 		return null;
 	}
 
 	/** Get {@link User} from argument. */
-	public static User getUser(final CommandEvent event, final String arg) {
+	public static User getUser(CommandEvent event, String arg) {
 		List<User> users = FinderUtil.findUsers(arg, event.getJDA());
-		for (final User user : users) {
+		for (User user : users) {
 			return user;
 		}
 		return null;
 	}
 
 	/** Get {@link Emote} from argument. */
-	public static Emote getEmote(final CommandEvent event, final String arg) {
+	public static Emote getEmote(CommandEvent event, String arg) {
 		List<Emote> emotes = FinderUtil.findEmotes(arg, event.getGuild());
-		for (final Emote emote : emotes) {
+		for (Emote emote : emotes) {
 			return emote;
 		}
 		return null;
 	}
 
 	/** Get {@link TextChannel} from argument. */
-	public static TextChannel getChannel(final CommandEvent event, final String arg) {
+	public static TextChannel getChannel(CommandEvent event, String arg) {
 		List<TextChannel> channels = FinderUtil.findTextChannels(arg, event.getGuild());
-		for (final TextChannel channel : channels) {
+		for (TextChannel channel : channels) {
 			return channel;
 		}
 		return null;
 	}
 
 	/** Get {@link Role} from argument. */
-	public static Role getRole(final CommandEvent event, final String arg) {
+	public static Role getRole(CommandEvent event, String arg) {
 		List<Role> roles = FinderUtil.findRoles(arg, event.getGuild());
-		for (final Role role : roles) {
+		for (Role role : roles) {
 			return role;
 		}
 		return null;
 	}
 
 	/** Will return glued argument. */
-    public static String getGluedArg(final String[] args, final int start) {
-        final StringBuilder arg = new StringBuilder();
+    public static String getGluedArg(String[] args, int start) {
+        StringBuilder arg = new StringBuilder();
 
         for (int i = start; i < args.length; i++) {
             arg.append(args[i]).append(" ");

@@ -21,7 +21,7 @@ package eu.u032.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.CheckUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 
@@ -36,20 +36,19 @@ public class SlowmodeCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
-		if (GeneralUtil.isNotMod(event)) {
-			MessageUtil.sendError(event, "error.not.mod");
+    protected void execute(CommandEvent event) {
+		if (CheckUtil.isNotMod(null, event.getMember())) {
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
             return;
         }
 
-        final int interval = Integer.parseInt(event.getArgs());
+        int interval = Integer.parseInt(event.getArgs());
 
         if (interval < 0 || interval > 21600) {
-			MessageUtil.sendErrorMessage(event, "Specify in seconds from 0 (off) to 21600.");
+			MessageUtil.sendHelp(event, this);
             return;
         }
         if (event.getTextChannel().getSlowmode() == interval) {

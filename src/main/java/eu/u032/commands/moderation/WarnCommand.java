@@ -21,16 +21,22 @@ package eu.u032.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.model.WarnModel;
+import eu.u032.model.Warn;
 import eu.u032.service.WarnService;
 import eu.u032.util.ArgsUtil;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.CheckUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Member;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+@Component
 public class WarnCommand extends Command {
+	@Autowired
+	private WarnService warnService;
+
 	public WarnCommand() {
 		this.name = MessageUtil.getMessage("command.warn.name");
 		this.help = MessageUtil.getMessage("command.warn.help");
@@ -39,49 +45,42 @@ public class WarnCommand extends Command {
 	}
 
 	@Override
-	protected void execute(final CommandEvent event) {
-		if (GeneralUtil.isNotMod(event)) {
-			MessageUtil.sendError(event, "error.not.mod");
+	protected void execute(CommandEvent event) {
+		if (CheckUtil.isNotMod(null, event.getMember())) {
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
-		final String[] args = ArgsUtil.split(event.getArgs());
-		final Member member = ArgsUtil.getMember(event, args[0]);
-		final String reason = ArgsUtil.getGluedArg(args, 1);
+		String[] args = ArgsUtil.split(event.getArgs());
+		Member member = ArgsUtil.getMember(event, args[0]);
+		String reason = ArgsUtil.getGluedArg(args, 1);
 
-		if (member == null) {
-			MessageUtil.sendError(event, "error.member.not.found");
+		if (member == null || member.getUser().isBot()) {
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
-		if (member.getUser().isBot()) {
-			MessageUtil.sendError(event, "command.warn.error.cannot.bot");
-			return;
-		}
-		if (member == event.getMember()) {
-			MessageUtil.sendError(event, "error.cannot.yourself", "warn");
-			return;
-		}
-		if (GeneralUtil.isRoleHigher(member, event.getMember())) {
+		if (!event.getSelfMember().canInteract(member)) {
 			MessageUtil.sendError(event, "error.role.position", "warn");
 			return;
 		}
+		if (member == event.getMember()) {
+			MessageUtil.sendError(event, "command.ban.error.cannot.yourself", "warn");
+			return;
+		}
 
-		WarnService warnService = new WarnService();
+		Warn warn = new Warn();
+		warn.setGuild(event.getGuild().getIdLong());
+		warn.setUser(member.getIdLong());
+		warn.setReason(reason);
 
-		WarnModel warnModel = new WarnModel();
-		warnModel.setGuild(event.getGuild().getIdLong());
-		warnModel.setUser(member.getIdLong());
-		warnModel.setReason(reason);
-
-		warnService.save(warnModel);
+		warnService.save(warn);
 
 		MessageUtil.sendSuccessMessage(event, String.format("**%s** warned (ID: `#%s`) by moderator **%s**%s",
 			member.getUser().getAsTag(),
-			warnModel.getId(),
+			warn.getId(),
 			Objects.requireNonNull(event.getMember()).getEffectiveName(),
 			reason.isEmpty() ? "." : " with reason: " + reason));
 	}

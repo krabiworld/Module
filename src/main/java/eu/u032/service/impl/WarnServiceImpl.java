@@ -16,20 +16,38 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.service;
+package eu.u032.service.impl;
 
 import eu.u032.model.Warn;
+import eu.u032.repository.WarnRepository;
+import eu.u032.service.WarnService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public interface WarnService {
-	Warn findById(long id);
+public class WarnServiceImpl implements WarnService {
+	@Autowired
+	private WarnRepository warnRepository;
 
-	List<Warn> findAllByGuildAndUser(long guild, long user);
+	@Override
+	public Warn findById(long id) {
+		return warnRepository.findById(id);
+	}
 
-	void save(Warn warn);
+	@Override
+	public List<Warn> findAllByGuildAndUser(long guild, long user) {
+		return warnRepository.findAllByGuildAndUser(guild, user);
+	}
 
-	void delete(Warn warn);
+	@Override
+	public void save(Warn warn) {
+		warnRepository.saveAndFlush(warn);
+	}
+
+	@Override
+	public void delete(Warn warn) {
+		warnRepository.delete(warn);
+	}
 }

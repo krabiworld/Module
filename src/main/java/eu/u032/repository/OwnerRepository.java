@@ -16,20 +16,13 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032;
+package eu.u032.repository;
 
-import io.github.cdimascio.dotenv.Dotenv;
-import org.jetbrains.annotations.NotNull;
+import eu.u032.model.Owner;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public enum Config {;
-    private static final Dotenv DOTENV = Dotenv.load();
-
-    private static String get(@NotNull final String key) {
-        return DOTENV.get(key);
-    }
-
-	/** Get value as {@link String} */
-    public static String getString(@NotNull final String key) {
-        return get(key);
-    }
+@Repository
+public interface OwnerRepository extends JpaRepository<Owner, Long> {
+	Owner findById(long id);
 }

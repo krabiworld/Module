@@ -21,15 +21,22 @@ package eu.u032.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.model.WarnModel;
+import eu.u032.model.Warn;
 import eu.u032.service.WarnService;
 import eu.u032.util.ArgsUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 
+@Component
 public class WarnsCommand extends Command {
+	@Autowired
+	private WarnService warnService;
+
 	public WarnsCommand() {
 		this.name = MessageUtil.getMessage("command.warns.name");
 		this.help = MessageUtil.getMessage("command.warns.help");
@@ -38,30 +45,26 @@ public class WarnsCommand extends Command {
 	}
 
 	@Override
-	protected void execute(final CommandEvent event) {
+	protected void execute(CommandEvent event) {
 		Member member = event.getMember();
 
 		if (!event.getArgs().isEmpty()) {
 			member = ArgsUtil.getMember(event, event.getArgs());
 		}
-		if (member == null) {
-			MessageUtil.sendError(event, "error.member.not.found");
-			return;
-		}
-		if (member.getUser().isBot()) {
-			MessageUtil.sendError(event, "command.warns.error.is.bot");
+		if (member == null || member.getUser().isBot()) {
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
-		final List<WarnModel> warnModels = new WarnService()
+		List<Warn> warns = warnService
 			.findAllByGuildAndUser(event.getGuild().getIdLong(), member.getIdLong());
 
-		final StringBuilder warnsMessage = new StringBuilder("Warns count: " + warnModels.size() + "\n");
-		for (WarnModel warnModel : warnModels) {
-			warnsMessage.append("ID `").append(warnModel.getId()).append("`").append(" ")
+		StringBuilder warnsMessage = new StringBuilder("Warns count: " + warns.size() + "\n");
+		for (Warn warn : warns) {
+			warnsMessage.append("ID `").append(warn.getId()).append("`").append(" ")
 				.append(member.getAsMention())
-				.append(warnModel.getReason().isEmpty() ? "" : ": ")
-				.append(warnModel.getReason()).append("\n");
+				.append(warn.getReason().isEmpty() ? "" : ": ")
+				.append(warn.getReason()).append("\n");
 		}
 
 		EmbedBuilder embed = new EmbedBuilder()

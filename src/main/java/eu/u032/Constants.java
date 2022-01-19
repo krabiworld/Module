@@ -25,7 +25,7 @@ import java.awt.*;
 public class Constants {
 	// Bot
 	public static final int MAX_MESSAGE_CACHE = 500;
-	public static final String PREFIX = ">>>";
+	public static final String PREFIX = "m!";
 
 	// Colors
 	/** Main color. */

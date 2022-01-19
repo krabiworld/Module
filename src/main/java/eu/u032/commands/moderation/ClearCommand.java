@@ -21,7 +21,7 @@ package eu.u032.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.CheckUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
@@ -43,29 +43,28 @@ public class ClearCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
-		if (GeneralUtil.isNotMod(event)) {
-			MessageUtil.sendError(event, "error.not.mod");
+    protected void execute(CommandEvent event) {
+		if (CheckUtil.isNotMod(null, event.getMember())) {
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
         int count = Integer.parseInt(event.getArgs());
         if (count < 2 || count > 1000 || event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "command.clear.error.count");
+			MessageUtil.sendHelp(event, this);
             return;
         }
 
         try {
             event.getMessage().delete().queue();
 
-            final List<Message> messages = new LinkedList<>();
-            final List<Message> delMessages = new LinkedList<>();
-            final MessageHistory history = event.getChannel().getHistory();
-            final OffsetDateTime dateTime = event.getMessage().getTimeCreated().minusHours(335);
-            final TextChannel channel = event.getTextChannel();
+            List<Message> messages = new LinkedList<>();
+            List<Message> delMessages = new LinkedList<>();
+            MessageHistory history = event.getChannel().getHistory();
+            OffsetDateTime dateTime = event.getMessage().getTimeCreated().minusHours(335);
+            TextChannel channel = event.getTextChannel();
 
             while (count > 100) {
                 messages.addAll(history.retrievePast(100).complete());
@@ -78,7 +77,7 @@ public class ClearCommand extends Command {
 
             if (count > 0) messages.addAll(history.retrievePast(count).complete());
 
-            for (final Message message : messages) {
+            for (Message message : messages) {
                 if (message.getTimeCreated().isBefore(dateTime)) break;
                 if (message.isPinned()) continue;
                 delMessages.add(message);

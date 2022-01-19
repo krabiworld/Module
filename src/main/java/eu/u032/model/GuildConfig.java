@@ -16,20 +16,30 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.service;
+package eu.u032.model;
 
-import eu.u032.model.Warn;
-import org.springframework.stereotype.Service;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Service
-public interface WarnService {
-	Warn findById(long id);
+@Entity
+@Table(name = "guilds")
+@Getter
+@Setter
+public class GuildConfig {
+	@Id
+	@Column(name = "guild_id")
+	private long id;
 
-	List<Warn> findAllByGuildAndUser(long guild, long user);
+	private String prefix = "!";
 
-	void save(Warn warn);
+	private long mute = 0;
 
-	void delete(Warn warn);
+	private long logs = 0;
+
+	private long mod = 0;
 }

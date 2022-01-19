@@ -18,63 +18,69 @@
 
 package eu.u032.util;
 
+import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.GuildManager;
+import eu.u032.Constants;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class MessageUtil {
-	private final static Properties PROPERTIES = new Properties();
+	private static final Properties PROPERTIES = new Properties();
 
 	/** React and send error message from properties, after 10 seconds message has been deleted. */
-	public static void sendError(final CommandEvent event, final String key, final Object... args) {
+	public static void sendError(CommandEvent event, String key, Object... args) {
 		sendErrorMessage(event, getMessage(key, args));
 	}
 
 	/** React and send error message, after 10 seconds message has been deleted. */
-	public static void sendErrorMessage(final CommandEvent event, final String content) {
+	public static void sendErrorMessage(CommandEvent event, String content) {
 		event.reactError();
 		event.replyError(content, m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
 	}
 
 	/** React and send success message from properties, after 20 seconds message has been deleted. */
-	public static void sendSuccess(final CommandEvent event, final String key, final Object... args) {
+	public static void sendSuccess(CommandEvent event, String key, Object... args) {
 		sendSuccessMessage(event, getMessage(key, args));
 	}
 
 	/** React and send success message, after 20 seconds message has been deleted. */
-	public static void sendSuccessMessage(final CommandEvent event, final String content) {
+	public static void sendSuccessMessage(CommandEvent event, String content) {
 		event.reactSuccess();
 		event.replySuccess(content, m -> m.delete().queueAfter(20, TimeUnit.SECONDS));
 	}
 
 	/** Send log message with addition of timestamp to embed. */
-	public static void sendLog(final Guild guild, final EmbedBuilder embed) {
+	public static void sendLog(Guild guild, EmbedBuilder embed) {
 		sendLog(guild, embed, null);
     }
 
 	/** Send log message with file and addition of timestamp to embed. */
-	public static void sendLog(final Guild guild, final EmbedBuilder embed, final byte[] file) {
+	public static void sendLog(Guild guild, EmbedBuilder embed, byte[] file) {
 		embed.setTimestamp(new Date().toInstant());
 
-		final GuildManager.GuildSettings manager = new GuildManager().getSettings(guild);
-		if (Objects.requireNonNull(manager).getLogs() == 0) return;
-
-		final TextChannel textChannel = guild.getTextChannelById(manager.getLogs());
-
-		if (textChannel == null) return;
+		TextChannel logsChannel = SettingsUtil.getLogsChannel(guild);
+		if (logsChannel == null) return;
 
 		if (file == null) {
-			textChannel.sendMessageEmbeds(embed.build()).queue();
+			logsChannel.sendMessageEmbeds(embed.build()).queue();
 		} else {
-			textChannel.sendMessageEmbeds(embed.build()).addFile(file, ".txt").queue();
+			logsChannel.sendMessageEmbeds(embed.build()).addFile(file, ".txt").queue();
 		}
+	}
+
+	public static void sendHelp(CommandEvent event, Command command) {
+		String prefix = SettingsUtil.getPrefix(event.getGuild());
+		String arguments = command.getArguments().isEmpty() ? "" : " " + command.getArguments();
+		EmbedBuilder embed = new EmbedBuilder()
+			.setColor(Constants.COLOR)
+			.setTitle("Information of command " + command.getName())
+			.setDescription("`" + prefix + command.getName() + arguments + "`\n" + command.getHelp());
+		event.reply(embed.build(), m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
 	}
 
 	private static String getProperty(String key) {
@@ -83,12 +89,11 @@ public class MessageUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return PROPERTIES.getProperty(key);
 	}
 
 	/** Get message from properties file. */
-	public static String getMessage(final String key, final Object... args) {
+	public static String getMessage(String key, Object... args) {
 		if (args == null) {
 			return getProperty(key);
 		} else {

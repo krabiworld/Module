@@ -16,20 +16,18 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.service;
+package eu.u032.config;
 
-import eu.u032.model.Warn;
-import org.springframework.stereotype.Service;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+@Getter
+@Component
+public class Config {
+	@Value("${discord.token}")
+	private String token;
 
-@Service
-public interface WarnService {
-	Warn findById(long id);
-
-	List<Warn> findAllByGuildAndUser(long guild, long user);
-
-	void save(Warn warn);
-
-	void delete(Warn warn);
+	@Value("${discord.owner}")
+	private String owner;
 }

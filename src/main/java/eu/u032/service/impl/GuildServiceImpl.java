@@ -16,20 +16,36 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.service;
+package eu.u032.service.impl;
 
-import eu.u032.model.Warn;
+import eu.u032.model.GuildConfig;
+import eu.u032.repository.GuildRepository;
+import eu.u032.service.GuildService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public interface WarnService {
-	Warn findById(long id);
+public class GuildServiceImpl implements GuildService {
+	@Autowired
+	private GuildRepository guildRepository;
 
-	List<Warn> findAllByGuildAndUser(long guild, long user);
+	@Override
+	public GuildConfig findById(long id) {
+		return guildRepository.findById(id);
+	}
 
-	void save(Warn warn);
+	@Override
+	public void save(GuildConfig guildConfig) {
+		guildRepository.saveAndFlush(guildConfig);
+	}
 
-	void delete(Warn warn);
+	@Override
+	public void update(GuildConfig guildConfig) {
+		guildRepository.saveAndFlush(guildConfig);
+	}
+
+	@Override
+	public void delete(GuildConfig guildConfig) {
+		guildRepository.delete(guildConfig);
+	}
 }

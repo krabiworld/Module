@@ -27,10 +27,10 @@ import java.util.ArrayList;
 // Author: https://github.com/Starrysparklez/
 // Code: https://gist.github.com/Starrysparklez/3da0d67241d8185315e4fdc012f8aca7
 public class MessageCache {
-    public static final ArrayList<Message> MESSAGES = new ArrayList<>();
+    public static ArrayList<Message> MESSAGES = new ArrayList<>();
 
-    public static void addMessage(@Nonnull final Message message) {
-        for (final Message msg : MESSAGES) {
+    public static void addMessage(@Nonnull Message message) {
+        for (Message msg : MESSAGES) {
 			if (msg.getIdLong() == message.getIdLong()) MESSAGES.set(MESSAGES.indexOf(msg), message);
 		}
 		if (MESSAGES.size() + 1 > Constants.MAX_MESSAGE_CACHE) MESSAGES.remove(0);
@@ -38,9 +38,9 @@ public class MessageCache {
     }
 
     @Nullable
-    public static Message getMessage(final long messageId) {
+    public static Message getMessage(long messageId) {
         Message result = null;
-        for (final Message message : MESSAGES) {
+        for (Message message : MESSAGES) {
 			if (message.getIdLong() == messageId) result = message;
 		}
         return result;

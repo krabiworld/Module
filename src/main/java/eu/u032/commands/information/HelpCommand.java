@@ -21,7 +21,7 @@ package eu.u032.commands.information;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.SettingsUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 
@@ -37,17 +37,17 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
-        final String args = event.getArgs();
-        final String prefix = GeneralUtil.getPrefix(event.getGuild());
-        final List<Command> commands = event.getClient().getCommands();
-        final EmbedBuilder embed = new EmbedBuilder().setColor(Constants.COLOR);
-        final List<String> categories = new LinkedList<>();
+    protected void execute(CommandEvent event) {
+        String args = event.getArgs();
+        String prefix = SettingsUtil.getPrefix(event.getGuild());
+        List<Command> commands = event.getClient().getCommands();
+        EmbedBuilder embed = new EmbedBuilder().setColor(Constants.COLOR);
+        List<String> categories = new LinkedList<>();
 
         categoriesLoop:
-        for (final Command cmd : commands) {
+        for (Command cmd : commands) {
             if (cmd.getCategory() == null) continue;
-            for (final String category : categories) {
+            for (String category : categories) {
                 // if command already exists in "categories" - continue
                 if (category.equals(cmd.getCategory().getName())) continue categoriesLoop;
             }
@@ -59,8 +59,8 @@ public class HelpCommand extends Command {
             StringBuilder commandsBuilder = new StringBuilder();
             embed.setTitle("Available commands:");
 
-            for (final String category : categories) {
-                for (final Command cmd : commands) {
+            for (String category : categories) {
+                for (Command cmd : commands) {
                     if (cmd.isHidden()) continue;
                     if (cmd.getCategory().getName().equals(category)) {
                         commandsBuilder.append("`")
@@ -76,10 +76,10 @@ public class HelpCommand extends Command {
 
             event.reply(embed.build());
         } else {
-            for (final String category : categories) {
+            for (String category : categories) {
                 // if match found with name of category
                 if (category.toLowerCase().startsWith(args.toLowerCase())) {
-                    for (final Command cmd : commands) {
+                    for (Command cmd : commands) {
                         if (cmd.isHidden()) continue;
                         if (cmd.getCategory().getName().equals(category))
                             embed.addField(prefix + cmd.getName(), cmd.getHelp(), false);
@@ -89,15 +89,11 @@ public class HelpCommand extends Command {
                     return;
                 }
             }
-            for (final Command cmd : commands) {
+            for (Command cmd : commands) {
                 // if match found with name of command
                 if (cmd.getName().toLowerCase().startsWith(args.toLowerCase()) && !cmd.isHidden()) {
-                    embed.setTitle("Information of command " + cmd.getName());
-                    embed.setDescription("`" + prefix + cmd.getName() +
-						(cmd.getArguments().isEmpty() ? "" : " " + cmd.getArguments()) + "`\n" +
-						cmd.getHelp());
-                    event.reply(embed.build());
-                    return;
+					MessageUtil.sendHelp(event, cmd);
+					return;
                 }
             }
 

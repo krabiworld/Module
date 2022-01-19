@@ -20,15 +20,21 @@ package eu.u032.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eu.u032.model.WarnModel;
+import eu.u032.model.Warn;
 import eu.u032.service.WarnService;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.CheckUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.entities.Member;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static eu.u032.Constants.*;
 
+@Component
 public class RemwarnCommand extends Command {
+	@Autowired
+	private WarnService warnService;
+
 	public RemwarnCommand() {
 		this.name = MessageUtil.getMessage("command.remwarn.name");
 		this.help = MessageUtil.getMessage("command.remwarn.help");
@@ -37,37 +43,34 @@ public class RemwarnCommand extends Command {
 	}
 
 	@Override
-	protected void execute(final CommandEvent event) {
-		if (GeneralUtil.isNotMod(event)) {
-			MessageUtil.sendError(event, "error.not.mod");
+	protected void execute(CommandEvent event) {
+		if (CheckUtil.isNotMod(null, event.getMember())) {
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
-		final WarnService warnService = new WarnService();
+		Warn warn = warnService.findById(Long.parseLong(event.getArgs()));
 
-		final WarnModel warnModel = warnService.findById(Long.parseLong(event.getArgs()));
-
-		if (warnModel == null || warnModel.getGuild() != event.getGuild().getIdLong()) {
+		if (warn == null || warn.getGuild() != event.getGuild().getIdLong()) {
 			MessageUtil.sendError(event, "command.warn.error.not.found");
 			return;
 		}
 
-		final Member member = event.getGuild().getMemberById(warnModel.getUser());
+		Member member = event.getGuild().getMemberById(warn.getUser());
 
 		if (member == null) {
-			MessageUtil.sendError(event, "error.member.not.found");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
-		warnService.delete(warnModel);
+		warnService.delete(warn);
 
 		MessageUtil.sendSuccessMessage(event, String.format("Moderator **%s** removed warning (ID `%s`) to **%s**",
 			event.getMember().getEffectiveName(),
-			warnModel.getId(),
+			warn.getId(),
 			member.getUser().getAsTag()));
 	}
 }

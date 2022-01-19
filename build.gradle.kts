@@ -38,20 +38,22 @@ dependencies {
 	implementation("net.dv8tion:JDA:4.4.0_352") {
 		exclude(module = "opus-java")
 	}
-    implementation("io.github.cdimascio:dotenv-java:2.2.3")
     implementation("com.jagrosh:jda-utilities:3.0.5")
     implementation("ch.qos.logback:logback-classic:1.2.10")
-	implementation("org.postgresql:postgresql:42.3.1")
-	implementation("org.hibernate:hibernate-core:5.6.3.Final")
 	implementation("org.codehaus.groovy:groovy:3.0.9")
+	implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.2")
+	implementation("org.springframework.boot:spring-boot-starter:2.6.2")
+	runtimeOnly("org.postgresql:postgresql:42.3.1")
 	compileOnly("org.projectlombok:lombok:1.18.22")
 	annotationProcessor("org.projectlombok:lombok:1.18.22")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.2")
 }
 
 heroku {
     appName = "modulebot"
     jdkVersion = "17"
-    includes = listOf(".env", "build/libs/UASM-1.0-all.jar")
+    includes = listOf("build/libs/UASM-1.0-all.jar")
     isIncludeBuildDir = false
     processTypes = mapOf("worker" to "java -jar build/libs/UASM-1.0-all.jar")
 }

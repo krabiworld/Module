@@ -38,10 +38,10 @@ public class StatsCommand extends Command {
     }
 
     @Override
-	protected void execute(final CommandEvent event) {
-		final JDA jda = event.getJDA();
+	protected void execute(CommandEvent event) {
+		JDA jda = event.getJDA();
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
 			.setTitle("Bot Statistics")
 			.setColor(Constants.COLOR)
 			.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
@@ -51,23 +51,23 @@ public class StatsCommand extends Command {
         event.reply(embed.build());
     }
 
-    private MessageEmbed.Field getMainField(final JDA jda) {
+    private MessageEmbed.Field getMainField(JDA jda) {
         long channelsCount = 0;
 
-        for (final Guild guild : jda.getGuilds()) {
+        for (Guild guild : jda.getGuilds()) {
             channelsCount += guild.getChannels().size();
         }
-        final String common = String.format("**Servers:** %s\n**Users:** %s\n**Channels:** %s",
+        String common = String.format("**Servers:** %s\n**Users:** %s\n**Channels:** %s",
 			jda.getGuilds().size(), jda.getUsers().size(), channelsCount);
         return new MessageEmbed.Field("Main", common, true);
     }
 
-    private MessageEmbed.Field getPlatformField(final JDA jda) {
-		final long uptime = OffsetDateTime.ofInstant(
+    private MessageEmbed.Field getPlatformField(JDA jda) {
+		long uptime = OffsetDateTime.ofInstant(
 			Instant.ofEpochMilli(ManagementFactory.getRuntimeMXBean().getStartTime()), ZoneId.systemDefault())
 			.toEpochSecond();
 
-        final String platform = String.format("**Ping:** %s ms\n**Uptime:** <t:%s:R>",
+        String platform = String.format("**Ping:** %s ms\n**Uptime:** <t:%s:R>",
 			jda.getGatewayPing(), uptime);
         return new MessageEmbed.Field("Platform", platform, true);
     }
