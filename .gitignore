@@ -1,5 +1,4 @@
 build
 .gradle
-.env
 .idea
-src/main/resources/hibernate.cfg.xml
+src/main/resources/application.yml

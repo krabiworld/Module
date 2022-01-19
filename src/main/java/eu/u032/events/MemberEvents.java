@@ -16,7 +16,7 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.logging;
+package eu.u032.events;
 
 import eu.u032.Constants;
 import eu.u032.util.MessageUtil;
@@ -37,10 +37,10 @@ import java.util.List;
 
 public class MemberEvents extends ListenerAdapter {
 	@Override
-    public void onGuildMemberJoin(final GuildMemberJoinEvent event) {
-        final Member member = event.getMember();
+    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+        Member member = event.getMember();
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor(member.getUser().getAsTag(), null, member.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_GREEN)
 			.setDescription(member.getAsMention() + " joined to server!")
@@ -53,12 +53,12 @@ public class MemberEvents extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberRemove(final GuildMemberRemoveEvent event) {
-        final Member member = event.getMember();
+    public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
+        Member member = event.getMember();
 
         if (member == null) return;
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor(member.getUser().getAsTag(), null, member.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_RED)
 			.setDescription(member.getAsMention() + " has left the server!")
@@ -73,16 +73,16 @@ public class MemberEvents extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberUpdateNickname(final GuildMemberUpdateNicknameEvent event) {
-        final Member member = event.getMember();
-        final String before = event.getOldNickname();
-        final String after = event.getNewNickname();
+    public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
+        Member member = event.getMember();
+        String before = event.getOldNickname();
+        String after = event.getNewNickname();
         String action = " was updated";
 
         if (before == null) return;
         if (after == null) action = " was reset";
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor("Nickname for " + member.getUser().getAsTag() + action,
 				null, member.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_YELLOW)
@@ -95,15 +95,15 @@ public class MemberEvents extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberRoleAdd(final GuildMemberRoleAddEvent event) {
-        final List<Role> roles = event.getRoles();
-        final StringBuilder addedRoles = new StringBuilder();
+    public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
+        List<Role> roles = event.getRoles();
+        StringBuilder addedRoles = new StringBuilder();
 
-        for (final Role role : roles) {
+        for (Role role : roles) {
             addedRoles.append("`").append(role.getName()).append("` ");
         }
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
 			.setTitle("Added role(s) for " + event.getUser().getName())
 			.setColor(Constants.COLOR_GREEN)
 			.setDescription(addedRoles.toString())
@@ -112,15 +112,15 @@ public class MemberEvents extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberRoleRemove(final GuildMemberRoleRemoveEvent event) {
-        final List<Role> roles = event.getRoles();
-        final StringBuilder removedRoles = new StringBuilder();
+    public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
+        List<Role> roles = event.getRoles();
+        StringBuilder removedRoles = new StringBuilder();
 
-        for (final Role role : roles) {
+        for (Role role : roles) {
 			removedRoles.append("`").append(role.getName()).append("` ");
         }
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
 			.setTitle("Removed role(s) for " + event.getUser().getName())
 			.setColor(Constants.COLOR_RED)
 			.setDescription(removedRoles.toString())
@@ -129,10 +129,10 @@ public class MemberEvents extends ListenerAdapter {
     }
 
 	@Override
-	public void onGuildBan(final GuildBanEvent event) {
-		final User user = event.getUser();
+	public void onGuildBan(GuildBanEvent event) {
+		User user = event.getUser();
 
-		final EmbedBuilder embed = new EmbedBuilder()
+		EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor(user.getAsTag() + " was banned", null, user.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_RED)
 			.setFooter("ID: " + user.getId());
@@ -140,10 +140,10 @@ public class MemberEvents extends ListenerAdapter {
 	}
 
 	@Override
-	public void onGuildUnban(final GuildUnbanEvent event) {
+	public void onGuildUnban(GuildUnbanEvent event) {
 		User user = event.getUser();
 
-		final EmbedBuilder embed = new EmbedBuilder()
+		EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor(user.getAsTag() + " was unbanned", null, user.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_GREEN)
 			.setFooter("ID: " + user.getId());

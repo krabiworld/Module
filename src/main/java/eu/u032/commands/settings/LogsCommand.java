@@ -21,9 +21,9 @@ package eu.u032.commands.settings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.GuildManager;
+import eu.u032.manager.GuildManager;
 import eu.u032.util.ArgsUtil;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.SettingsUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -41,16 +41,17 @@ public class LogsCommand extends Command {
 	}
 
 	@Override
-	protected void execute(final CommandEvent event) {
+	protected void execute(CommandEvent event) {
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
-		final String[] args = ArgsUtil.split(event.getArgs());
+		String[] args = ArgsUtil.split(event.getArgs());
+		TextChannel currentLogsChannel = SettingsUtil.getLogsChannel(event.getGuild());
 
 		if (args[0].startsWith("off")) {
-			if (GeneralUtil.getLogsChannel(event.getGuild()) == null) {
+			if (currentLogsChannel == null) {
 				MessageUtil.sendError(event, "command.logs.error.already.disabled");
 				return;
 			}
@@ -58,22 +59,26 @@ public class LogsCommand extends Command {
 			MessageUtil.sendSuccessMessage(event, "Logs are disabled.");
 		} else if (args[0].startsWith("on")) {
 			if (args.length <= 1) {
-				MessageUtil.sendError(event, "error.missing.args");
+				MessageUtil.sendHelp(event, this);
 				return;
 			}
 
-			final TextChannel channel = ArgsUtil.getChannel(event, args[1]);
+			TextChannel logsChannel = ArgsUtil.getChannel(event, args[1]);
 
-			if (channel == null) {
+			if (logsChannel == null) {
 				MessageUtil.sendError(event, "error.channel.not.found");
 				return;
 			}
+			if (logsChannel == currentLogsChannel) {
+				MessageUtil.sendError(event, "error.channel.already.set");
+				return;
+			}
 
-			manager.setLogs(event.getGuild(), channel.getIdLong());
+			manager.setLogs(event.getGuild(), logsChannel.getIdLong());
 
-			MessageUtil.sendSuccess(event, "command.logs.success.changed", channel.getAsMention());
+			MessageUtil.sendSuccess(event, "command.logs.success.changed", logsChannel.getAsMention());
 		} else {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 		}
 	}
 }

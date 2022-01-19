@@ -35,18 +35,18 @@ public class AvatarCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
+    protected void execute(CommandEvent event) {
 		Member member = event.getMember();
 
         if (!event.getArgs().isEmpty()) {
             member = ArgsUtil.getMember(event, event.getArgs());
         }
         if (member == null) {
-            MessageUtil.sendError(event, "error.member.not.found");
+			MessageUtil.sendHelp(event, this);
             return;
         }
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Avatar of " + member.getUser().getName())
                 .setColor(member.getColor())
                 .setImage(member.getEffectiveAvatarUrl() + "?size=512");

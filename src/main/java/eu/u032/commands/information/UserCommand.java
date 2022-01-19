@@ -41,27 +41,27 @@ public class UserCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
+    protected void execute(CommandEvent event) {
 		Member member = event.getMember();
 
         if (!event.getArgs().isEmpty()) {
             member = ArgsUtil.getMember(event, event.getArgs());
         }
         if (member == null) {
-			MessageUtil.sendErrorMessage(event, "error.member.not.found");
+			MessageUtil.sendHelp(event, this);
             return;
         }
 
-        final User.Profile profile = member.getUser().retrieveProfile().complete();
+        User.Profile profile = member.getUser().retrieveProfile().complete();
 
-        final String description = String.format("**Username:** %s\n%s%s%s%s",
+        String description = String.format("**Username:** %s\n%s%s%s%s",
 			member.getUser().getAsTag(),
 			getStatus(member.getOnlineStatus()),
 			getActivities(member.getActivities()),
 			getJoinedAt(member.getTimeJoined()),
 			getRegisteredAt(member.getTimeCreated()));
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor("Information about " + member.getUser().getName(),
 				null, member.getEffectiveAvatarUrl())
 			.setColor(member.getColor())
@@ -74,8 +74,8 @@ public class UserCommand extends Command {
         event.reply(embed.build());
     }
 
-    private String getStatus(final OnlineStatus onlineStatus) {
-         final String status = switch (onlineStatus) {
+    private String getStatus(OnlineStatus onlineStatus) {
+         String status = switch (onlineStatus) {
             case ONLINE -> "<:online:925113750598598736>Online";
             case IDLE -> "<:idle:925113750254682133>Idle";
             case DO_NOT_DISTURB -> "<:dnd:925113750896398406>Do Not Disturb";
@@ -84,8 +84,8 @@ public class UserCommand extends Command {
         return "**Status:**" + status + "\n";
     }
 
-    private String getActivities(final List<Activity> activityList) {
-        final StringBuilder activities = new StringBuilder();
+    private String getActivities(List<Activity> activityList) {
+        StringBuilder activities = new StringBuilder();
         for (Activity activity : activityList) {
             if (activity.getType() == Activity.ActivityType.CUSTOM_STATUS)
                 activities.append("**Custom Status:** ")
@@ -105,12 +105,12 @@ public class UserCommand extends Command {
         return activities.toString();
     }
 
-    private String getJoinedAt(final OffsetDateTime time) {
+    private String getJoinedAt(OffsetDateTime time) {
         return String.format("**Joined at:** <t:%s:D> (<t:%s:R>)\n",
 			time.toEpochSecond(), time.toEpochSecond());
     }
 
-    private String getRegisteredAt(final OffsetDateTime time) {
+    private String getRegisteredAt(OffsetDateTime time) {
         return String.format("**Registered at:** <t:%s:D> (<t:%s:R>)",
 			time.toEpochSecond(), time.toEpochSecond());
     }

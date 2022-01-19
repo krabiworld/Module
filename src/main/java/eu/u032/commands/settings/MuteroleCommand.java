@@ -21,15 +21,15 @@ package eu.u032.commands.settings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
-import eu.u032.GuildManager;
+import eu.u032.manager.GuildManager;
 import eu.u032.util.ArgsUtil;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.SettingsUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 
 public class MuteroleCommand extends Command {
-	final GuildManager manager;
+	private final GuildManager manager;
 
 	public MuteroleCommand(GuildManager manager) {
 		this.manager = manager;
@@ -41,21 +41,22 @@ public class MuteroleCommand extends Command {
 	}
 
 	@Override
-	protected void execute(final CommandEvent event) {
+	protected void execute(CommandEvent event) {
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
-		final Role role = ArgsUtil.getRole(event, event.getArgs());
-		final Role muteRole = GeneralUtil.getMuteRole(event.getGuild());
+		Role role = ArgsUtil.getRole(event, event.getArgs());
+		Role muteRole = SettingsUtil.getMuteRole(event.getGuild());
 
 		if (role == null) {
 			MessageUtil.sendError(event, "error.role.not.found");
 			return;
 		}
-		if (role.getIdLong() == (muteRole == null ? 0 : muteRole.getIdLong())) {
+		if (role == muteRole) {
 			MessageUtil.sendError(event, "error.role.already.set");
+			return;
 		}
 
 		manager.setMute(event.getGuild(), role.getIdLong());

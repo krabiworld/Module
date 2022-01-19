@@ -22,7 +22,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
 import eu.u032.util.ArgsUtil;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.CheckUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 
@@ -37,29 +37,24 @@ public class UnbanCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
-		if (GeneralUtil.isNotMod(event)) {
-			MessageUtil.sendError(event, "error.not.mod");
+    protected void execute(CommandEvent event) {
+		if (CheckUtil.isNotMod(null, event.getMember())) {
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
-		if (!GeneralUtil.isBanned(event.getArgs(), event.getGuild())) {
+		if (!CheckUtil.isBanned(event.getArgs(), event.getGuild())) {
 			MessageUtil.sendError(event, "command.unban.error.not.found");
 			return;
 		}
 
-		final String[] args = ArgsUtil.split(event.getArgs());
+		String[] args = ArgsUtil.split(event.getArgs());
 
-        try {
-            event.getGuild().unban(args[0]).queue();
-			MessageUtil.sendSuccessMessage(event, String.format("Member with id **%s** unbanned by moderator **%s**.",
-				args[0],
-				event.getMember().getEffectiveName()));
-        } catch (final Exception e) {
-            MessageUtil.sendErrorMessage(event, e.getMessage());
-        }
+		event.getGuild().unban(args[0]).queue();
+		MessageUtil.sendSuccessMessage(event, String.format("Member with id **%s** unbanned by moderator **%s**.",
+			args[0],
+			event.getMember().getEffectiveName()));
     }
 }

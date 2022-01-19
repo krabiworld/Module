@@ -16,64 +16,68 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032;
+package eu.u032.manager;
 
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
-import eu.u032.model.GuildModel;
+import eu.u032.model.GuildConfig;
 import eu.u032.service.GuildService;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Collections;
 
+@Service
 public class GuildManager extends ListenerAdapter implements GuildSettingsManager<GuildManager.GuildSettings> {
-	private final static GuildService guildService = new GuildService();
+	@Autowired
+	private GuildService guildService;
 
 	@Override
-	public void onGuildJoin(final GuildJoinEvent event) {
+	public void onGuildJoin(GuildJoinEvent event) {
 		if (guildService.findById(event.getGuild().getIdLong()) != null) return;
 
-		final GuildModel guildModel = new GuildModel();
-		guildModel.setId(event.getGuild().getIdLong());
+		GuildConfig guildConfig = new GuildConfig();
+		guildConfig.setId(event.getGuild().getIdLong());
 
-		guildService.save(guildModel);
+		guildService.save(guildConfig);
 	}
 
 	@Override
-	public GuildSettings getSettings(final Guild guild) {
-		return new GuildSettings(new GuildService().findById(guild.getIdLong()));
+	public GuildSettings getSettings(Guild guild) {
+		return new GuildSettings(guildService.findById(guild.getIdLong()));
 	}
 
-	public void setPrefix(final Guild guild, final String prefix) {
-		final GuildModel guildModel = guildService.findById(guild.getIdLong());
-		guildModel.setPrefix(prefix);
+	public void setPrefix(Guild guild, String prefix) {
+		GuildConfig guildConfig = guildService.findById(guild.getIdLong());
+		guildConfig.setPrefix(prefix);
 
-		guildService.update(guildModel);
+		guildService.update(guildConfig);
 	}
 
-	public void setLogs(final Guild guild, final long logsId) {
-		final GuildModel guildModel = guildService.findById(guild.getIdLong());
-		guildModel.setLogs(logsId);
+	public void setLogs(Guild guild, long logsId) {
+		GuildConfig guildConfig = guildService.findById(guild.getIdLong());
+		guildConfig.setLogs(logsId);
 
-		guildService.update(guildModel);
+		guildService.update(guildConfig);
 	}
 
-	public void setMute(final Guild guild, final long muteId) {
-		final GuildModel guildModel = guildService.findById(guild.getIdLong());
-		guildModel.setMute(muteId);
+	public void setMute(Guild guild, long muteId) {
+		GuildConfig guildConfig = guildService.findById(guild.getIdLong());
+		guildConfig.setMute(muteId);
 
-		guildService.update(guildModel);
+		guildService.update(guildConfig);
 	}
 
-	public void setMod(final Guild guild, final long modId) {
-		final GuildModel guildModel = guildService.findById(guild.getIdLong());
-		guildModel.setMod(modId);
+	public void setMod(Guild guild, long modId) {
+		GuildConfig guildConfig = guildService.findById(guild.getIdLong());
+		guildConfig.setMod(modId);
 
-		guildService.update(guildModel);
+		guildService.update(guildConfig);
 	}
 
 	@Getter
@@ -81,11 +85,11 @@ public class GuildManager extends ListenerAdapter implements GuildSettingsManage
 		private final long mute, logs, mod;
 		private final String prefix;
 		
-		private GuildSettings(GuildModel guildModel) {
-			this.mute = guildModel.getMute();
-			this.logs = guildModel.getLogs();
-			this.mod = guildModel.getMod();
-			this.prefix = guildModel.getPrefix();
+		private GuildSettings(GuildConfig guildConfig) {
+			this.mute = guildConfig.getMute();
+			this.logs = guildConfig.getLogs();
+			this.mod = guildConfig.getMod();
+			this.prefix = guildConfig.getPrefix();
 		}
 
 		@Override

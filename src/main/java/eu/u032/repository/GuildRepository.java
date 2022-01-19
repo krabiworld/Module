@@ -16,20 +16,13 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.service;
+package eu.u032.repository;
 
-import eu.u032.model.Warn;
-import org.springframework.stereotype.Service;
+import eu.u032.model.GuildConfig;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-@Service
-public interface WarnService {
-	Warn findById(long id);
-
-	List<Warn> findAllByGuildAndUser(long guild, long user);
-
-	void save(Warn warn);
-
-	void delete(Warn warn);
+@Repository
+public interface GuildRepository extends JpaRepository<GuildConfig, Long> {
+	GuildConfig findById(long id);
 }

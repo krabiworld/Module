@@ -22,7 +22,8 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
 import eu.u032.util.ArgsUtil;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.CheckUtil;
+import eu.u032.util.SettingsUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -39,33 +40,32 @@ public class UnmuteCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
-		if (GeneralUtil.isNotMod(event)) {
-			MessageUtil.sendError(event, "error.not.mod");
+    protected void execute(CommandEvent event) {
+		if (CheckUtil.isNotMod(null, event.getMember())) {
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
-		final String[] args = ArgsUtil.split(event.getArgs());
-		final Role muteRole = GeneralUtil.getMuteRole(event.getGuild());
-		final Member member = ArgsUtil.getMember(event, args[0]);
+		String[] args = ArgsUtil.split(event.getArgs());
+		Role muteRole = SettingsUtil.getMuteRole(event.getGuild());
+		Member member = ArgsUtil.getMember(event, args[0]);
 
 		if (muteRole == null) {
-			MessageUtil.sendError(event, "error.role.mute.not.set");
+			MessageUtil.sendError(event, "command.mute.error.role.not.set");
 			return;
 		}
         if (member == null) {
-			MessageUtil.sendError(event, "error.member.not.found");
+			MessageUtil.sendHelp(event, this);
             return;
         }
-		if (GeneralUtil.isRoleHigher(member, event.getMember())) {
+		if (!event.getSelfMember().canInteract(member)) {
 			MessageUtil.sendError(event, "error.role.position", "unmute");
 			return;
 		}
-        if (!GeneralUtil.hasRole(member, muteRole)) {
+        if (!CheckUtil.hasRole(member, muteRole)) {
 			MessageUtil.sendError(event, "command.unmute.error.not.muted");
             return;
         }

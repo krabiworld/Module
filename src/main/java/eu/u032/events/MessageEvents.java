@@ -16,7 +16,7 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.logging;
+package eu.u032.events;
 
 import eu.u032.Constants;
 import eu.u032.MessageCache;
@@ -32,25 +32,24 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
 
 public class MessageEvents extends ListenerAdapter {
     @Override
-    public void onMessageReceived(final MessageReceivedEvent event) {
+    public void onMessageReceived(MessageReceivedEvent event) {
         MessageCache.addMessage(event.getMessage());
     }
 
     @Override
-    public void onMessageDelete(final MessageDeleteEvent event) {
-		final Message msg = MessageCache.getMessage(event.getMessageIdLong());
+    public void onMessageDelete(MessageDeleteEvent event) {
+		Message msg = MessageCache.getMessage(event.getMessageIdLong());
 
 		if (msg == null) return;
 
-        final User author = msg.getAuthor();
+        User author = msg.getAuthor();
 
 		if (author.isBot()) return;
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_RED)
 			.setDescription(String.format("Message from %s deleted in <#%s>",
@@ -62,9 +61,9 @@ public class MessageEvents extends ListenerAdapter {
         }
 
         if (!msg.getAttachments().isEmpty()) {
-            final StringBuilder attachments = new StringBuilder();
+            StringBuilder attachments = new StringBuilder();
 
-            for (final Message.Attachment attachment : msg.getAttachments()) {
+            for (Message.Attachment attachment : msg.getAttachments()) {
                 attachments.append(String.format("File: [%s](%s) ([Proxy](%s))",
 					attachment.getFileName(), attachment.getUrl(), attachment.getProxyUrl()))
 					.append("\n");
@@ -77,16 +76,16 @@ public class MessageEvents extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageUpdate(final MessageUpdateEvent event) {
-		final Message after = event.getMessage();
+    public void onMessageUpdate(MessageUpdateEvent event) {
+		Message after = event.getMessage();
 		MessageCache.addMessage(after);
 
-		final Message before = MessageCache.getMessage(event.getMessageIdLong());
-		final User author = after.getAuthor();
+		Message before = MessageCache.getMessage(event.getMessageIdLong());
+		User author = after.getAuthor();
 
 		if (author.isBot() || before == null) return;
 
-		final EmbedBuilder embed = new EmbedBuilder()
+		EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor(author.getAsTag(), author.getEffectiveAvatarUrl(), author.getEffectiveAvatarUrl())
 			.setColor(Constants.COLOR_YELLOW)
 			.setDescription(String.format("Message from %s edited in <#%s>\n[Jump to Message](%s)",
@@ -94,11 +93,11 @@ public class MessageEvents extends ListenerAdapter {
 			.setFooter("ID: " + author.getId());
 
 		if (!before.getContentStripped().isEmpty()) {
-			final String beforeFormatted = "```" + before.getContentStripped() + "```";
+			String beforeFormatted = "```" + before.getContentStripped() + "```";
 			embed.addField("Before", beforeFormatted, false);
 		}
 		if (!after.getContentStripped().isEmpty()) {
-			final String afterFormatted = "```" + after.getContentStripped() + "```";
+			String afterFormatted = "```" + after.getContentStripped() + "```";
 			embed.addField("After", afterFormatted, false);
 		}
 
@@ -106,11 +105,11 @@ public class MessageEvents extends ListenerAdapter {
 	}
 
     @Override
-    public void onMessageBulkDelete(final MessageBulkDeleteEvent event) {
-        final List<String> deletedMessages = new ArrayList<>();
+    public void onMessageBulkDelete(MessageBulkDeleteEvent event) {
+        List<String> deletedMessages = new ArrayList<>();
 
-        for (final String messageId : event.getMessageIds()) {
-            final Message message = MessageCache.getMessage(Long.parseLong(messageId));
+        for (String messageId : event.getMessageIds()) {
+            Message message = MessageCache.getMessage(Long.parseLong(messageId));
             if (message == null) continue;
             deletedMessages.add(String.format("%s %s%s%s: %s\n",
 				message.getTimeCreated().format(DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm:ss,")),
@@ -122,12 +121,12 @@ public class MessageEvents extends ListenerAdapter {
         }
 
         Collections.reverse(deletedMessages);
-        final StringBuilder deletedMessagesString = new StringBuilder();
-        for (final String message : deletedMessages) {
+        StringBuilder deletedMessagesString = new StringBuilder();
+        for (String message : deletedMessages) {
             deletedMessagesString.append(message);
         }
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Deleted " + event.getMessageIds().size() + " messages!")
                 .setDescription("Deleted in " + event.getChannel().getAsMention())
                 .setColor(Constants.COLOR_RED);

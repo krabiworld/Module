@@ -38,10 +38,10 @@ public class ServerinfoCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
-		final Guild guild = event.getGuild();
+    protected void execute(CommandEvent event) {
+		Guild guild = event.getGuild();
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
 			.setTitle("Information about " + guild.getName())
 			.setColor(COLOR)
 			.setThumbnail(guild.getIconUrl())
@@ -57,9 +57,9 @@ public class ServerinfoCommand extends Command {
         event.reply(embed.build());
     }
 
-    private MessageEmbed.Field getMembersField(final Guild guild) {
+    private MessageEmbed.Field getMembersField(Guild guild) {
         long botCount = 0, memberCount = 0;
-        for (final Member member : guild.getMembers()) {
+        for (Member member : guild.getMembers()) {
             if (member.getUser().isBot()) botCount++;
             else memberCount++;
         }
@@ -68,9 +68,9 @@ public class ServerinfoCommand extends Command {
         return new MessageEmbed.Field("Members (" + guild.getMemberCount() + ")", members, true);
     }
 
-    private MessageEmbed.Field getChannelsField(final Guild guild) {
-        final long channelCount = guild.getChannels().size() - guild.getCategories().size();
-        final StringBuilder channels = new StringBuilder();
+    private MessageEmbed.Field getChannelsField(Guild guild) {
+        long channelCount = guild.getChannels().size() - guild.getCategories().size();
+        StringBuilder channels = new StringBuilder();
         if (!guild.getTextChannels().isEmpty()) {
             channels.append(TEXT + " Text: **")
 				.append(guild.getTextChannels().size()).append("**\n");
@@ -90,11 +90,11 @@ public class ServerinfoCommand extends Command {
         return new MessageEmbed.Field("Channels (" + channelCount + ")", channels.toString(), true);
     }
 
-    private MessageEmbed.Field getByStatusField(final Guild guild) {
+    private MessageEmbed.Field getByStatusField(Guild guild) {
         long online = 0, dnd = 0, idle = 0, offline = 0;
-		final StringBuilder byStatus = new StringBuilder();
+		StringBuilder byStatus = new StringBuilder();
 
-		for (final Member member : guild.getMembers()) {
+		for (Member member : guild.getMembers()) {
             switch (member.getOnlineStatus()) {
                 case ONLINE -> online++;
                 case OFFLINE, INVISIBLE -> offline++;
@@ -118,20 +118,20 @@ public class ServerinfoCommand extends Command {
         return new MessageEmbed.Field("By Status", byStatus.toString(), true);
     }
 
-    private MessageEmbed.Field getOwnerField(final Guild guild) {
+    private MessageEmbed.Field getOwnerField(Guild guild) {
         return new MessageEmbed.Field("Owner",
 			Objects.requireNonNull(guild.getOwner()).getUser().getAsMention(), true);
     }
 
-    private MessageEmbed.Field getVerificationLevelField(final Guild.VerificationLevel level) {
-        final String verificationLevel = level.name().charAt(0) + level.name().substring(1).toLowerCase()
+    private MessageEmbed.Field getVerificationLevelField(Guild.VerificationLevel level) {
+        String verificationLevel = level.name().charAt(0) + level.name().substring(1).toLowerCase()
 			.replace("_", " ");
         return new MessageEmbed.Field("Verification Level", verificationLevel, true);
     }
 
-    private MessageEmbed.Field getCreatedAtField(final Guild guild) {
-        final long timeCreated = guild.getTimeCreated().toEpochSecond();
-        final String createdAt = "<t:" + timeCreated + ":D> (<t:" + timeCreated + ":R>)";
+    private MessageEmbed.Field getCreatedAtField(Guild guild) {
+        long timeCreated = guild.getTimeCreated().toEpochSecond();
+        String createdAt = "<t:" + timeCreated + ":D> (<t:" + timeCreated + ":R>)";
         return new MessageEmbed.Field("Created at", createdAt, true);
     }
 }

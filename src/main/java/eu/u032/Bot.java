@@ -21,29 +21,40 @@ package eu.u032;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import eu.u032.commands.information.HelpCommand;
+import eu.u032.commands.information.ServerinfoCommand;
+import eu.u032.commands.information.StatsCommand;
+import eu.u032.commands.information.UserCommand;
+import eu.u032.commands.moderation.*;
 import eu.u032.commands.owner.EvalCommand;
 import eu.u032.commands.owner.OwnerCommand;
-import eu.u032.commands.settings.ModroleCommand;
-import eu.u032.commands.settings.PrefixCommand;
 import eu.u032.commands.settings.LogsCommand;
+import eu.u032.commands.settings.ModroleCommand;
 import eu.u032.commands.settings.MuteroleCommand;
-import eu.u032.logging.*;
-import eu.u032.commands.information.*;
-import eu.u032.commands.moderation.*;
-import eu.u032.commands.utilities.*;
+import eu.u032.commands.settings.PrefixCommand;
+import eu.u032.commands.utilities.AvatarCommand;
+import eu.u032.commands.utilities.EmojiCommand;
+import eu.u032.config.Config;
+import eu.u032.events.MemberEvents;
+import eu.u032.events.MessageEvents;
+import eu.u032.manager.GuildManager;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.LoginException;
 
+@Component
 public class Bot {
-	public static void main(String[] args) throws LoginException {
-		final EventWaiter eventWaiter = new EventWaiter();
-		final GuildManager manager = new GuildManager();
-		final CommandClient builder = new CommandClientBuilder()
-			.setOwnerId(Config.getString("OWNER_ID"))
+	@Autowired
+	public Bot(GuildManager manager, Config config, WarnCommand warnCommand,
+			   RemwarnCommand remwarnCommand, WarnsCommand warnsCommand) throws LoginException {
+		EventWaiter eventWaiter = new EventWaiter();
+		CommandClient builder = new CommandClientBuilder()
+			.setOwnerId(config.getOwner())
 			.setPrefix(Constants.PREFIX)
 			.setActivity(null)
 			.setEmojis("✅", "⚠", "❌")
@@ -63,9 +74,9 @@ public class Bot {
 				new KickCommand(),
 				new BanCommand(),
 				new UnbanCommand(),
-				new WarnCommand(),
-				new RemwarnCommand(),
-				new WarnsCommand(),
+				warnCommand,
+				remwarnCommand,
+				warnsCommand,
 				// Settings
 				new PrefixCommand(manager),
 				new LogsCommand(manager),
@@ -79,8 +90,8 @@ public class Bot {
 				new EmojiCommand())
 			.build();
 
-        JDABuilder
-			.createDefault(Config.getString("TOKEN"))
+		JDABuilder
+			.createDefault(config.getToken())
 			.enableIntents(GatewayIntent.GUILD_MEMBERS,
 				GatewayIntent.GUILD_MESSAGES,
 				GatewayIntent.GUILD_PRESENCES,
@@ -94,5 +105,5 @@ public class Bot {
 				new MemberEvents(),
 				new MessageEvents())
 			.build();
-    }
+	}
 }

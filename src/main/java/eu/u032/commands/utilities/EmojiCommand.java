@@ -35,20 +35,20 @@ public class EmojiCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
+    protected void execute(CommandEvent event) {
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
-        final Emote emoji = ArgsUtil.getEmote(event, event.getArgs());
+        Emote emoji = ArgsUtil.getEmote(event, event.getArgs());
 
         if (emoji == null) {
-			MessageUtil.sendError(event, "error.emoji.not.found");
+			MessageUtil.sendHelp(event, this);
             return;
         }
 
-        final EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Emoji " + emoji.getName(), emoji.getImageUrl())
                 .setColor(Constants.COLOR)
                 .setImage(emoji.getImageUrl())

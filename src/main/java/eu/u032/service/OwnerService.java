@@ -1,20 +1,31 @@
+/*
+ * UASM Discord Bot.
+ * Copyright (C) 2022 untled032, Headcrab
+
+ * UASM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * UASM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with UASM. If not, see https://www.gnu.org/licenses/.
+ */
+
 package eu.u032.service;
 
-import eu.u032.dao.impl.OwnerDaoImpl;
-import eu.u032.model.OwnerModel;
+import eu.u032.model.Owner;
+import org.springframework.stereotype.Service;
 
-public class OwnerService {
-	private final OwnerDaoImpl ownerDao = new OwnerDaoImpl();
+@Service
+public interface OwnerService {
+	Owner findById(long id);
 
-	public OwnerModel findById(final long id) {
-		return ownerDao.findById(id);
-	}
+	void save(Owner owner);
 
-	public void save(final OwnerModel ownerModel) {
-		ownerDao.save(ownerModel);
-	}
-
-	public void delete(final OwnerModel ownerModel) {
-		ownerDao.delete(ownerModel);
-	}
+	void delete(Owner owner);
 }

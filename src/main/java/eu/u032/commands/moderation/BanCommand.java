@@ -22,7 +22,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import eu.u032.Constants;
 import eu.u032.util.ArgsUtil;
-import eu.u032.util.GeneralUtil;
+import eu.u032.util.CheckUtil;
 import eu.u032.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -38,45 +38,36 @@ public class BanCommand extends Command {
     }
 
     @Override
-    protected void execute(final CommandEvent event) {
-		if (GeneralUtil.isNotMod(event)) {
-			MessageUtil.sendError(event, "error.not.mod");
+    protected void execute(CommandEvent event) {
+		if (CheckUtil.isNotMod(null, event.getMember())) {
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			MessageUtil.sendError(event, "error.missing.args");
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
-		final String[] args = ArgsUtil.split(event.getArgs());
-		final Member member = ArgsUtil.getMember(event, args[0]);
-		final String reason = ArgsUtil.getGluedArg(args, 1);
+		String[] args = ArgsUtil.split(event.getArgs());
+		Member member = ArgsUtil.getMember(event, args[0]);
+		String reason = ArgsUtil.getGluedArg(args, 1);
 
         if (member == null) {
-			MessageUtil.sendError(event, "error.member.not.found");
+			MessageUtil.sendHelp(event, this);
             return;
         }
-		if (member == event.getSelfMember()) {
-			MessageUtil.sendError(event, "error.cannot.me", "ban");
-			return;
-		}
-		if (member == event.getMember()) {
-			MessageUtil.sendError(event, "error.cannot.yourself", "ban");
-			return;
-		}
-		if (GeneralUtil.isRoleHigher(member, event.getMember())) {
+		if (!event.getSelfMember().canInteract(member)) {
 			MessageUtil.sendError(event, "error.role.position", "ban");
 			return;
 		}
+		if (member == event.getMember()) {
+			MessageUtil.sendError(event, "command.ban.error.cannot.yourself");
+			return;
+		}
 
-        try {
-			event.getGuild().ban(member, 0, reason).queue();
-			MessageUtil.sendSuccessMessage(event, String.format("**%s** banned by moderator **%s**%s",
-				member.getUser().getAsTag(),
-				event.getMember().getEffectiveName(),
-				reason.isEmpty() ? "." : " with reason: " + reason));
-        } catch (final Exception e) {
-            MessageUtil.sendErrorMessage(event, e.getMessage());
-        }
+		event.getGuild().ban(member, 0, reason).queue();
+		MessageUtil.sendSuccessMessage(event, String.format("**%s** banned by moderator **%s**%s",
+			member.getUser().getAsTag(),
+			event.getMember().getEffectiveName(),
+			reason.isEmpty() ? "." : " with reason: " + reason));
     }
 }

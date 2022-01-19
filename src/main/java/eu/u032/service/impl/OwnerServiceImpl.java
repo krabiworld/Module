@@ -16,20 +16,31 @@
  * along with UASM. If not, see https://www.gnu.org/licenses/.
  */
 
-package eu.u032.service;
+package eu.u032.service.impl;
 
-import eu.u032.model.Warn;
+import eu.u032.model.Owner;
+import eu.u032.repository.OwnerRepository;
+import eu.u032.service.OwnerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public interface WarnService {
-	Warn findById(long id);
+public class OwnerServiceImpl implements OwnerService {
+	@Autowired
+	private OwnerRepository ownerRepository;
 
-	List<Warn> findAllByGuildAndUser(long guild, long user);
+	@Override
+	public Owner findById(long id) {
+		return ownerRepository.findById(id);
+	}
 
-	void save(Warn warn);
+	@Override
+	public void save(Owner owner) {
+		ownerRepository.saveAndFlush(owner);
+	}
 
-	void delete(Warn warn);
+	@Override
+	public void delete(Owner owner) {
+		ownerRepository.delete(owner);
+	}
 }
