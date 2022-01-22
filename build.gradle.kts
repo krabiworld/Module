@@ -2,30 +2,27 @@
  * Module Discord Bot.
  * Copyright (C) 2022 untled032, Headcrab
 
- * UASM is free software: you can redistribute it and/or modify
+ * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
 
- * UASM is distributed in the hope that it will be useful,
+ * Module is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with UASM. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see https://www.gnu.org/licenses/.
  */
 
 plugins {
     java
     application
-	id("com.github.johnrengelman.shadow") version "7.1.0"
+	id("org.springframework.boot") version "2.6.3"
     id("com.heroku.sdk.heroku-gradle") version "2.0.0"
 }
 
-application {
-	mainClass.set("eu.u032.Bot")
-}
 version = "1.0"
 
 repositories {
@@ -53,11 +50,20 @@ dependencies {
 heroku {
     appName = "modulebot"
     jdkVersion = "17"
-    includes = listOf("build/libs/UASM-1.0-all.jar")
+    includes = listOf("build/libs/module.jar")
     isIncludeBuildDir = false
-    processTypes = mapOf("worker" to "java -jar build/libs/UASM-1.0-all.jar")
+    processTypes = mapOf("worker" to "java -jar build/libs/module.jar")
 }
 
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+	mainClass.set("org.module.Launcher")
+	this.archiveFileName.set("module.jar")
+}
 tasks.withType<JavaCompile> {
 	options.encoding = "UTF-8"
+}
+tasks.processResources {
+	filesMatching("application.yml") {
+		expand(project.properties)
+	}
 }

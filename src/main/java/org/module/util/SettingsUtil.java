@@ -2,18 +2,18 @@
  * Module Discord Bot.
  * Copyright (C) 2022 untled032, Headcrab
 
- * UASM is free software: you can redistribute it and/or modify
+ * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
 
- * UASM is distributed in the hope that it will be useful,
+ * Module is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with UASM. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see https://www.gnu.org/licenses/.
  */
 
 package org.module.util;
@@ -39,19 +39,19 @@ public class SettingsUtil {
 	/** Get Mute {@link Role role} from {@link GuildManager.GuildSettings} */
 	public static Role getMuteRole(Guild guild) {
 		GuildManager.GuildSettings settings = getSettings(guild);
-		return settings.getMute() == 0 ? null : guild.getRoleById(settings.getMute());
+		return settings.getMuteRole() == 0 ? null : guild.getRoleById(settings.getMuteRole());
 	}
 
 	/** Get Moderator {@link Role role} from {@link GuildManager.GuildSettings} */
 	public static Role getModRole(Guild guild) {
 		GuildManager.GuildSettings settings = getSettings(guild);
-		return settings.getMod() == 0 ? null : guild.getRoleById(settings.getMod());
+		return settings.getModeratorRole() == 0 ? null : guild.getRoleById(settings.getModeratorRole());
 	}
 
 	/** Get Logs {@link TextChannel channel} from {@link GuildManager.GuildSettings} */
 	public static TextChannel getLogsChannel(Guild guild) {
 		GuildManager.GuildSettings settings = getSettings(guild);
-		return settings.getLogs() == 0 ? null : guild.getTextChannelById(settings.getLogs());
+		return settings.getLogsChannel() == 0 ? null : guild.getTextChannelById(settings.getLogsChannel());
 	}
 
 	/** Get Prefix from {@link GuildManager.GuildSettings} */
