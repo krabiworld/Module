@@ -2,25 +2,25 @@
  * Module Discord Bot.
  * Copyright (C) 2022 untled032, Headcrab
 
- * UASM is free software: you can redistribute it and/or modify
+ * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
 
- * UASM is distributed in the hope that it will be useful,
+ * Module is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with UASM. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see https://www.gnu.org/licenses/.
  */
 
 package org.module.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
+import org.module.constants.Constants;
 import org.module.service.MessageService;
 import org.module.util.SettingsUtil;
 import org.module.util.PropertyUtil;
@@ -68,7 +68,7 @@ public class HelpCommand extends Command {
 
             for (String category : categories) {
                 for (Command cmd : commands) {
-                    if (cmd.isHidden()) continue;
+                    if (cmd.isHidden() || cmd.getCategory() == null) continue;
                     if (cmd.getCategory().getName().equals(category)) {
                         commandsBuilder.append("`")
 							.append(prefix)
@@ -87,7 +87,7 @@ public class HelpCommand extends Command {
                 // if match found with name of category
                 if (category.toLowerCase().startsWith(args.toLowerCase())) {
                     for (Command cmd : commands) {
-                        if (cmd.isHidden()) continue;
+                        if (cmd.isHidden() || cmd.getCategory() == null) continue;
                         if (cmd.getCategory().getName().equals(category))
                             embed.addField(prefix + cmd.getName(), cmd.getHelp(), false);
                     }
@@ -104,7 +104,7 @@ public class HelpCommand extends Command {
                 }
             }
 
-			messageService.sendErrorMessage(event, "Command or category **" + args + "** not found.");
+			messageService.sendError(event, "command.help.error.not.found", args);
         }
     }
 }
