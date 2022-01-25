@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.commands.owner;
@@ -31,13 +30,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OwnerCommand extends Command {
-	@Autowired
-	private OwnerService ownerService;
+	private final MessageService messageService;
+	private final OwnerService ownerService;
 
 	@Autowired
-	private MessageService messageService;
-
-	public OwnerCommand() {
+	public OwnerCommand(MessageService messageService, OwnerService ownerService) {
+		this.messageService = messageService;
+		this.ownerService = ownerService;
 		this.name = PropertyUtil.getProperty("command.owner.name");
 		this.help = PropertyUtil.getProperty("command.owner.help");
 		this.arguments = PropertyUtil.getProperty("command.owner.arguments");
@@ -69,7 +68,7 @@ public class OwnerCommand extends Command {
 
 			messageService.sendSuccess(event, "command.owner.success.added", user.getAsTag());
 		} else if (args[0].startsWith("remove")) {
-			Owner owner = ownerService.findById(user.getIdLong());
+			Owner owner = ownerService.getOwner(user.getIdLong());
 
 			if (owner == null) {
 				messageService.sendError(event, "command.owner.error.not.found");

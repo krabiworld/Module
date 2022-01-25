@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.constants;
@@ -24,8 +23,8 @@ import java.awt.*;
 
 public class Constants {
 	// Bot
-	public static final int MAX_MESSAGE_CACHE = 500;
-	public static final String PREFIX = "m!";
+	public static final int MAX_MESSAGE_CACHE = 1000;
+	public static final String DEFAULT_PREFIX = "m!";
 
 	// Colors
 	/** Main color. */
@@ -42,16 +41,4 @@ public class Constants {
 	public static final Category MODERATION = new Category("Moderation");
 	public static final Category SETTINGS = new Category("Settings");
 	public static final Category UTILITIES = new Category("Utilities");
-
-	// Emojis
-	public static final String ONLINE = "<:online:925113750598598736>";
-	public static final String IDLE = "<:idle:925113750254682133>";
-	public static final String DND = "<:dnd:925113750896398406>";
-	public static final String OFFLINE = "<:offline:925113750581817354>";
-	public static final String MEMBERS = "<:members:926844061707546654>";
-	public static final String BOTS = "<:bots:926844061703364648>";
-	public static final String TEXT = "<:text:926844062198276136>";
-	public static final String VOICE = "<:voice:926844062504464444>";
-	public static final String STAGE = "<:stage:926844062252818522>";
-	public static final String STORE = "<:store:926844062160519178>";
 }

@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.service;
@@ -22,11 +21,12 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import org.module.enums.MessageType;
 
 public interface MessageService {
-	void sendError(CommandEvent event, String key, Object... args);
+	void sendMessage(MessageType type, CommandEvent event, String content);
 
-	void sendErrorMessage(CommandEvent event, String content);
+	void sendError(CommandEvent event, String key, Object... args);
 
 	void sendSuccess(CommandEvent event, String key, Object... args);
 

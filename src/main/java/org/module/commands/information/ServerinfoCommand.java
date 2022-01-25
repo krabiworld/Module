@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,13 +12,14 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.module.constants.Emoji;
 import org.module.util.PropertyUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -65,8 +65,8 @@ public class ServerinfoCommand extends Command {
             if (member.getUser().isBot()) botCount++;
             else memberCount++;
         }
-        String members = MEMBERS + " Members: **" + memberCount + "**\n" +
-			BOTS + " Bots: **" + botCount + "**";
+        String members = Emoji.MEMBERS + " Members: **" + memberCount + "**\n" +
+			Emoji.BOTS + " Bots: **" + botCount + "**";
         return new MessageEmbed.Field("Members (" + guild.getMemberCount() + ")", members, true);
     }
 
@@ -74,19 +74,19 @@ public class ServerinfoCommand extends Command {
         long channelCount = guild.getChannels().size() - guild.getCategories().size();
         StringBuilder channels = new StringBuilder();
         if (!guild.getTextChannels().isEmpty()) {
-            channels.append(TEXT + " Text: **")
+            channels.append(Emoji.TEXT + " Text: **")
 				.append(guild.getTextChannels().size()).append("**\n");
         }
         if (!guild.getVoiceChannels().isEmpty()) {
-            channels.append(VOICE + " Voice: **")
+            channels.append(Emoji.VOICE + " Voice: **")
 				.append(guild.getVoiceChannels().size()).append("**\n");
         }
         if (!guild.getStageChannels().isEmpty()) {
-            channels.append(STAGE + " Stage: **")
+            channels.append(Emoji.STAGE + " Stage: **")
 				.append(guild.getStageChannels().size()).append("**\n");
         }
         if (!guild.getStoreChannels().isEmpty()) {
-            channels.append(STORE + " Store: **")
+            channels.append(Emoji.STORE + " Store: **")
 				.append(guild.getStageChannels().size()).append("**\n");
         }
         return new MessageEmbed.Field("Channels (" + channelCount + ")", channels.toString(), true);
@@ -106,16 +106,16 @@ public class ServerinfoCommand extends Command {
 		}
 
 		if (online > 0) {
-            byStatus.append(ONLINE + "Online: **").append(online).append("**\n");
+            byStatus.append(Emoji.ONLINE + "Online: **").append(online).append("**\n");
         }
         if (idle > 0) {
-            byStatus.append(IDLE + "Idle: **").append(idle).append("**\n");
+            byStatus.append(Emoji.IDLE + "Idle: **").append(idle).append("**\n");
         }
         if (dnd > 0) {
-            byStatus.append(DND + "Do Not Disturb: **").append(dnd).append("**\n");
+            byStatus.append(Emoji.DND + "Do Not Disturb: **").append(dnd).append("**\n");
         }
         if (offline > 0) {
-            byStatus.append(OFFLINE + "Offline: **").append(offline).append("**\n");
+            byStatus.append(Emoji.OFFLINE + "Offline: **").append(offline).append("**\n");
         }
         return new MessageEmbed.Field("By Status", byStatus.toString(), true);
     }

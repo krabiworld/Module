@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.commands.moderation;
@@ -32,13 +31,13 @@ import static org.module.constants.Constants.*;
 
 @Component
 public class RemwarnCommand extends Command {
-	@Autowired
-	private ModerationService moderationService;
+	private final ModerationService moderationService;
+	private final MessageService messageService;
 
 	@Autowired
-	private MessageService messageService;
-
-	public RemwarnCommand() {
+	public RemwarnCommand(MessageService messageService, ModerationService moderationService) {
+		this.messageService = messageService;
+		this.moderationService = moderationService;
 		this.name = PropertyUtil.getProperty("command.remwarn.name");
 		this.help = PropertyUtil.getProperty("command.remwarn.help");
 		this.arguments = PropertyUtil.getProperty("command.remwarn.arguments");

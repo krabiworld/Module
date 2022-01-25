@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.commands.utilities;
@@ -31,10 +30,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EmojiCommand extends Command {
-	@Autowired
-	private MessageService messageService;
+	private final MessageService messageService;
 
-    public EmojiCommand() {
+	@Autowired
+    public EmojiCommand(MessageService messageService) {
+		this.messageService = messageService;
 		this.name = PropertyUtil.getProperty("command.emoji.name");
 		this.help = PropertyUtil.getProperty("command.emoji.help");
 		this.arguments = PropertyUtil.getProperty("command.emoji.arguments");

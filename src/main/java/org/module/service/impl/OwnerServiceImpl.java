@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.service.impl;
@@ -27,17 +26,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OwnerServiceImpl implements OwnerService {
+	private final OwnerRepository ownerRepository;
+
 	@Autowired
-	private OwnerRepository ownerRepository;
+	public OwnerServiceImpl(OwnerRepository ownerRepository) {
+		this.ownerRepository = ownerRepository;
+	}
 
 	@Override
-	public Owner findById(long id) {
+	public Owner getOwner(long id) {
 		return ownerRepository.findById(id);
 	}
 
 	@Override
 	public boolean isOwner(Member member) {
-		return findById(member.getIdLong()) != null;
+		return getOwner(member.getIdLong()) != null;
 	}
 
 	@Override

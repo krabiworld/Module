@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.commands.settings;
@@ -33,13 +32,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MuteRoleCommand extends Command {
-	@Autowired
-	private GuildManager manager;
+	private final MessageService messageService;
+	private final GuildManager manager;
 
 	@Autowired
-	private MessageService messageService;
-
-	public MuteRoleCommand() {
+	public MuteRoleCommand(MessageService messageService, GuildManager manager) {
+		this.messageService = messageService;
+		this.manager = manager;
 		this.name = PropertyUtil.getProperty("command.muterole.name");
 		this.help = PropertyUtil.getProperty("command.muterole.help");
 		this.arguments = PropertyUtil.getProperty("command.muterole.arguments");
