@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.commands.information;
@@ -36,13 +35,14 @@ import java.time.*;
 
 @Component
 public class StatsCommand extends Command {
-	@Autowired
-	private StatsService statsService;
+	private final StatsService statsService;
 
 	@Value("${application.version}")
 	private String version;
 
-    public StatsCommand() {
+	@Autowired
+    public StatsCommand(StatsService statsService) {
+		this.statsService = statsService;
         this.name = PropertyUtil.getProperty("command.stats.name");
         this.help = PropertyUtil.getProperty("command.stats.help");
         this.category = Constants.INFORMATION;
@@ -56,6 +56,7 @@ public class StatsCommand extends Command {
 			.setTitle("Bot Statistics")
 			.setColor(Constants.COLOR)
 			.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
+			.setFooter("Version: " + version)
 
 			.addField(getMainField(jda))
 			.addField(getPlatformField(jda));
@@ -64,13 +65,13 @@ public class StatsCommand extends Command {
 
     private MessageEmbed.Field getMainField(JDA jda) {
         long channelsCount = 0;
-
         for (Guild guild : jda.getGuilds()) {
             channelsCount += guild.getChannels().size();
         }
-        String common = String.format("**Servers:** %s\n**Users:** %s\n**Channels:** %s\n**Version:** %s",
-			jda.getGuilds().size(), jda.getUsers().size(), channelsCount, version);
-        return new MessageEmbed.Field("Main", common, true);
+
+        String main = String.format("**Servers:** %s\n**Users:** %s\n**Channels:** %s",
+			jda.getGuilds().size(), jda.getUsers().size(), channelsCount);
+        return new MessageEmbed.Field("Main", main, true);
     }
 
     private MessageEmbed.Field getPlatformField(JDA jda) {
@@ -78,8 +79,8 @@ public class StatsCommand extends Command {
 				.ofEpochMilli(ManagementFactory.getRuntimeMXBean().getStartTime()), ZoneId.systemDefault())
 			.toEpochSecond();
 
-        String platform = String.format("**Executed Commands:** %s\n**Ping:** %s ms\n**Uptime:** <t:%s:R>",
-			statsService.getStats().getExecutedCommands(), jda.getGatewayPing(), uptime);
+        String platform = String.format("**Commands executed:** %s\n**Ping:** %s ms\n**Uptime:** <t:%s:R>",
+			statsService.getStats().getCommandsExecuted(), jda.getGatewayPing(), uptime);
         return new MessageEmbed.Field("Platform", platform, true);
     }
 }

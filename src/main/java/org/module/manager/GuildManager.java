@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.manager;
@@ -36,50 +35,54 @@ import java.util.Collections;
 
 @Component
 public class GuildManager extends ListenerAdapter implements GuildSettingsManager<GuildManager.GuildSettings> {
+	private final GuildService guildService;
+
 	@Autowired
-	private GuildService guildService;
+	public GuildManager(GuildService guildService) {
+		this.guildService = guildService;
+	}
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent event) {
-		if (guildService.findById(event.getGuild().getIdLong()) != null) return;
+		if (guildService.getGuild(event.getGuild().getIdLong()) != null) return;
 
 		GuildConfig guildConfig = new GuildConfig();
 		guildConfig.setId(event.getGuild().getIdLong());
 
-		guildService.save(guildConfig);
+		guildService.addGuild(guildConfig);
 	}
 
 	@Override
 	public GuildSettings getSettings(Guild guild) {
-		return new GuildSettings(guildService.findById(guild.getIdLong()));
+		return new GuildSettings(guildService.getGuild(guild.getIdLong()));
 	}
 
 	public void setPrefix(Guild guild, String prefix) {
-		GuildConfig guildConfig = guildService.findById(guild.getIdLong());
+		GuildConfig guildConfig = guildService.getGuild(guild.getIdLong());
 		guildConfig.setPrefix(prefix);
 
-		guildService.update(guildConfig);
+		guildService.updateGuild(guildConfig);
 	}
 
 	public void setLogsChannel(Guild guild, TextChannel channel) {
-		GuildConfig guildConfig = guildService.findById(guild.getIdLong());
+		GuildConfig guildConfig = guildService.getGuild(guild.getIdLong());
 		guildConfig.setLogs(channel == null ? 0 : channel.getIdLong());
 
-		guildService.update(guildConfig);
+		guildService.updateGuild(guildConfig);
 	}
 
 	public void setMuteRole(Guild guild, Role role) {
-		GuildConfig guildConfig = guildService.findById(guild.getIdLong());
+		GuildConfig guildConfig = guildService.getGuild(guild.getIdLong());
 		guildConfig.setMute(role.getIdLong());
 
-		guildService.update(guildConfig);
+		guildService.updateGuild(guildConfig);
 	}
 
 	public void setModeratorRole(Guild guild, Role role) {
-		GuildConfig guildConfig = guildService.findById(guild.getIdLong());
+		GuildConfig guildConfig = guildService.getGuild(guild.getIdLong());
 		guildConfig.setMod(role.getIdLong());
 
-		guildService.update(guildConfig);
+		guildService.updateGuild(guildConfig);
 	}
 
 	@Getter

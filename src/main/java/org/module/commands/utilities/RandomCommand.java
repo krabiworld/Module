@@ -1,3 +1,20 @@
+/*
+ * This file is part of Module.
+
+ * Module is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * Module is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.module.commands.utilities;
 
 import com.jagrosh.jdautilities.command.Command;
@@ -12,10 +29,11 @@ import java.util.Random;
 
 @Component
 public class RandomCommand extends Command {
-	@Autowired
-	private MessageService messageService;
+	private final MessageService messageService;
 
-	public RandomCommand() {
+	@Autowired
+	public RandomCommand(MessageService messageService) {
+		this.messageService = messageService;
 		this.name = PropertyUtil.getProperty("command.random.name");
 		this.help = PropertyUtil.getProperty("command.random.help");
 		this.arguments = PropertyUtil.getProperty("command.random.arguments");

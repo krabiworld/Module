@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,20 +12,19 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.service;
 
 import org.module.model.GuildConfig;
-import org.springframework.stereotype.Service;
 
 public interface GuildService {
-	GuildConfig findById(long id);
+	GuildConfig getGuild(long id);
 
-	void save(GuildConfig guildConfig);
+	void addGuild(GuildConfig guildConfig);
 
-	void update(GuildConfig guildConfig);
+	void updateGuild(GuildConfig guildConfig);
 
-	void delete(GuildConfig guildConfig);
+	void deleteGuild(GuildConfig guildConfig);
 }

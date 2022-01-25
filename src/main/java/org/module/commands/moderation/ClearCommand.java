@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +12,7 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.commands.moderation;
@@ -37,13 +36,13 @@ import java.util.List;
 
 @Component
 public class ClearCommand extends Command {
-	@Autowired
-	private MessageService messageService;
+	private final MessageService messageService;
+	private final ModerationService moderationService;
 
 	@Autowired
-	private ModerationService moderationService;
-
-    public ClearCommand() {
+    public ClearCommand(MessageService messageService, ModerationService moderationService) {
+		this.messageService = messageService;
+		this.moderationService = moderationService;
         this.name = PropertyUtil.getProperty("command.clear.name");
         this.help = PropertyUtil.getProperty("command.clear.help");
         this.arguments = PropertyUtil.getProperty("command.clear.arguments");

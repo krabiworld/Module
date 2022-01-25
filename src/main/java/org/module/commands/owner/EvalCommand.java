@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,13 +12,14 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.commands.owner;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.module.enums.MessageType;
 import org.module.service.MessageService;
 import org.module.service.OwnerService;
 import org.module.util.PropertyUtil;
@@ -29,13 +29,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EvalCommand extends Command {
-	@Autowired
-	private OwnerService ownerService;
+	private final MessageService messageService;
+	private final OwnerService ownerService;
 
 	@Autowired
-	private MessageService messageService;
-
-	public EvalCommand() {
+	public EvalCommand(MessageService messageService, OwnerService ownerService) {
+		this.messageService = messageService;
+		this.ownerService = ownerService;
 		this.name = PropertyUtil.getProperty("command.eval.name");
 		this.help = PropertyUtil.getProperty("command.eval.help");
 		this.arguments = PropertyUtil.getProperty("command.eval.arguments");
@@ -44,9 +44,7 @@ public class EvalCommand extends Command {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		if (!event.isOwner() || !ownerService.isOwner(event.getMember())) {
-			return;
-		}
+		if (!ownerService.isOwner(event.getMember())) return;
 
 		if (event.getArgs().isEmpty()) {
 			messageService.sendHelp(event, this);
@@ -54,14 +52,14 @@ public class EvalCommand extends Command {
 		}
 
 		GroovyShell shell = new GroovyShell();
-		shell.setProperty("event", event);
+		shell.setProperty("e", event);
 
 		event.getChannel().sendTyping().queue();
 		event.async(() -> {
 			try {
-				event.replySuccess("Evaluated Successfully:\n" + shell.evaluate(event.getArgs()));
+				event.replySuccess("Evaluated Successfully:\n```\n" + shell.evaluate(event.getArgs()) + "\n```");
 			} catch (Exception e) {
-				messageService.sendErrorMessage(event, e.getMessage());
+				messageService.sendMessage(MessageType.ERROR, event, e.getMessage());
 			}
 		});
 	}

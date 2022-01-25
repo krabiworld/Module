@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,22 +12,21 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.entities.*;
 import org.module.constants.Constants;
+import org.module.service.CookieService;
 import org.module.service.MessageService;
 import org.module.util.ArgsUtil;
 import org.module.util.PropertyUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,10 +35,13 @@ import java.util.List;
 
 @Component
 public class UserCommand extends Command {
-	@Autowired
-	private MessageService messageService;
+	private final MessageService messageService;
+	private final CookieService cookieService;
 
-    public UserCommand() {
+	@Autowired
+    public UserCommand(MessageService messageService, CookieService cookieService) {
+		this.messageService = messageService;
+		this.cookieService = cookieService;
         this.name = PropertyUtil.getProperty("command.user.name");
         this.help = PropertyUtil.getProperty("command.user.help");
         this.arguments = PropertyUtil.getProperty("command.user.arguments");
@@ -51,15 +52,15 @@ public class UserCommand extends Command {
     protected void execute(CommandEvent event) {
 		Member member = event.getMember();
 
-        if (!event.getArgs().isEmpty()) {
-            member = ArgsUtil.getMember(event, event.getArgs());
-        }
-        if (member == null) {
+		if (!event.getArgs().isEmpty()) {
+			member = ArgsUtil.getMember(event, event.getArgs());
+		}
+		if (member == null) {
 			messageService.sendHelp(event, this);
-            return;
-        }
+			return;
+		}
 
-        User.Profile profile = member.getUser().retrieveProfile().complete();
+		User.Profile profile = member.getUser().retrieveProfile().complete();
 
         String description = String.format("**Username:** %s\n%s%s%s%s",
 			member.getUser().getAsTag(),
@@ -73,9 +74,9 @@ public class UserCommand extends Command {
 				null, member.getEffectiveAvatarUrl())
 			.setColor(member.getColor())
 			.setDescription(description)
+			.addField(getCookiesField(member.getUser(), event.getGuild()))
 			.setThumbnail(member.getEffectiveAvatarUrl())
 			.setFooter("ID: " + member.getId());
-
         if (profile.getBannerUrl() != null) embed.setImage(profile.getBannerUrl() + "?size=512");
 
         event.reply(embed.build());
@@ -121,4 +122,9 @@ public class UserCommand extends Command {
         return String.format("**Registered at:** <t:%s:D> (<t:%s:R>)",
 			time.toEpochSecond(), time.toEpochSecond());
     }
+
+	private MessageEmbed.Field getCookiesField(User user, Guild guild) {
+		return new MessageEmbed.Field("Cookies",
+			String.valueOf(cookieService.getCookies(guild, user)), true);
+	}
 }

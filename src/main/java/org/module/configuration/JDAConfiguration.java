@@ -1,6 +1,5 @@
 /*
- * Module Discord Bot.
- * Copyright (C) 2022 untled032, Headcrab
+ * This file is part of Module.
 
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,12 +12,11 @@
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Module. If not, see https://www.gnu.org/licenses/.
+ * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.module.configuration;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -29,9 +27,13 @@ import org.module.commands.owner.*;
 import org.module.commands.settings.*;
 import org.module.commands.utilities.*;
 import org.module.constants.Constants;
-import org.module.events.MemberEvent;
-import org.module.events.MessageEvent;
-import org.module.events.CommandsEvent;
+import org.module.events.message.MessageReactionAdd;
+import org.module.events.member.*;
+import org.module.events.message.MessageBulkDelete;
+import org.module.events.command.Command;
+import org.module.events.message.MessageDelete;
+import org.module.events.message.MessageReceived;
+import org.module.events.message.MessageUpdate;
 import org.module.manager.GuildManager;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -50,9 +52,8 @@ import javax.security.auth.login.LoginException;
 @Configuration
 public class JDAConfiguration {
 	private final Logger logger = LoggerFactory.getLogger(JDAConfiguration.class);
-
-	@Autowired
-	private ApplicationContext ctx;
+	private final ApplicationContext ctx;
+	private final GuildManager manager;
 
 	@Value("${discord.token}")
 	private String token;
@@ -60,12 +61,18 @@ public class JDAConfiguration {
 	@Value("${discord.owner}")
 	private String owner;
 
+	@Autowired
+	public JDAConfiguration(ApplicationContext ctx, GuildManager manager) {
+		this.ctx = ctx;
+		this.manager = manager;
+	}
+
 	@Bean
-	public JDA jda(ApplicationContext ctx, GuildManager manager) throws LoginException {
+	public JDA jda() throws LoginException {
 		EventWaiter eventWaiter = new EventWaiter();
 		CommandClient builder = new CommandClientBuilder()
 			.setOwnerId(owner)
-			.setPrefix(Constants.PREFIX)
+			.setPrefix(Constants.DEFAULT_PREFIX)
 			.setActivity(null)
 			.setEmojis("✅", "⚠", "❌")
 			.useHelpBuilder(false)
@@ -100,29 +107,42 @@ public class JDAConfiguration {
 				get(EmojiCommand.class),
 				get(RandomCommand.class)
 			)
-			.setListener(ctx.getBean(CommandsEvent.class))
+			.setListener(get(Command.class))
 			.build();
 
-		logger.info("Loaded " + builder.getCommands().size() + " commands");
+		logger.info("Added " + builder.getCommands().size() + " commands.");
 
-		return JDABuilder
+		JDA jda = JDABuilder
 			.createDefault(token)
-			.enableIntents(GatewayIntent.GUILD_MEMBERS,
-				GatewayIntent.GUILD_MESSAGES,
-				GatewayIntent.GUILD_PRESENCES,
-				GatewayIntent.DIRECT_MESSAGES)
+			.enableIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS))
 			.enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY, CacheFlag.EMOTE)
 			.disableCache(CacheFlag.VOICE_STATE)
 			.setBulkDeleteSplittingEnabled(false)
 			.setMemberCachePolicy(MemberCachePolicy.ALL)
 			.useSharding(0, 1)
 			.addEventListeners(eventWaiter, builder, manager,
-				ctx.getBean(MemberEvent.class), ctx.getBean(MessageEvent.class))
+				// Member
+				get(MemberUnban.class),
+				get(MemberBan.class),
+				get(MemberJoin.class),
+				get(MemberRemove.class),
+				get(MemberRoleAdd.class),
+				get(MemberRoleRemove.class),
+				get(MemberUpdateNickname.class),
+				// Message
+				get(MessageBulkDelete.class),
+				get(MessageUpdate.class),
+				get(MessageDelete.class),
+				get(MessageReceived.class),
+				get(MessageReactionAdd.class))
 			.build();
+
+		logger.info("Added " + jda.getRegisteredListeners().size() + " events.");
+		return jda;
 	}
 
 	/** Alias to {@link ApplicationContext#getBean(Class)}. */
-	private Command get(Class<? extends Command> command) {
-		return ctx.getBean(command);
+	private <T> T get(Class<? extends T> clazz) {
+		return ctx.getBean(clazz);
 	}
 }
