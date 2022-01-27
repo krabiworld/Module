@@ -17,8 +17,13 @@
 
 package org.module.commands.utilities;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.module.constants.Constants;
 import org.module.service.MessageService;
 import org.module.util.ArgsUtil;
@@ -28,8 +33,10 @@ import net.dv8tion.jda.api.entities.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+
 @Component
-public class AvatarCommand extends Command {
+public class AvatarCommand extends SlashCommand {
 	private final MessageService messageService;
 
 	@Autowired
@@ -38,6 +45,9 @@ public class AvatarCommand extends Command {
 		this.name = PropertyUtil.getProperty("command.avatar.name");
 		this.help = PropertyUtil.getProperty("command.avatar.help");
 		this.arguments = PropertyUtil.getProperty("command.avatar.arguments");
+		this.options = Collections.singletonList(new OptionData(
+			OptionType.USER, "user", "User to get avatar."
+		));
         this.category = Constants.UTILITIES;
     }
 
@@ -53,10 +63,26 @@ public class AvatarCommand extends Command {
             return;
         }
 
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Avatar of " + member.getUser().getName())
-                .setColor(member.getColor())
-                .setImage(member.getEffectiveAvatarUrl() + "?size=512");
-        event.reply(embed.build());
+        event.reply(command(member));
     }
+
+	@Override
+	protected void execute(SlashCommandEvent event) {
+		OptionMapping option = event.getOption("user");
+
+		if (option == null) {
+			event.replyEmbeds(command(event.getMember())).queue();
+			return;
+		}
+
+		event.replyEmbeds(command(option.getAsMember())).queue();
+	}
+
+	private MessageEmbed command(Member member) {
+		return new EmbedBuilder()
+			.setAuthor("Avatar of " + member.getUser().getName())
+			.setColor(member.getColor())
+			.setImage(member.getEffectiveAvatarUrl() + "?size=512")
+			.build();
+	}
 }

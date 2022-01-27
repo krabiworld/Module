@@ -17,14 +17,32 @@
 
 package org.module.util;
 
+import com.jagrosh.jdautilities.command.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.module.constants.Constants;
 import org.module.enums.MessageType;
 
 public class EmbedUtil extends EmbedBuilder {
+	/** Embed with description */
 	public EmbedUtil(MessageType type, String description) {
-		if (type == MessageType.ERROR) this.setColor(Constants.COLOR_RED);
-		else if (type == MessageType.SUCCESS) this.setColor(Constants.COLOR_GREEN);
+		setMessageColor(type);
 		this.setDescription(description);
+	}
+
+	/** Embed for command help. */
+	public EmbedUtil(Command command, String prefix) {
+		String arguments = command.getArguments().isEmpty() ? "" : " " + command.getArguments();
+		setMessageColor(MessageType.INFO);
+		this.setTitle("Information of command " + command.getName());
+		this.setDescription("`" + prefix + command.getName() + arguments + "`\n" + command.getHelp());
+	}
+
+	private void setMessageColor(MessageType type) {
+		switch (type) {
+			case INFO -> this.setColor(Constants.COLOR);
+			case WARN -> this.setColor(Constants.COLOR_YELLOW);
+			case ERROR -> this.setColor(Constants.COLOR_RED);
+			case SUCCESS -> this.setColor(Constants.COLOR_GREEN);
+		}
 	}
 }

@@ -19,6 +19,7 @@ package org.module.commands.owner;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.module.constants.Constants;
 import org.module.enums.MessageType;
 import org.module.service.MessageService;
 import org.module.service.OwnerService;
@@ -39,6 +40,7 @@ public class EvalCommand extends Command {
 		this.name = PropertyUtil.getProperty("command.eval.name");
 		this.help = PropertyUtil.getProperty("command.eval.help");
 		this.arguments = PropertyUtil.getProperty("command.eval.arguments");
+		this.category = Constants.OWNER;
 		this.hidden = true;
 	}
 
@@ -57,7 +59,7 @@ public class EvalCommand extends Command {
 		event.getChannel().sendTyping().queue();
 		event.async(() -> {
 			try {
-				event.replySuccess("Evaluated Successfully:\n```\n" + shell.evaluate(event.getArgs()) + "\n```");
+				event.replySuccess("Evaluated Successfully:\n```" + shell.evaluate(event.getArgs()) + "```");
 			} catch (Exception e) {
 				messageService.sendMessage(MessageType.ERROR, event, e.getMessage());
 			}

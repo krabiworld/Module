@@ -19,7 +19,12 @@ package org.module.commands.information;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.module.constants.Constants;
 import org.module.service.CookieService;
 import org.module.service.MessageService;
@@ -31,10 +36,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Component
-public class UserCommand extends Command {
+public class UserCommand extends SlashCommand {
 	private final MessageService messageService;
 	private final CookieService cookieService;
 
@@ -45,6 +51,9 @@ public class UserCommand extends Command {
         this.name = PropertyUtil.getProperty("command.user.name");
         this.help = PropertyUtil.getProperty("command.user.help");
         this.arguments = PropertyUtil.getProperty("command.user.arguments");
+		this.options = Collections.singletonList(new OptionData(
+			OptionType.USER, "user", "User to get information."
+		));
         this.category = Constants.INFORMATION;
     }
 
@@ -60,29 +69,44 @@ public class UserCommand extends Command {
 			return;
 		}
 
+        event.reply(command(member, event.getGuild()));
+    }
+
+	@Override
+	protected void execute(SlashCommandEvent event) {
+		OptionMapping option = event.getOption("user");
+
+		if (option == null) {
+			event.replyEmbeds(command(event.getMember(), event.getGuild())).queue();
+			return;
+		}
+
+		event.replyEmbeds(command(option.getAsMember(), event.getGuild())).queue();
+	}
+
+	private MessageEmbed command(Member member, Guild guild) {
 		User.Profile profile = member.getUser().retrieveProfile().complete();
 
-        String description = String.format("**Username:** %s\n%s%s%s%s",
+		String description = String.format("**Username:** %s\n%s%s%s%s",
 			member.getUser().getAsTag(),
 			getStatus(member.getOnlineStatus()),
 			getActivities(member.getActivities()),
 			getJoinedAt(member.getTimeJoined()),
 			getRegisteredAt(member.getTimeCreated()));
 
-        EmbedBuilder embed = new EmbedBuilder()
+		EmbedBuilder embed = new EmbedBuilder()
 			.setAuthor("Information about " + member.getUser().getName(),
 				null, member.getEffectiveAvatarUrl())
 			.setColor(member.getColor())
 			.setDescription(description)
-			.addField(getCookiesField(member.getUser(), event.getGuild()))
+			.addField(getCookiesField(member.getUser(), guild))
 			.setThumbnail(member.getEffectiveAvatarUrl())
 			.setFooter("ID: " + member.getId());
-        if (profile.getBannerUrl() != null) embed.setImage(profile.getBannerUrl() + "?size=512");
+		if (profile.getBannerUrl() != null) embed.setImage(profile.getBannerUrl() + "?size=512");
+		return embed.build();
+	}
 
-        event.reply(embed.build());
-    }
-
-    private String getStatus(OnlineStatus onlineStatus) {
+	private String getStatus(OnlineStatus onlineStatus) {
          String status = switch (onlineStatus) {
             case ONLINE -> "<:online:925113750598598736>Online";
             case IDLE -> "<:idle:925113750254682133>Idle";
@@ -98,7 +122,7 @@ public class UserCommand extends Command {
             if (activity.getType() == Activity.ActivityType.CUSTOM_STATUS)
                 activities.append("**Custom Status:** ")
 					.append(activity.getEmoji() == null ? "" : activity.getEmoji().getAsMention() + " ");
-            if (activity.getType() == Activity.ActivityType.DEFAULT)
+            if (activity.getType() == Activity.ActivityType.PLAYING)
                 activities.append("**Playing:** ");
             if (activity.getType() == Activity.ActivityType.COMPETING)
                 activities.append("**Competing in:** ");

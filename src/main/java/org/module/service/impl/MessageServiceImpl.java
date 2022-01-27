@@ -19,18 +19,18 @@ package org.module.service.impl;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.module.constants.Constants;
 import org.module.enums.MessageType;
 import org.module.service.MessageService;
 import org.module.util.EmbedUtil;
 import org.module.util.PropertyUtil;
 import org.module.util.SettingsUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -39,10 +39,10 @@ import java.util.function.Consumer;
 
 @Service
 public class MessageServiceImpl implements MessageService {
-	private final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
 	private final Consumer<Message> errorDelay = m -> m.delete().queueAfter(10, TimeUnit.SECONDS);
+	private final Consumer<Message> warnDelay = m -> m.delete().queueAfter(15, TimeUnit.SECONDS);
 	private final Consumer<Message> successDelay = m -> m.delete().queueAfter(20, TimeUnit.SECONDS);
-	
+
 	@Override
 	public void sendMessage(MessageType type, CommandEvent event, String content) {
 		if (type == MessageType.ERROR) {
@@ -51,8 +51,11 @@ public class MessageServiceImpl implements MessageService {
 		} else if (type == MessageType.SUCCESS) {
 			event.reactSuccess();
 			event.replySuccess(content, successDelay);
+		} else if (type == MessageType.WARN) {
+			event.reactWarning();
+			event.replyWarning(content, warnDelay);
 		} else {
-			logger.error("Message type " + type.name() + " not found.");
+			event.reply(content);
 		}
 	}
 
@@ -91,12 +94,13 @@ public class MessageServiceImpl implements MessageService {
 
 	@Override
 	public void sendHelp(CommandEvent event, Command command) {
-		String prefix = SettingsUtil.getPrefix(event.getGuild());
-		String arguments = command.getArguments().isEmpty() ? "" : " " + command.getArguments();
-		EmbedBuilder embed = new EmbedBuilder()
-			.setColor(Constants.COLOR)
-			.setTitle("Information of command " + command.getName())
-			.setDescription("`" + prefix + command.getName() + arguments + "`\n" + command.getHelp());
-		event.reply(embed.build(), m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
+		EmbedUtil embed = new EmbedUtil(command, SettingsUtil.getPrefix(event.getGuild()));
+		event.reply(embed.build(), successDelay);
+	}
+
+	@Override
+	public void sendEphemeralHelp(SlashCommandEvent event, Command command) {
+		EmbedUtil embed = new EmbedUtil(command, "/");
+		event.replyEmbeds(embed.build()).setEphemeral(true).queue();
 	}
 }

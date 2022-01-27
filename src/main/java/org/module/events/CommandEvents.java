@@ -15,25 +15,48 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.events.command;
+package org.module.events;
 
+import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CommandListener;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.module.service.StatsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Command implements CommandListener {
+public class CommandEvents implements CommandListener {
+	private final Logger logger = LoggerFactory.getLogger(CommandEvents.class);
 	private final StatsService statsService;
 
 	@Autowired
-	public Command(StatsService statsService) {
+	public CommandEvents(StatsService statsService) {
 		this.statsService = statsService;
 	}
 
 	@Override
-	public void onCommand(CommandEvent event, com.jagrosh.jdautilities.command.Command command) {
+	public void onCommand(CommandEvent event, Command command) {
 		statsService.incrementCommandsExecuted();
+	}
+
+	@Override
+	public void onSlashCommand(SlashCommandEvent event, SlashCommand command) {
+		statsService.incrementCommandsExecuted();
+	}
+
+	@Override
+	public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
+		logger.error(String.format("Exception in command %s.", command.getName()));
+		throwable.printStackTrace();
+	}
+
+	@Override
+	public void onSlashCommandException(SlashCommandEvent event, SlashCommand command, Throwable throwable) {
+		logger.error(String.format("Exception in slash command %s.", command.getName()));
+		throwable.printStackTrace();
 	}
 }

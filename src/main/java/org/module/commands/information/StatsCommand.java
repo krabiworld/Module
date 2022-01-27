@@ -17,8 +17,9 @@
 
 package org.module.commands.information;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.module.constants.Constants;
 import org.module.service.StatsService;
 import org.module.util.PropertyUtil;
@@ -34,7 +35,7 @@ import java.lang.management.ManagementFactory;
 import java.time.*;
 
 @Component
-public class StatsCommand extends Command {
+public class StatsCommand extends SlashCommand {
 	private final StatsService statsService;
 
 	@Value("${application.version}")
@@ -50,20 +51,27 @@ public class StatsCommand extends Command {
 
     @Override
 	protected void execute(CommandEvent event) {
-		JDA jda = event.getJDA();
+        event.reply(command(event.getJDA()));
+    }
 
-        EmbedBuilder embed = new EmbedBuilder()
+	@Override
+	protected void execute(SlashCommandEvent event) {
+		event.replyEmbeds(command(event.getJDA())).queue();
+	}
+
+	private MessageEmbed command(JDA jda) {
+		return new EmbedBuilder()
 			.setTitle("Bot Statistics")
 			.setColor(Constants.COLOR)
 			.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
 			.setFooter("Version: " + version)
 
 			.addField(getMainField(jda))
-			.addField(getPlatformField(jda));
-        event.reply(embed.build());
-    }
+			.addField(getPlatformField(jda))
+			.build();
+	}
 
-    private MessageEmbed.Field getMainField(JDA jda) {
+	private MessageEmbed.Field getMainField(JDA jda) {
         long channelsCount = 0;
         for (Guild guild : jda.getGuilds()) {
             channelsCount += guild.getChannels().size();

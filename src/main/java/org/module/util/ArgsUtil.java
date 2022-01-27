@@ -20,6 +20,7 @@ package org.module.util;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 import java.util.List;
 
@@ -49,6 +50,15 @@ public class ArgsUtil {
 
 	/** Get {@link Emote} from argument. */
 	public static Emote getEmote(CommandEvent event, String arg) {
+		List<Emote> emotes = FinderUtil.findEmotes(arg, event.getGuild());
+		for (Emote emote : emotes) {
+			return emote;
+		}
+		return null;
+	}
+
+	/** Get {@link Emote} from argument. */
+	public static Emote getEmote(SlashCommandEvent event, String arg) {
 		List<Emote> emotes = FinderUtil.findEmotes(arg, event.getGuild());
 		for (Emote emote : emotes) {
 			return emote;

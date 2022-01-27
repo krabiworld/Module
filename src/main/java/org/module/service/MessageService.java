@@ -21,6 +21,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.module.enums.MessageType;
 
 public interface MessageService {
@@ -35,4 +36,6 @@ public interface MessageService {
 	void sendLog(Guild guild, EmbedBuilder embed, byte[] file);
 
 	void sendHelp(CommandEvent event, Command command);
+
+	void sendEphemeralHelp(SlashCommandEvent event, Command command);
 }
