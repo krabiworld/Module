@@ -3,7 +3,7 @@
 ![](https://img.shields.io/github/repo-size/HeadcrabJ/Module)
 ![](https://img.shields.io/maven-central/v/net.dv8tion/JDA?label=JDA)
 
-Multifunctional bot with moderation, information and utilities commands. [Server](https://discord.gg/DWEjaavW6d/).
+Multifunctional bot with moderation, information and utilities commands. [Invite](https://discord.com/api/oauth2/authorize?client_id=920294906008834058&permissions=8&scope=bot%20applications.commands), [Server](https://discord.gg/DWEjaavW6d/).
 
 ## Technologies
 - [Java](https://www.oracle.com/java/)
