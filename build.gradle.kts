@@ -22,27 +22,28 @@ plugins {
     id("com.heroku.sdk.heroku-gradle") version "2.0.0"
 }
 
-version = "1.0"
+version = "1.1"
 
 repositories {
     mavenCentral()
-	maven("https://m2.dv8tion.net/releases")
-	jcenter()
+	maven("https://m2.chew.pro/snapshots/")
 }
 
 dependencies {
-	implementation("net.dv8tion:JDA:4.4.0_352") {
+	implementation("net.dv8tion:JDA:5.0.0-alpha.4") {
 		exclude(module = "opus-java")
 	}
-    implementation("com.jagrosh:jda-utilities:3.0.5")
+    implementation("pw.chew:jda-chewtils:2.0-SNAPSHOT")
     implementation("ch.qos.logback:logback-classic:1.2.10")
 	implementation("org.codehaus.groovy:groovy:3.0.9")
 	implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.2")
 	implementation("org.springframework.boot:spring-boot-starter:2.6.2")
+	implementation("org.reflections:reflections:0.10.2")
 	runtimeOnly("org.postgresql:postgresql:42.3.1")
 	compileOnly("org.projectlombok:lombok:1.18.22")
 	annotationProcessor("org.projectlombok:lombok:1.18.22")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.6.2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.2")
 }
 

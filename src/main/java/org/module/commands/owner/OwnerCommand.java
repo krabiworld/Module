@@ -19,6 +19,7 @@ package org.module.commands.owner;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.module.constants.Constants;
 import org.module.model.Owner;
 import org.module.service.MessageService;
 import org.module.service.OwnerService;
@@ -40,6 +41,7 @@ public class OwnerCommand extends Command {
 		this.name = PropertyUtil.getProperty("command.owner.name");
 		this.help = PropertyUtil.getProperty("command.owner.help");
 		this.arguments = PropertyUtil.getProperty("command.owner.arguments");
+		this.category = Constants.OWNER;
 		this.hidden = true;
 		this.ownerCommand = true;
 	}

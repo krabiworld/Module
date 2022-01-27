@@ -1,13 +1,15 @@
 spring:
-    datasource:
-        driver-class-name: "org.postgresql.Driver"
-        url: "jdbc:postgresql://localhost:5432/database"
-        username: "username"
-        password: "password"
+  datasource:
+    driver-class-name: "org.postgresql.Driver"
+    url: "jdbc:postgresql://host:5432/database"
+    username: "username"
+    password: "password"
 
 application:
-    version: ${version}
+  version: ${version}
 
 discord:
-    token: "token"
-    owner: "owner"
+  token: "Bot Token"
+  owner: Bot Owner ID
+  bot: Bot ID
+  guild: Guild ID (For testing slash commands)

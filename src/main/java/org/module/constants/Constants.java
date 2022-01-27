@@ -39,6 +39,7 @@ public class Constants {
 	// Categories
 	public static final Category INFORMATION = new Category("Information");
 	public static final Category MODERATION = new Category("Moderation");
+	public static final Category OWNER = new Category("Owner");
 	public static final Category SETTINGS = new Category("Settings");
 	public static final Category UTILITIES = new Category("Utilities");
 }

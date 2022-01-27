@@ -17,8 +17,9 @@
 
 package org.module.commands.information;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.module.constants.Emoji;
 import org.module.util.PropertyUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -32,7 +33,7 @@ import java.util.Objects;
 import static org.module.constants.Constants.*;
 
 @Component
-public class ServerinfoCommand extends Command {
+public class ServerinfoCommand extends SlashCommand {
 	public ServerinfoCommand() {
         this.name = PropertyUtil.getProperty("command.serverinfo.name");
         this.help = PropertyUtil.getProperty("command.serverinfo.help");
@@ -41,9 +42,16 @@ public class ServerinfoCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-		Guild guild = event.getGuild();
+		event.reply(command(event.getGuild()));
+    }
 
-        EmbedBuilder embed = new EmbedBuilder()
+	@Override
+	protected void execute(SlashCommandEvent event) {
+		event.replyEmbeds(command(event.getGuild())).queue();
+	}
+
+	private MessageEmbed command(Guild guild) {
+		return new EmbedBuilder()
 			.setTitle("Information about " + guild.getName())
 			.setColor(COLOR)
 			.setThumbnail(guild.getIconUrl())
@@ -55,11 +63,11 @@ public class ServerinfoCommand extends Command {
 			.addField(getByStatusField(guild))
 			.addField(getOwnerField(guild))
 			.addField(getVerificationLevelField(guild.getVerificationLevel()))
-			.addField(getCreatedAtField(guild));
-        event.reply(embed.build());
-    }
+			.addField(getCreatedAtField(guild))
+			.build();
+	}
 
-    private MessageEmbed.Field getMembersField(Guild guild) {
+	private MessageEmbed.Field getMembersField(Guild guild) {
         long botCount = 0, memberCount = 0;
         for (Member member : guild.getMembers()) {
             if (member.getUser().isBot()) botCount++;

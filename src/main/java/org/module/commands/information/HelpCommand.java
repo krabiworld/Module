@@ -53,7 +53,7 @@ public class HelpCommand extends Command {
 
         categoriesLoop:
         for (Command cmd : commands) {
-            if (cmd.getCategory() == null) continue;
+			if (cmd.isHidden()) continue;
             for (String category : categories) {
                 // if command already exists in "categories" - continue
                 if (category.equals(cmd.getCategory().getName())) continue categoriesLoop;
@@ -65,10 +65,13 @@ public class HelpCommand extends Command {
         if (args.isEmpty()) {
             StringBuilder commandsBuilder = new StringBuilder();
             embed.setTitle("Available commands:");
+			embed.setDescription(String.format(
+				"For additional information enter `%shelp category` to get information about category or `%shelp command` to get information about command.",
+				prefix, prefix));
 
             for (String category : categories) {
                 for (Command cmd : commands) {
-                    if (cmd.isHidden() || cmd.getCategory() == null) continue;
+                    if (cmd.isHidden()) continue;
                     if (cmd.getCategory().getName().equals(category)) {
                         commandsBuilder.append("`")
 							.append(prefix)
@@ -87,7 +90,7 @@ public class HelpCommand extends Command {
                 // if match found with name of category
                 if (category.toLowerCase().startsWith(args.toLowerCase())) {
                     for (Command cmd : commands) {
-                        if (cmd.isHidden() || cmd.getCategory() == null) continue;
+                        if (cmd.isHidden()) continue;
                         if (cmd.getCategory().getName().equals(category))
                             embed.addField(prefix + cmd.getName(), cmd.getHelp(), false);
                     }

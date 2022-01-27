@@ -17,8 +17,13 @@
 
 package org.module.commands.utilities;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.module.constants.Constants;
 import org.module.service.MessageService;
 import org.module.util.ArgsUtil;
@@ -28,8 +33,10 @@ import net.dv8tion.jda.api.entities.Emote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+
 @Component
-public class EmojiCommand extends Command {
+public class EmojiCommand extends SlashCommand {
 	private final MessageService messageService;
 
 	@Autowired
@@ -38,6 +45,9 @@ public class EmojiCommand extends Command {
 		this.name = PropertyUtil.getProperty("command.emoji.name");
 		this.help = PropertyUtil.getProperty("command.emoji.help");
 		this.arguments = PropertyUtil.getProperty("command.emoji.arguments");
+		this.options = Collections.singletonList(new OptionData(
+			OptionType.STRING, "emoji", "Only custom emojis!", true
+		));
         this.category = Constants.UTILITIES;
     }
 
@@ -47,19 +57,31 @@ public class EmojiCommand extends Command {
 			messageService.sendHelp(event, this);
 			return;
 		}
-
         Emote emoji = ArgsUtil.getEmote(event, event.getArgs());
-
         if (emoji == null) {
 			messageService.sendHelp(event, this);
             return;
         }
-
-        EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("Emoji " + emoji.getName(), emoji.getImageUrl())
-                .setColor(Constants.COLOR)
-                .setImage(emoji.getImageUrl())
-                .setFooter("ID: " + emoji.getId());
-        event.reply(embed.build());
+        event.reply(command(emoji));
     }
+
+	@Override
+	protected void execute(SlashCommandEvent event) {
+		OptionMapping option = event.getOption("emoji");
+		Emote emoji = ArgsUtil.getEmote(event, option.getAsString());
+		if (emoji == null) {
+			messageService.sendEphemeralHelp(event, this);
+			return;
+		}
+		event.replyEmbeds(command(emoji)).queue();
+	}
+
+	private MessageEmbed command(Emote emoji) {
+		return new EmbedBuilder()
+			.setTitle("Emoji " + emoji.getName(), emoji.getImageUrl())
+			.setColor(Constants.COLOR)
+			.setImage(emoji.getImageUrl())
+			.setFooter("ID: " + emoji.getId())
+			.build();
+	}
 }

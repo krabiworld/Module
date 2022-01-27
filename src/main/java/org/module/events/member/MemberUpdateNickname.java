@@ -38,6 +38,7 @@ public class MemberUpdateNickname extends ListenerAdapter {
 	@Override
 	public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
 		Member member = event.getMember();
+		if (member.getUser().isBot()) return;
 		String before = event.getOldNickname();
 		String after = event.getNewNickname();
 		String action = " was updated";

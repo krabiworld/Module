@@ -19,9 +19,12 @@ package org.module.commands.utilities;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.module.constants.Constants;
 import org.module.service.MessageService;
 import org.module.util.ArgsUtil;
 import org.module.util.PropertyUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +32,7 @@ import java.util.Random;
 
 @Component
 public class RandomCommand extends Command {
+	private final Logger logger = LoggerFactory.getLogger(RandomCommand.class);
 	private final MessageService messageService;
 
 	@Autowired
@@ -37,6 +41,7 @@ public class RandomCommand extends Command {
 		this.name = PropertyUtil.getProperty("command.random.name");
 		this.help = PropertyUtil.getProperty("command.random.help");
 		this.arguments = PropertyUtil.getProperty("command.random.arguments");
+		this.category = Constants.UTILITIES;
 	}
 
 	@Override
@@ -56,7 +61,7 @@ public class RandomCommand extends Command {
 				}
 				event.reply(String.valueOf(random.nextLong(Long.parseLong(args[0]))));
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				logger.error(e.getMessage());
 				messageService.sendHelp(event, this);
 			}
 		}

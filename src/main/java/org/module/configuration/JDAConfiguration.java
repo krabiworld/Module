@@ -17,132 +17,122 @@
 
 package org.module.configuration;
 
+import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
-import org.module.commands.information.*;
-import org.module.commands.moderation.*;
-import org.module.commands.owner.*;
-import org.module.commands.settings.*;
-import org.module.commands.utilities.*;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.module.constants.Constants;
-import org.module.events.message.MessageReactionAdd;
-import org.module.events.member.*;
-import org.module.events.message.MessageBulkDelete;
-import org.module.events.command.Command;
-import org.module.events.message.MessageDelete;
-import org.module.events.message.MessageReceived;
-import org.module.events.message.MessageUpdate;
+import org.module.events.CommandEvents;
 import org.module.manager.GuildManager;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.security.auth.login.LoginException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static org.reflections.scanners.Scanners.SubTypes;
 
 @Configuration
 public class JDAConfiguration {
 	private final Logger logger = LoggerFactory.getLogger(JDAConfiguration.class);
 	private final ApplicationContext ctx;
-	private final GuildManager manager;
-
-	@Value("${discord.token}")
-	private String token;
-
-	@Value("${discord.owner}")
-	private String owner;
 
 	@Autowired
-	public JDAConfiguration(ApplicationContext ctx, GuildManager manager) {
+	public JDAConfiguration(ApplicationContext ctx, GuildManager manager, DiscordConfig config) {
 		this.ctx = ctx;
-		this.manager = manager;
 	}
 
 	@Bean
-	public JDA jda() throws LoginException {
+	public JDA jda(GuildManager manager, DiscordConfig config, CommandEvents commandEvents) throws LoginException {
 		EventWaiter eventWaiter = new EventWaiter();
 		CommandClient builder = new CommandClientBuilder()
-			.setOwnerId(owner)
+			.setOwnerId(config.getOwnerId())
 			.setPrefix(Constants.DEFAULT_PREFIX)
+			.setPrefixes(new String[]{"<@!" + config.getBotId() + "> "})
 			.setActivity(null)
 			.setEmojis("✅", "⚠", "❌")
 			.useHelpBuilder(false)
 			.setGuildSettingsManager(manager)
-			.addCommands(
-				// Information
-				get(HelpCommand.class),
-				get(ServerinfoCommand.class),
-				get(StatsCommand.class),
-				get(UserCommand.class),
-				// Moderation
-				get(BanCommand.class),
-				get(ClearCommand.class),
-				get(KickCommand.class),
-				get(MuteCommand.class),
-				get(RemwarnCommand.class),
-				get(SlowmodeCommand.class),
-				get(UnbanCommand.class),
-				get(UnmuteCommand.class),
-				get(WarnCommand.class),
-				get(WarnsCommand.class),
-				// Owner
-				get(EvalCommand.class),
-				get(OwnerCommand.class),
-				// Settings
-				get(LogsCommand.class),
-				get(ModRoleCommand.class),
-				get(MuteRoleCommand.class),
-				get(PrefixCommand.class),
-				// Utilities
-				get(AvatarCommand.class),
-				get(EmojiCommand.class),
-				get(RandomCommand.class)
-			)
-			.setListener(get(Command.class))
+			.addCommands(getCommands())
+			.addSlashCommands(getSlashCommands())
+			.setListener(commandEvents)
+			.forceGuildOnly(config.getGuildId())
 			.build();
 
-		logger.info("Added " + builder.getCommands().size() + " commands.");
-
-		JDA jda = JDABuilder
-			.createDefault(token)
+		return JDABuilder
+			.createDefault(config.getToken())
 			.enableIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS))
 			.enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY, CacheFlag.EMOTE)
 			.disableCache(CacheFlag.VOICE_STATE)
 			.setBulkDeleteSplittingEnabled(false)
 			.setMemberCachePolicy(MemberCachePolicy.ALL)
 			.useSharding(0, 1)
-			.addEventListeners(eventWaiter, builder, manager,
-				// Member
-				get(MemberUnban.class),
-				get(MemberBan.class),
-				get(MemberJoin.class),
-				get(MemberRemove.class),
-				get(MemberRoleAdd.class),
-				get(MemberRoleRemove.class),
-				get(MemberUpdateNickname.class),
-				// Message
-				get(MessageBulkDelete.class),
-				get(MessageUpdate.class),
-				get(MessageDelete.class),
-				get(MessageReceived.class),
-				get(MessageReactionAdd.class))
+			.addEventListeners(eventWaiter, builder, manager)
+			.addEventListeners(getEvents())
 			.build();
-
-		logger.info("Added " + jda.getRegisteredListeners().size() + " events.");
-		return jda;
 	}
 
-	/** Alias to {@link ApplicationContext#getBean(Class)}. */
-	private <T> T get(Class<? extends T> clazz) {
-		return ctx.getBean(clazz);
+	private Command[] getCommands() {
+		Reflections reflections = new Reflections(new ConfigurationBuilder().forPackage("org.module.commands"));
+		Set<Class<?>> subTypes = reflections.get(SubTypes.of(Command.class).asClass());
+
+		List<Command> commands = new ArrayList<>();
+		for (Class<?> command : subTypes) {
+			try {
+				commands.add((Command) ctx.getBean(command));
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+		logger.info("Loaded " + commands.size() + " commands.");
+		return commands.toArray(new Command[0]);
+	}
+
+	private SlashCommand[] getSlashCommands() {
+		Reflections reflections = new Reflections(new ConfigurationBuilder().forPackage("org.module.commands"));
+		Set<Class<?>> subTypes = reflections.get(SubTypes.of(SlashCommand.class).asClass());
+
+		List<SlashCommand> slashCommands = new ArrayList<>();
+		for (Class<?> slashCommand : subTypes) {
+			try {
+				slashCommands.add((SlashCommand) ctx.getBean(slashCommand));
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+		logger.info("Loaded " + slashCommands.size() + " slash commands.");
+		return slashCommands.toArray(new SlashCommand[0]);
+	}
+
+	private Object[] getEvents() {
+		Reflections reflections = new Reflections(new ConfigurationBuilder().forPackage("org.module.events"));
+		Set<Class<?>> subTypes = reflections.get(SubTypes.of(ListenerAdapter.class).asClass());
+
+		List<Object> events = new ArrayList<>();
+		for (Class<?> event : subTypes) {
+			if (!event.getName().startsWith("org.module.events.")) continue;
+			try {
+				events.add(ctx.getBean(event));
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+		logger.info("Loaded " + events.size() + " events.");
+		return events.toArray(new Object[0]);
 	}
 }
