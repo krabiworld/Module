@@ -18,6 +18,8 @@
 package org.module.enums;
 
 public enum MessageType {
+	INFO,
+	WARN,
 	ERROR,
 	SUCCESS
 }
