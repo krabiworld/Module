@@ -1,16 +1,16 @@
 /*
  * This file is part of Module.
-
+ *
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * Module is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -19,26 +19,19 @@ package org.module.commands.settings;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.constants.Constants;
+import org.module.Constants;
 import org.module.manager.GuildManager;
-import org.module.service.MessageService;
 import org.module.util.ArgsUtil;
+import org.module.util.MessageUtil;
 import org.module.util.SettingsUtil;
 import org.module.util.PropertyUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ModRoleCommand extends Command {
-	private final MessageService messageService;
-	private final GuildManager manager;
+	private final GuildManager manager = new GuildManager();
 
-	@Autowired
-	public ModRoleCommand(MessageService messageService, GuildManager manager) {
-		this.messageService = messageService;
-		this.manager = manager;
+	public ModRoleCommand() {
 		this.name = PropertyUtil.getProperty("command.modrole.name");
 		this.help = PropertyUtil.getProperty("command.modrole.help");
 		this.arguments = PropertyUtil.getProperty("command.modrole.arguments");
@@ -49,7 +42,7 @@ public class ModRoleCommand extends Command {
 	@Override
 	protected void execute(CommandEvent event) {
 		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this);
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
@@ -57,16 +50,16 @@ public class ModRoleCommand extends Command {
 		Role modRole = SettingsUtil.getModRole(event.getGuild());
 
 		if (role == null) {
-			messageService.sendError(event, "error.role.not.found");
+			MessageUtil.sendError(event, "error.role.not.found");
 			return;
 		}
 		if (role == modRole) {
-			messageService.sendError(event, "error.role.already.set");
+			MessageUtil.sendError(event, "error.role.already.set");
 			return;
 		}
 
 		manager.setModeratorRole(event.getGuild(), role);
 
-		messageService.sendSuccess(event, "command.modrole.success.changed", role.getName());
+		MessageUtil.sendSuccess(event, "command.modrole.success.changed", role.getName());
 	}
 }

@@ -15,25 +15,31 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.service.impl;
+package org.module.dao.impl;
 
-import org.module.dao.impl.StatsDaoImpl;
-import org.module.model.Stats;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.module.dao.StatsDao;
-import org.module.service.StatsService;
+import org.module.model.Stats;
+import org.module.util.SessionFactoryUtil;
 
-public class StatsServiceImpl implements StatsService {
-	private final StatsDao statsDao = new StatsDaoImpl();
+public class StatsDaoImpl implements StatsDao {
+	private final static SessionFactory getSessionFactory = SessionFactoryUtil.getSessionFactory();
 
 	@Override
-	public Stats getStats() {
-		return statsDao.findById(1);
+	public Stats findById(long id) {
+		Session session = getSessionFactory.openSession();
+		Stats stats = session.get(Stats.class, id);
+		session.close();
+		return stats;
 	}
 
 	@Override
-	public void incrementCommandsExecuted() {
-		Stats stats = getStats();
-		stats.setCommandsExecuted(stats.getCommandsExecuted() + 1);
-		statsDao.update(stats);
+	public void update(Stats stats) {
+		Session session = getSessionFactory.openSession();
+		session.beginTransaction();
+		session.update(stats);
+		session.getTransaction().commit();
+		session.close();
 	}
 }
