@@ -1,16 +1,16 @@
 /*
  * This file is part of Module.
-
+ *
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * Module is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -19,31 +19,24 @@ package org.module.commands.information;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import org.module.constants.Constants;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.module.Constants;
 import org.module.service.StatsService;
+import org.module.service.impl.StatsServiceImpl;
 import org.module.util.PropertyUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.lang.management.ManagementFactory;
 import java.time.*;
 
-@Component
 public class StatsCommand extends SlashCommand {
-	private final StatsService statsService;
+	private final StatsService statsService = new StatsServiceImpl();
+	private final String version = PropertyUtil.getProperties("application").getProperty("version");
 
-	@Value("${application.version}")
-	private String version;
-
-	@Autowired
-    public StatsCommand(StatsService statsService) {
-		this.statsService = statsService;
+    public StatsCommand() {
         this.name = PropertyUtil.getProperty("command.stats.name");
         this.help = PropertyUtil.getProperty("command.stats.help");
         this.category = Constants.INFORMATION;
@@ -62,7 +55,7 @@ public class StatsCommand extends SlashCommand {
 	private MessageEmbed command(JDA jda) {
 		return new EmbedBuilder()
 			.setTitle("Bot Statistics")
-			.setColor(Constants.COLOR)
+			.setColor(Constants.DEFAULT)
 			.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
 			.setFooter("Version: " + version)
 

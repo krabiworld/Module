@@ -7,15 +7,15 @@ Multifunctional bot with moderation, information and utilities commands. [Invite
 
 ## Technologies
 - [Java](https://www.oracle.com/java/)
-- [Spring](https://spring.io/)
 - [JDA](https://github.com/DV8FromTheWorld/JDA)
 - [JDA-Chewtils](https://github.com/Chew/JDA-Chewtils)
+- [Hibernate](https://hibernate.org/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Lombok](https://projectlombok.org/)
 
 ## Build and run
 1. Clone this repository.
-2. In directory `src/main/resources` rename `application.template.yml` to `application.yml` and write required data to this file.
+2. In directory `src/main/resources` rename `application.example.properties` and `hibernate.example.properties` to `application.properties` and `hibernate.properties` and write required data to these files.
 3. Create tables with provided schemas in directory `src/main/resources/schemas`.
 4. Install JDK 17.
 5. Run `./gradlew build` to build executable jar file.

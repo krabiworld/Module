@@ -1,16 +1,16 @@
 /*
  * This file is part of Module.
-
+ *
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * Module is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -19,25 +19,19 @@ package org.module.commands.moderation;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.constants.Constants;
-import org.module.service.MessageService;
+import org.module.Constants;
 import org.module.service.ModerationService;
+import org.module.service.impl.ModerationServiceImpl;
 import org.module.util.ArgsUtil;
+import org.module.util.MessageUtil;
 import org.module.util.PropertyUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class BanCommand extends Command {
-	private final MessageService messageService;
-	private final ModerationService moderationService;
+	private final ModerationService moderationService = new ModerationServiceImpl();
 
-	@Autowired
-    public BanCommand(MessageService messageService, ModerationService moderationService) {
-		this.messageService = messageService;
-		this.moderationService = moderationService;
+    public BanCommand() {
         this.name = PropertyUtil.getProperty("command.ban.name");
         this.help = PropertyUtil.getProperty("command.ban.help");
         this.arguments = PropertyUtil.getProperty("command.ban.arguments");
@@ -49,11 +43,11 @@ public class BanCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
 		if (!moderationService.isModerator(event.getMember())) {
-			messageService.sendError(event, "error.not.mod");
+			MessageUtil.sendError(event, "error.not.mod");
 			return;
 		}
 		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this);
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
@@ -62,20 +56,20 @@ public class BanCommand extends Command {
 		String reason = ArgsUtil.getGluedArg(args, 1);
 
         if (member == null) {
-			messageService.sendHelp(event, this);
+			MessageUtil.sendHelp(event, this);
             return;
         }
 		if (!event.getSelfMember().canInteract(member)) {
-			messageService.sendError(event, "command.ban.error.role.position");
+			MessageUtil.sendError(event, "command.ban.error.role.position");
 			return;
 		}
 		if (member == event.getMember()) {
-			messageService.sendError(event, "command.ban.error.cannot.yourself");
+			MessageUtil.sendError(event, "command.ban.error.cannot.yourself");
 			return;
 		}
 
 		event.getGuild().ban(member, 0, reason).queue();
-		messageService.sendSuccess(event, "command.ban.success.banned",
+		MessageUtil.sendSuccess(event, "command.ban.success.banned",
 			member.getUser().getAsTag(),
 			event.getMember().getEffectiveName(),
 			reason.isEmpty() ? "." : " with reason: " + reason);

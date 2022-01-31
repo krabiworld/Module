@@ -1,16 +1,16 @@
 /*
  * This file is part of Module.
-
+ *
  * Module is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * Module is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -19,25 +19,19 @@ package org.module.commands.owner;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.constants.Constants;
+import org.module.Constants;
 import org.module.model.Owner;
-import org.module.service.MessageService;
 import org.module.service.OwnerService;
+import org.module.service.impl.OwnerServiceImpl;
 import org.module.util.ArgsUtil;
+import org.module.util.MessageUtil;
 import org.module.util.PropertyUtil;
 import net.dv8tion.jda.api.entities.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class OwnerCommand extends Command {
-	private final MessageService messageService;
-	private final OwnerService ownerService;
+	private final OwnerService ownerService = new OwnerServiceImpl();
 
-	@Autowired
-	public OwnerCommand(MessageService messageService, OwnerService ownerService) {
-		this.messageService = messageService;
-		this.ownerService = ownerService;
+	public OwnerCommand() {
 		this.name = PropertyUtil.getProperty("command.owner.name");
 		this.help = PropertyUtil.getProperty("command.owner.help");
 		this.arguments = PropertyUtil.getProperty("command.owner.arguments");
@@ -51,14 +45,14 @@ public class OwnerCommand extends Command {
 		String[] args = ArgsUtil.split(event.getArgs());
 
 		if (event.getArgs().isEmpty() || args.length <= 1) {
-			messageService.sendHelp(event, this);
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
 		User user = ArgsUtil.getUser(event, args[1]);
 
 		if (user == null) {
-			messageService.sendHelp(event, this);
+			MessageUtil.sendHelp(event, this);
 			return;
 		}
 
@@ -68,18 +62,18 @@ public class OwnerCommand extends Command {
 
 			ownerService.addOwner(owner);
 
-			messageService.sendSuccess(event, "command.owner.success.added", user.getAsTag());
+			MessageUtil.sendSuccess(event, "command.owner.success.added", user.getAsTag());
 		} else if (args[0].startsWith("remove")) {
 			Owner owner = ownerService.getOwner(user.getIdLong());
 
 			if (owner == null) {
-				messageService.sendError(event, "command.owner.error.not.found");
+				MessageUtil.sendError(event, "command.owner.error.not.found");
 				return;
 			}
 
 			ownerService.removeOwner(owner);
 
-			messageService.sendSuccess(event, "command.owner.success.removed", user.getAsTag());
+			MessageUtil.sendSuccess(event, "command.owner.success.removed", user.getAsTag());
 		}
 	}
 }
