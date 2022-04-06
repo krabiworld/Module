@@ -20,48 +20,61 @@ package org.module.service.impl;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import org.module.dao.impl.WarnDaoImpl;
-import org.module.model.Warn;
-import org.module.dao.WarnDao;
+import org.module.repository.WarnRepository;
+import org.module.manager.GuildManager;
+import org.module.model.WarnModel;
 import org.module.service.ModerationService;
 import org.module.util.CheckUtil;
-import org.module.util.SettingsUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ModerationServiceImpl implements ModerationService {
-	private final WarnDao warnDao = new WarnDaoImpl();
+	private final WarnRepository warnRepository;
+	private final GuildManager manager;
+
+	@Autowired
+	public ModerationServiceImpl(WarnRepository warnRepository, GuildManager manager) {
+		this.warnRepository = warnRepository;
+		this.manager = manager;
+	}
 
 	@Override
 	public boolean isModerator(Member member) {
 		if (member.hasPermission(Permission.ADMINISTRATOR) || member.isOwner()) return true;
-		Role modRole = SettingsUtil.getModRole(member.getGuild());
+
+		GuildManager.GuildSettings settings = manager.getSettings(member.getGuild());
+		if (settings == null) return false;
+		Role modRole = settings.getModeratorRole();
 		if (modRole == null) return false;
+
 		return CheckUtil.hasRole(member, modRole);
 	}
 
 	@Override
-	public Warn getWarn(long id) {
-		return warnDao.findById(id);
+	public WarnModel getWarn(long id) {
+		return warnRepository.findById(id);
 	}
 
 	@Override
-	public List<Warn> getWarns(Member member) {
-		return warnDao.findAllByGuildAndUser(member.getGuild().getIdLong(), member.getIdLong());
+	public List<WarnModel> getWarns(Member member) {
+		return warnRepository.findAllByGuildAndUser(member.getGuild().getIdLong(), member.getIdLong());
 	}
 
 	@Override
 	public long warn(Member member, String reason) {
-		Warn warn = new Warn();
+		WarnModel warn = new WarnModel();
 		warn.setGuild(member.getGuild().getIdLong());
 		warn.setUser(member.getIdLong());
 		warn.setReason(reason);
-		warnDao.save(warn);
+		warnRepository.saveAndFlush(warn);
 		return warn.getId();
 	}
 
 	@Override
-	public void removeWarn(Warn warn) {
-		warnDao.delete(warn);
+	public void removeWarn(WarnModel warnModel) {
+		warnRepository.delete(warnModel);
 	}
 }

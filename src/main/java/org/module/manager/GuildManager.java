@@ -19,27 +19,36 @@ package org.module.manager;
 
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.module.model.GuildConfig;
-import lombok.Getter;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.module.Constants;
+import org.module.model.GuildModel;
 import org.module.service.GuildService;
-import org.module.service.impl.GuildServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 
+@Component
 public class GuildManager extends ListenerAdapter implements GuildSettingsManager<GuildManager.GuildSettings> {
-	private static final GuildService guildService = new GuildServiceImpl();
+	private final GuildService guildService;
+
+	@Autowired
+	public GuildManager(GuildService guildService) {
+		this.guildService = guildService;
+	}
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent event) {
 		if (guildService.getGuild(event.getGuild().getIdLong()) != null) return;
 
-		GuildConfig guildConfig = new GuildConfig();
+		GuildModel guildConfig = new GuildModel();
 		guildConfig.setId(event.getGuild().getIdLong());
 
 		guildService.addGuild(guildConfig);
@@ -47,39 +56,67 @@ public class GuildManager extends ListenerAdapter implements GuildSettingsManage
 
 	@Override
 	public GuildSettings getSettings(Guild guild) {
-		return new GuildSettings(guildService.getGuild(guild.getIdLong()));
+		return new GuildSettings(guild, guildService.getGuild(guild.getIdLong()));
 	}
 
 	public void setPrefix(Guild guild, String prefix) {
-		GuildConfig guildConfig = guildService.getGuild(guild.getIdLong());
+		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
 		guildConfig.setPrefix(prefix);
 
 		guildService.updateGuild(guildConfig);
 	}
 
 	public void setLogsChannel(Guild guild, TextChannel channel) {
-		GuildConfig guildConfig = guildService.getGuild(guild.getIdLong());
+		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
 		guildConfig.setLogs(channel == null ? 0 : channel.getIdLong());
 
 		guildService.updateGuild(guildConfig);
 	}
 
 	public void setModeratorRole(Guild guild, Role role) {
-		GuildConfig guildConfig = guildService.getGuild(guild.getIdLong());
+		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
 		guildConfig.setMod(role.getIdLong());
 
 		guildService.updateGuild(guildConfig);
 	}
 
-	@Getter
+	public void setLang(Guild guild, Constants.Language lang) {
+		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
+		guildConfig.setLang(lang == Constants.Language.EN ? "en" : "ru");
+
+		guildService.updateGuild(guildConfig);
+	}
+
 	public static class GuildSettings implements GuildSettingsProvider {
-		private final long logsChannel, moderatorRole;
-		private final String prefix;
-		
-		private GuildSettings(GuildConfig guildConfig) {
-			this.logsChannel = guildConfig.getLogs();
-			this.moderatorRole = guildConfig.getMod();
-			this.prefix = guildConfig.getPrefix();
+		@Nullable private final TextChannel logsChannel;
+		@Nullable private final Role moderatorRole;
+		@Nonnull private final String prefix, lang;
+
+		private GuildSettings(Guild guild, GuildModel guildModel) {
+			this.logsChannel = guild.getTextChannelById(guildModel.getLogs());
+			this.moderatorRole = guild.getRoleById(guildModel.getMod());
+			this.prefix = guildModel.getPrefix();
+			this.lang = guildModel.getLang();
+		}
+
+		@Nullable
+		public TextChannel getLogsChannel() {
+			return logsChannel;
+		}
+
+		@Nullable
+		public Role getModeratorRole() {
+			return moderatorRole;
+		}
+
+		@Nonnull
+		public String getPrefix() {
+			return prefix;
+		}
+
+		@Nonnull
+		public String getLang() {
+			return lang;
 		}
 
 		@Override

@@ -18,7 +18,6 @@
 package org.module.util;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.entities.*;
 
@@ -33,60 +32,36 @@ public class ArgsUtil {
 	/** Get {@link Member} from argument. */
 	public static Member getMember(CommandEvent event, String arg) {
 		List<Member> members = FinderUtil.findMembers(arg, event.getGuild());
-		for (Member member : members) {
-			return member;
-		}
-		return null;
+		return members.stream().findFirst().orElse(null);
 	}
 
 	/** Get {@link User} from argument. */
 	public static User getUser(CommandEvent event, String arg) {
 		List<User> users = FinderUtil.findUsers(arg, event.getJDA());
-		for (User user : users) {
-			return user;
-		}
-		return null;
+		return users.stream().findFirst().orElse(null);
 	}
 
 	/** Get {@link Emote} from argument. */
 	public static Emote getEmote(CommandEvent event, String arg) {
 		List<Emote> emotes = FinderUtil.findEmotes(arg, event.getGuild());
-		for (Emote emote : emotes) {
-			return emote;
-		}
-		return null;
-	}
-
-	/** Get {@link Emote} from argument. */
-	public static Emote getEmote(SlashCommandEvent event, String arg) {
-		List<Emote> emotes = FinderUtil.findEmotes(arg, event.getGuild());
-		for (Emote emote : emotes) {
-			return emote;
-		}
-		return null;
+		return emotes.stream().findFirst().orElse(null);
 	}
 
 	/** Get {@link TextChannel} from argument. */
 	public static TextChannel getTextChannel(CommandEvent event, String arg) {
 		List<TextChannel> channels = FinderUtil.findTextChannels(arg, event.getGuild());
-		for (TextChannel channel : channels) {
-			return channel;
-		}
-		return null;
+		return channels.stream().findFirst().orElse(null);
 	}
 
 	/** Get {@link Role} from argument. */
 	public static Role getRole(CommandEvent event, String arg) {
 		List<Role> roles = FinderUtil.findRoles(arg, event.getGuild());
-		for (Role role : roles) {
-			return role;
-		}
-		return null;
+		return roles.stream().findFirst().orElse(null);
 	}
 
 	/** Will return glued argument. */
     public static String getGluedArg(String[] args, int start) {
-        StringBuilder arg = new StringBuilder();
+		StringBuilder arg = new StringBuilder();
 
         for (int i = start; i < args.length; i++) {
             arg.append(args[i]).append(" ");

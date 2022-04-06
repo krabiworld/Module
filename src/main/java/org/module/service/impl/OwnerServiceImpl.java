@@ -18,17 +18,25 @@
 package org.module.service.impl;
 
 import net.dv8tion.jda.api.entities.Member;
-import org.module.dao.impl.OwnerDaoImpl;
-import org.module.model.Owner;
-import org.module.dao.OwnerDao;
+import net.dv8tion.jda.api.entities.User;
+import org.module.repository.OwnerRepository;
+import org.module.model.OwnerModel;
 import org.module.service.OwnerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class OwnerServiceImpl implements OwnerService {
-	private final OwnerDao ownerDao = new OwnerDaoImpl();
+	private final OwnerRepository ownerRepository;
+
+	@Autowired
+	public OwnerServiceImpl(OwnerRepository ownerRepository) {
+		this.ownerRepository = ownerRepository;
+	}
 
 	@Override
-	public Owner getOwner(long id) {
-		return ownerDao.findById(id);
+	public OwnerModel getOwner(long id) {
+		return ownerRepository.findById(id);
 	}
 
 	@Override
@@ -37,12 +45,21 @@ public class OwnerServiceImpl implements OwnerService {
 	}
 
 	@Override
-	public void addOwner(Owner owner) {
-		ownerDao.save(owner);
+	public boolean addOwner(User user) {
+		if (getOwner(user.getIdLong()) != null) return false;
+
+		OwnerModel owner = new OwnerModel();
+		owner.setId(user.getIdLong());
+		ownerRepository.saveAndFlush(owner);
+		return true;
 	}
 
 	@Override
-	public void removeOwner(Owner owner) {
-		ownerDao.delete(owner);
+	public boolean removeOwner(User user) {
+		OwnerModel owner = getOwner(user.getIdLong());
+		if (owner == null) return false;
+
+		ownerRepository.delete(owner);
+		return true;
 	}
 }
