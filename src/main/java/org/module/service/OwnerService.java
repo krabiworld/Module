@@ -18,14 +18,16 @@
 package org.module.service;
 
 import net.dv8tion.jda.api.entities.Member;
-import org.module.model.Owner;
+import net.dv8tion.jda.api.entities.User;
+import org.module.model.OwnerModel;
 
 public interface OwnerService {
-	Owner getOwner(long id);
+	OwnerModel getOwner(long id);
 
 	boolean isNotOwner(Member member);
 
-	void addOwner(Owner owner);
+	boolean addOwner(User user);
 
-	void removeOwner(Owner owner);
+	/** Return true if user removed from owner list. */
+	boolean removeOwner(User user);
 }

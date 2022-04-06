@@ -17,12 +17,12 @@
 
 package org.module.service;
 
-import org.module.model.GuildConfig;
+import org.module.model.GuildModel;
 
 public interface GuildService {
-	GuildConfig getGuild(long id);
+	GuildModel getGuild(long id);
 
-	void addGuild(GuildConfig guildConfig);
+	void addGuild(GuildModel guildModel);
 
-	void updateGuild(GuildConfig guildConfig);
+	void updateGuild(GuildModel guildModel);
 }

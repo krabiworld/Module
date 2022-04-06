@@ -23,11 +23,11 @@ import java.awt.*;
 
 public class Constants {
 	public static final int MAX_MESSAGE_CACHE = 1000;
-	public static final String DEFAULT_PREFIX = "m!";
+	public static final String DEFAULT_PREFIX = "module!";
 
 	public static final Category INFORMATION = new Category("Information");
 	public static final Category MODERATION = new Category("Moderation");
-	public static final Category OWNER = new Category("Owner");
+	public static final Category OWNER = new Category("OwnerModel");
 	public static final Category SETTINGS = new Category("Settings");
 	public static final Category UTILITIES = new Category("Utilities");
 
@@ -40,15 +40,10 @@ public class Constants {
 	/** Yellow color. Use if something has been updated or in warning action. */
 	public static final Color WARN = new Color(212, 190, 51);
 
-	public static final String ONLINE = "<:online:925113750598598736>";
-	public static final String IDLE = "<:idle:925113750254682133>";
-	public static final String DND = "<:dnd:925113750896398406>";
-	public static final String OFFLINE = "<:offline:925113750581817354>";
-	public static final String MEMBERS = "<:members:926844061707546654>";
-	public static final String BOTS = "<:bots:926844061703364648>";
-	public static final String TEXT = "<:text:926844062198276136>";
-	public static final String VOICE = "<:voice:926844062504464444>";
-	public static final String STAGE = "<:stage:926844062252818522>";
-	public static final String STORE = "<:store:926844062160519178>";
-	public static final String COOKIE = "\uD83C\uDF6A";
+	public static final String ONLINE = "<:online:948619010788962324>";
+	public static final String IDLE = "<:idle:948619010575065131>";
+	public static final String DND = "<:dnd:948619010352750603>";
+	public static final String OFFLINE = "<:offline:948619010440843387>";
+
+	public enum Language { RU, EN }
 }

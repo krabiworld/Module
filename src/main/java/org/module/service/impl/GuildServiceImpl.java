@@ -17,26 +17,33 @@
 
 package org.module.service.impl;
 
-import org.module.dao.impl.GuildDaoImpl;
-import org.module.model.GuildConfig;
-import org.module.dao.GuildDao;
+import org.module.model.GuildModel;
+import org.module.repository.GuildRepository;
 import org.module.service.GuildService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GuildServiceImpl implements GuildService {
-	private final GuildDao guildDao = new GuildDaoImpl();
+	private final GuildRepository guildRepository;
 
-	@Override
-	public GuildConfig getGuild(long id) {
-		return guildDao.findById(id);
+	@Autowired
+	public GuildServiceImpl(GuildRepository guildRepository) {
+		this.guildRepository = guildRepository;
 	}
 
 	@Override
-	public void addGuild(GuildConfig guildConfig) {
-		guildDao.save(guildConfig);
+	public GuildModel getGuild(long id) {
+		return guildRepository.findById(id);
 	}
 
 	@Override
-	public void updateGuild(GuildConfig guildConfig) {
-		guildDao.update(guildConfig);
+	public void addGuild(GuildModel guildModel) {
+		guildRepository.saveAndFlush(guildModel);
+	}
+
+	@Override
+	public void updateGuild(GuildModel guildModel) {
+		guildRepository.saveAndFlush(guildModel);
 	}
 }

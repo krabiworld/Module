@@ -17,10 +17,10 @@
 
 package org.module.service;
 
-import org.module.model.Stats;
+import org.module.model.StatsModel;
 
 public interface StatsService {
-	Stats getStats();
+	StatsModel getStats();
 
-	void incrementCommandsExecuted();
+	void incrementExecutedCommands();
 }

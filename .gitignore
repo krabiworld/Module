@@ -1,5 +1,4 @@
 build
 .gradle
 .idea
-/src/main/resources/application.properties
-/src/main/resources/hibernate.properties
+/src/main/resources/application.yml

@@ -18,11 +18,11 @@
 plugins {
     java
     application
-	id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("com.heroku.sdk.heroku-gradle") version "2.0.0"
+	id("org.springframework.boot") version "2.6.6"
+	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
 
-version = "1.1"
+version = "1.3"
 application {
 	mainClass.set("org.module.Module")
 }
@@ -33,37 +33,28 @@ repositories {
 }
 
 dependencies {
-	implementation("net.dv8tion:JDA:5.0.0-alpha.5") {
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("net.dv8tion:JDA:5.0.0-alpha.9") {
 		exclude(module = "opus-java")
 	}
     implementation("pw.chew:jda-chewtils:2.0-SNAPSHOT") {
 		exclude(module = "jda-chewtils-examples")
 	}
-    implementation("ch.qos.logback:logback-classic:1.2.10")
-	implementation("org.codehaus.groovy:groovy:3.0.9")
-	implementation("org.reflections:reflections:0.10.2")
-	implementation("org.hibernate:hibernate-core:5.6.5.Final")
-	runtimeOnly("org.postgresql:postgresql:42.3.1")
-	compileOnly("org.projectlombok:lombok:1.18.22")
-	annotationProcessor("org.projectlombok:lombok:1.18.22")
+	implementation("org.json:json:20220320")
+	implementation("ch.qos.logback:logback-classic:1.2.11")
+	implementation("org.codehaus.groovy:groovy:3.0.10")
+	runtimeOnly("org.postgresql:postgresql:42.3.3")
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
-heroku {
-    appName = "modulebeta"
-    jdkVersion = "17"
-    includes = listOf("build/libs/module.jar")
-    isIncludeBuildDir = false
-    processTypes = mapOf("worker" to "java -jar build/libs/module.jar")
+springBoot {
+	buildInfo()
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-	archiveFileName.set("module.jar")
-}
 tasks.withType<JavaCompile> {
 	options.encoding = "UTF-8"
-}
-tasks.processResources {
-	filesMatching("application.properties") {
-		expand(project.properties)
-	}
 }

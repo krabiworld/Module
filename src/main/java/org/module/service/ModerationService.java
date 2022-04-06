@@ -18,18 +18,18 @@
 package org.module.service;
 
 import net.dv8tion.jda.api.entities.Member;
-import org.module.model.Warn;
+import org.module.model.WarnModel;
 
 import java.util.List;
 
 public interface ModerationService {
 	boolean isModerator(Member member);
 
-	Warn getWarn(long id);
+	WarnModel getWarn(long id);
 
-	List<Warn> getWarns(Member member);
+	List<WarnModel> getWarns(Member member);
 
 	long warn(Member member, String reason);
 
-	void removeWarn(Warn warn);
+	void removeWarn(WarnModel warnModel);
 }

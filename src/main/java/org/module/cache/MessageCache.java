@@ -27,7 +27,7 @@ import java.util.ArrayList;
 // Author: https://github.com/Starrysparklez/
 // Code: https://gist.github.com/Starrysparklez/3da0d67241d8185315e4fdc012f8aca7
 public class MessageCache {
-    public static ArrayList<Message> MESSAGES = new ArrayList<>();
+    public static final ArrayList<Message> MESSAGES = new ArrayList<>();
 
     public static void addMessage(@Nonnull Message message) {
         for (Message msg : MESSAGES) {
@@ -39,10 +39,9 @@ public class MessageCache {
 
     @Nullable
     public static Message getMessage(long messageId) {
-        Message result = null;
         for (Message message : MESSAGES) {
-			if (message.getIdLong() == messageId) result = message;
+			if (message.getIdLong() == messageId) return message;
 		}
-        return result;
+        return null;
     }
 }

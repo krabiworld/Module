@@ -17,23 +17,30 @@
 
 package org.module.service.impl;
 
-import org.module.dao.impl.StatsDaoImpl;
-import org.module.model.Stats;
-import org.module.dao.StatsDao;
+import org.module.model.StatsModel;
+import org.module.repository.StatsRepository;
 import org.module.service.StatsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class StatsServiceImpl implements StatsService {
-	private final StatsDao statsDao = new StatsDaoImpl();
+	private final StatsRepository statsRepository;
 
-	@Override
-	public Stats getStats() {
-		return statsDao.findById(1);
+	@Autowired
+	public StatsServiceImpl(StatsRepository statsRepository) {
+		this.statsRepository = statsRepository;
 	}
 
 	@Override
-	public void incrementCommandsExecuted() {
-		Stats stats = getStats();
-		stats.setCommandsExecuted(stats.getCommandsExecuted() + 1);
-		statsDao.update(stats);
+	public StatsModel getStats() {
+		return statsRepository.findById(1);
+	}
+
+	@Override
+	public void incrementExecutedCommands() {
+		StatsModel stats = getStats();
+		stats.setExecutedCommands(stats.getExecutedCommands() + 1);
+		statsRepository.saveAndFlush(stats);
 	}
 }
