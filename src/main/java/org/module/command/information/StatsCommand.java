@@ -17,14 +17,15 @@
 
 package org.module.command.information;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.module.Constants;
 import org.module.service.StatsService;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,12 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
 @Component
-public class StatsCommand extends Command {
+@Command(
+	name = "command.stats.name",
+	help = "command.stats.help",
+	category = "category.information"
+)
+public class StatsCommand extends AbstractCommand {
 	private final StatsService statsService;
 	private final BuildProperties buildProperties;
 
@@ -43,13 +49,11 @@ public class StatsCommand extends Command {
     public StatsCommand(StatsService statsService, BuildProperties buildProperties) {
 		this.statsService = statsService;
 		this.buildProperties = buildProperties;
-        this.name = "stats";
-        this.category = Constants.INFORMATION;
     }
 
     @Override
-	protected void execute(CommandEvent event) {
-		JDA jda = event.getJDA();
+	protected void execute(CommandContext ctx) {
+		JDA jda = ctx.getJDA();
 		long totalMemory = Runtime.getRuntime().totalMemory();
 		long freeMemory = Runtime.getRuntime().freeMemory();
 
@@ -59,7 +63,7 @@ public class StatsCommand extends Command {
 			totalMemory / 1024 / 1024);
 
 		MessageEmbed embed = new EmbedBuilder()
-			.setTitle("Bot Statistics")
+			.setTitle(ctx.get("command.stats.help"))
 			.setColor(Constants.DEFAULT)
 			.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
 			.setFooter(footer)
@@ -68,7 +72,7 @@ public class StatsCommand extends Command {
 			.addField(getPlatformField(jda))
 			.build();
 
-        event.reply(embed);
+        ctx.send(embed);
     }
 
 	private MessageEmbed.Field getMainField(JDA jda) {

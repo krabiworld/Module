@@ -38,9 +38,7 @@ dependencies {
 	implementation("net.dv8tion:JDA:5.0.0-alpha.9") {
 		exclude(module = "opus-java")
 	}
-    implementation("pw.chew:jda-chewtils:2.0-SNAPSHOT") {
-		exclude(module = "jda-chewtils-examples")
-	}
+    implementation("pw.chew:jda-chewtils-commons:2.0-SNAPSHOT")
 	implementation("org.json:json:20220320")
 	implementation("ch.qos.logback:logback-classic:1.2.11")
 	implementation("org.codehaus.groovy:groovy:3.0.10")

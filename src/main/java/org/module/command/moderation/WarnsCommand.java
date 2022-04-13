@@ -17,44 +17,43 @@
 
 package org.module.command.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.model.WarnModel;
-import org.module.service.MessageService;
-import org.module.service.ModerationService;
-import org.module.util.ArgsUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import org.module.Constants;
+import org.module.model.WarnModel;
+import org.module.service.ModerationService;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class WarnsCommand extends Command {
+@Command(
+	name = "command.warns.name",
+	args = "command.warns.args",
+	help = "command.warns.help",
+	category = "category.moderation"
+)
+public class WarnsCommand extends AbstractCommand {
 	private final ModerationService moderationService;
-	private final MessageService messageService;
 
 	@Autowired
-	public WarnsCommand(ModerationService moderationService, MessageService messageService) {
+	public WarnsCommand(ModerationService moderationService) {
 		this.moderationService = moderationService;
-		this.messageService = messageService;
-		this.name = "warns";
-		this.category = Constants.MODERATION;
 	}
 
 	@Override
-	protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		Member member = event.getMember();
+	protected void execute(CommandContext ctx) {
+		Member member = ctx.getMember();
 
-		if (!event.getArgs().isEmpty()) {
-			member = ArgsUtil.getMember(event, event.getArgs());
+		if (!ctx.getArgs().isEmpty()) {
+			member = ctx.findMember(ctx.getArgs());
 		}
 		if (member == null || member.getUser().isBot()) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
 			return;
 		}
 
@@ -73,6 +72,6 @@ public class WarnsCommand extends Command {
 			.setColor(Constants.DEFAULT)
 			.setDescription(warnsMessage.isEmpty() ? "" : warnsMessage)
 			.setFooter("ID: " + member.getId());
-		event.reply(embed.build());
+		ctx.send(embed.build());
 	}
 }

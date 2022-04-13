@@ -15,33 +15,24 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.event;
+package org.module.listeners;
 
-import com.jagrosh.jdautilities.command.*;
 import org.module.service.StatsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.module.structure.CommandListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CommandEvents implements CommandListener {
-	private static final Logger logger = LoggerFactory.getLogger(CommandEvents.class);
+public class CommandListener implements CommandListenerAdapter {
 	private final StatsService statsService;
 
 	@Autowired
-	public CommandEvents(StatsService statsService) {
+	public CommandListener(StatsService statsService) {
 		this.statsService = statsService;
 	}
 
 	@Override
-	public void onCommand(CommandEvent event, Command command) {
+	public void onCommand() {
 		statsService.incrementExecutedCommands();
-	}
-
-	@Override
-	public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
-		logger.error(String.format("Exception in command %s.", command.getName()));
-		throwable.printStackTrace();
 	}
 }

@@ -15,20 +15,24 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.model;
+package org.module.structure;
 
-import lombok.Getter;
-import lombok.Setter;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-@Entity
-@Table(name = "owners")
-@Getter
-@Setter
-public class OwnerModel {
-	@Id
-	private long id;
+public interface GuildSettingsProvider {
+	@Nonnull
+	String getPrefix();
+
+	@Nonnull
+	String getLang();
+
+	@Nullable
+	TextChannel getLogsChannel();
+
+	@Nullable
+	Role getModeratorRole();
 }

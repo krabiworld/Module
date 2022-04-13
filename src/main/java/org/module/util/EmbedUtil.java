@@ -17,7 +17,6 @@
 
 package org.module.util;
 
-import com.jagrosh.jdautilities.command.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.module.Constants;
 import org.module.Locale;
@@ -32,13 +31,14 @@ public class EmbedUtil extends EmbedBuilder {
 	}
 
 	/** Embed for command help. */
-	public EmbedUtil(Command command, Locale locale, String prefix) {
-		String name = command.getName();
-		String args = locale.get(String.format("command.%s.arguments", command.getName()));
-		String help = locale.get(String.format("command.%s.help", command.getName()));
+	public EmbedUtil(org.module.structure.Command command, Locale locale, String prefix) {
+		String name = locale.get(command.name());
+		String commandArgs = command.args();
+		String args = commandArgs.isEmpty() ? "" : " " + locale.get(commandArgs);
+		String help = locale.get(command.help());
 
 		this.setColor(Constants.DEFAULT);
 		this.setTitle(locale.get("command.help.command.title", name));
-		this.setDescription(String.format("`%s%s%s`\n%s", prefix, name, args.isEmpty() ? "" : " " + args, help));
+		this.setDescription(String.format("`%s%s%s`\n%s", prefix, name, args, help));
 	}
 }

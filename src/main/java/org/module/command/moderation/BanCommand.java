@@ -17,67 +17,52 @@
 
 package org.module.command.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.service.ModerationService;
-import org.module.util.ArgsUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BanCommand extends Command {
-	private final ModerationService moderationService;
-	private final MessageService messageService;
-
-	@Autowired
-    public BanCommand(ModerationService moderationService, MessageService messageService) {
-		this.moderationService = moderationService;
-		this.messageService = messageService;
-        this.name = "ban";
-        this.category = Constants.MODERATION;
-        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
-        this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-
-		if (!moderationService.isModerator(event.getMember())) {
-			messageService.sendError(event, locale, "error.not.mod");
-			return;
-		}
-		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this, locale);
+@Command(
+	name = "command.ban.name",
+	args = "command.ban.args",
+	help = "command.ban.help",
+	category = "category.moderation",
+	moderator = true,
+	botPermissions = {Permission.BAN_MEMBERS},
+	userPermissions = {Permission.BAN_MEMBERS}
+)
+public class BanCommand extends AbstractCommand {
+	@Override
+    protected void execute(CommandContext ctx) {
+		if (ctx.getArgs().isEmpty()) {
+			ctx.sendHelp();
 			return;
 		}
 
-		String[] args = ArgsUtil.split(event.getArgs());
-		Member member = ArgsUtil.getMember(event, args[0]);
-		String reason = ArgsUtil.getGluedArg(args, 1);
+		String[] args = ctx.splitArgs();
+		Member member = ctx.findMember(args[0]);
+		String reason = ctx.getGluedArg(args, 1);
 
         if (member == null) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
             return;
         }
-		if (!event.getSelfMember().canInteract(member)) {
-			messageService.sendError(event, locale, "command.ban.error.role.position");
+		if (!ctx.getSelfMember().canInteract(member)) {
+			ctx.sendError("command.ban.error.role.position");
 			return;
 		}
-		if (member == event.getMember()) {
-			messageService.sendError(event, locale, "command.ban.error.cannot.yourself");
+		if (member == ctx.getMember()) {
+			ctx.sendError("command.ban.error.cannot.yourself");
 			return;
 		}
 
-		event.getGuild().ban(member, 0, reason).queue();
-		messageService.sendSuccess(event, locale, "command.ban.success.banned",
+		ctx.getGuild().ban(member, 0, reason).queue();
+		ctx.sendSuccess("command.ban.success.banned",
 			member.getUser().getAsTag(),
-			event.getMember().getEffectiveName(),
+			ctx.getMember().getEffectiveName(),
 			reason.isEmpty() ? "." : " with reason: " + reason);
     }
 }

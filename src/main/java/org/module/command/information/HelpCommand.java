@@ -17,66 +17,59 @@
 
 package org.module.command.information;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.module.Constants;
-import org.module.Locale;
-import org.module.manager.GuildManager;
-import org.module.service.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
+import org.module.util.EmbedUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class HelpCommand extends Command {
-	private final GuildManager manager;
-	private final MessageService messageService;
-
-	@Autowired
-	public HelpCommand(GuildManager manager, MessageService messageService) {
-		this.manager = manager;
-		this.messageService = messageService;
-        this.name = "help";
-        this.category = Constants.INFORMATION;
-    }
-
+@Command(
+	name = "command.help.name",
+	args = "command.help.args",
+	help = "command.help.help",
+	category = "category.information"
+)
+public class HelpCommand extends AbstractCommand {
     @Override
-    protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		String args = event.getArgs();
-		GuildManager.GuildSettings settings = manager.getSettings(event.getGuild());
-		if (settings == null) return;
-		String prefix = settings.getPrefix();
-        List<Command> commands = event.getClient().getCommands();
+    protected void execute(CommandContext ctx) {
+		String args = ctx.getArgs();
+		String prefix = ctx.getPrefix();
         EmbedBuilder embed = new EmbedBuilder().setColor(Constants.DEFAULT);
-        List<String> categories = new LinkedList<>();
+		List<Command> commands = new LinkedList<>();
+		List<String> categories = new LinkedList<>();
 
         categoriesLoop:
-        for (Command cmd : commands) {
-			if (cmd.isHidden()) continue;
+        for (AbstractCommand abstractCommand : ctx.getCommands()) {
+			Command command = abstractCommand.getAnnotation();
+			commands.add(command);
+
+			if (command.hidden()) continue;
             for (String category : categories) {
                 // if command already exists in "categories" - continue
-                if (category.equals(cmd.getCategory().getName())) continue categoriesLoop;
+                if (category.equals(ctx.get(command.category()))) continue categoriesLoop;
             }
-            categories.add(cmd.getCategory().getName());
+            categories.add(ctx.get(command.category()));
         }
 
         // if "args" is empty - getTemplate all commands
         if (args.isEmpty()) {
             StringBuilder commandsBuilder = new StringBuilder();
-            embed.setTitle(locale.get("command.help.title"));
-			embed.setDescription(locale.get("command.help.description", prefix, prefix));
+            embed.setTitle(ctx.get("command.help.title"));
+			embed.setDescription(ctx.get("command.help.description", prefix, prefix));
 
             for (String category : categories) {
                 for (Command cmd : commands) {
-                    if (cmd.isHidden()) continue;
-                    if (cmd.getCategory().getName().equals(category)) {
+                    if (cmd.hidden()) continue;
+                    if (ctx.get(cmd.category()).equals(category)) {
                         commandsBuilder.append("`")
 							.append(prefix)
-							.append(cmd.getName())
+							.append(ctx.get(cmd.name()))
 							.append("` ");
                     }
                 }
@@ -85,32 +78,34 @@ public class HelpCommand extends Command {
                 commandsBuilder = new StringBuilder();
             }
 
-            event.reply(embed.build());
+            ctx.send(embed);
         } else {
             for (String category : categories) {
                 // if match found with name of category
                 if (category.toLowerCase().startsWith(args.toLowerCase())) {
                     for (Command cmd : commands) {
-                        if (cmd.isHidden()) continue;
-                        if (cmd.getCategory().getName().equals(category)) {
-							String help = locale.get(String.format("command.%s.help", cmd.getName()));
-							embed.addField(prefix + cmd.getName(), help, false);
+                        if (cmd.hidden()) continue;
+                        if (ctx.get(cmd.category()).equals(category)) {
+							String name = ctx.get(cmd.name());
+							String help = ctx.get(cmd.help());
+							embed.addField(prefix + name, help, false);
 						}
                     }
-                    embed.setTitle(locale.get("command.help.category.title", category));
-                    event.reply(embed.build());
+                    embed.setTitle(ctx.get("command.help.category.title", category));
+                    ctx.send(embed);
                     return;
                 }
             }
             for (Command cmd : commands) {
                 // if match found with name of command
-                if (cmd.getName().toLowerCase().startsWith(args.toLowerCase()) && !cmd.isHidden()) {
-					messageService.sendHelp(event, cmd, locale);
+                if (ctx.get(cmd.name()).toLowerCase().startsWith(args.toLowerCase()) && !cmd.hidden()) {
+					EmbedUtil helpEmbed = new EmbedUtil(cmd, ctx.getLocale(), prefix);
+					ctx.send(helpEmbed);
 					return;
                 }
             }
 
-			messageService.sendError(event, locale, "command.help.error.not.found", args);
+			ctx.sendError("command.help.error.not.found", args);
         }
     }
 }

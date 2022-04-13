@@ -17,60 +17,48 @@
 
 package org.module.command.settings;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.Permission;
 import org.module.Constants;
-import org.module.Locale;
-import org.module.manager.GuildManager;
-import org.module.service.MessageService;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LangCommand extends Command {
-	private final GuildManager manager;
-	private final MessageService messageService;
-
+@Command(
+	name = "command.lang.name",
+	args = "command.lang.args",
+	help = "command.lang.help",
+	category = "category.settings",
+	userPermissions = {Permission.MANAGE_SERVER}
+)
+public class LangCommand extends AbstractCommand {
 	@Autowired
-	public LangCommand(GuildManager manager, MessageService messageService) {
-		this.manager = manager;
-		this.messageService = messageService;
-		this.name = "lang";
-		this.category = Constants.SETTINGS;
-		this.userPermissions = new Permission[]{Permission.MANAGE_SERVER};
-		this.children = new Command[]{new EnSubCommand(), new RuSubCommand()};
+	public LangCommand() {
+		this.children = new AbstractCommand[]{new EnSubCommand(), new RuSubCommand()};
 	}
 
 	@Override
-	protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		messageService.sendHelp(event, this, locale);
+	protected void execute(CommandContext ctx) {
+		ctx.sendHelp();
 	}
 
-	private class EnSubCommand extends Command {
-		public EnSubCommand() {
-			this.name = "en";
-		}
-
+	@Command(name = "command.lang.en.name")
+	private static class EnSubCommand extends AbstractCommand {
 		@Override
-		protected void execute(CommandEvent event) {
-			Locale locale = messageService.getLocale(event.getGuild());
-			manager.setLang(event.getGuild(), Constants.Language.EN);
-			messageService.sendSuccess(event, locale, "command.lang.success.changed", "en");
+		protected void execute(CommandContext ctx) {
+			ctx.getManager().setLang(ctx.getGuild(), Constants.Language.EN);
+			ctx.sendSuccess("command.lang.success.changed", "en");
 		}
 	}
 
-	private class RuSubCommand extends Command {
-		public RuSubCommand() {
-			this.name = "ru";
-		}
-
+	@Command(name = "command.lang.ru.name")
+	private static class RuSubCommand extends AbstractCommand {
 		@Override
-		protected void execute(CommandEvent event) {
-			Locale locale = messageService.getLocale(event.getGuild());
-			manager.setLang(event.getGuild(), Constants.Language.RU);
-			messageService.sendSuccess(event, locale, "command.lang.success.changed", "ru");
+		protected void execute(CommandContext ctx) {
+			ctx.getManager().setLang(ctx.getGuild(), Constants.Language.RU);
+			ctx.sendSuccess("command.lang.success.changed", "ru");
 		}
 	}
 }

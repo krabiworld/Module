@@ -15,19 +15,31 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.service;
+package org.module.structure;
 
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
-import org.module.model.OwnerModel;
+import net.dv8tion.jda.api.Permission;
+import org.springframework.stereotype.Component;
 
-public interface OwnerService {
-	OwnerModel getOwner(long id);
+import java.lang.annotation.*;
 
-	boolean isNotOwner(Member member);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Component
+@Inherited
+public @interface Command {
+	String name();
 
-	boolean addOwner(User user);
+	String args() default "";
 
-	/** Return true if user removed from owner list. */
-	boolean removeOwner(User user);
+	String help() default "";
+
+	String category() default "";
+
+	boolean moderator() default false;
+
+	boolean hidden() default false;
+
+	Permission[] botPermissions() default {Permission.MESSAGE_SEND, Permission.MESSAGE_EMBED_LINKS};
+
+	Permission[] userPermissions() default {};
 }

@@ -21,6 +21,7 @@ import org.module.model.StatsModel;
 import org.module.repository.StatsRepository;
 import org.module.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +34,7 @@ public class StatsServiceImpl implements StatsService {
 	}
 
 	@Override
+	@Cacheable("stats")
 	public StatsModel getStats() {
 		return statsRepository.findById(1);
 	}

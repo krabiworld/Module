@@ -17,19 +17,10 @@
 
 package org.module;
 
-import com.jagrosh.jdautilities.command.Command.Category;
-
 import java.awt.*;
 
 public class Constants {
-	public static final int MAX_MESSAGE_CACHE = 1000;
-	public static final String DEFAULT_PREFIX = "module!";
-
-	public static final Category INFORMATION = new Category("Information");
-	public static final Category MODERATION = new Category("Moderation");
-	public static final Category OWNER = new Category("OwnerModel");
-	public static final Category SETTINGS = new Category("Settings");
-	public static final Category UTILITIES = new Category("Utilities");
+	public static final int MAX_MESSAGE_CACHE = 8000;
 
 	/** Main color. */
 	public static final Color DEFAULT = new Color(46, 122, 213);

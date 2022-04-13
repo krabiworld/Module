@@ -15,26 +15,24 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.service;
+package org.module.structure;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import org.module.Locale;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
+import org.module.Constants;
 
-public interface MessageService {
-	void sendError(CommandEvent event, Locale locale, String key, Object... args);
+import javax.annotation.Nullable;
 
-	void sendSuccess(CommandEvent event, Locale locale, String key, Object... args);
+public interface GuildManagerProvider {
+	@Nullable
+	GuildSettingsProvider getSettings(Guild guild);
 
-	void sendLog(Guild guild, EmbedBuilder embed);
+	void setPrefix(Guild guild, String prefix);
 
-	void sendLog(Guild guild, EmbedBuilder embed, byte[] file);
+	void setLang(Guild guild, Constants.Language lang);
 
-	void sendHelp(CommandEvent event, Command command, Locale locale);
+	void setLogsChannel(Guild guild, TextChannel channel);
 
-	Locale getLocale(String lang);
-
-	Locale getLocale(Guild guild);
+	void setModeratorRole(Guild guild, Role role);
 }

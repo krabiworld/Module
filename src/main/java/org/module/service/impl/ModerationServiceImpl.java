@@ -17,15 +17,12 @@
 
 package org.module.service.impl;
 
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import org.module.repository.WarnRepository;
-import org.module.manager.GuildManager;
 import org.module.model.WarnModel;
+import org.module.repository.WarnRepository;
 import org.module.service.ModerationService;
-import org.module.util.CheckUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,32 +30,20 @@ import java.util.List;
 @Service
 public class ModerationServiceImpl implements ModerationService {
 	private final WarnRepository warnRepository;
-	private final GuildManager manager;
 
 	@Autowired
-	public ModerationServiceImpl(WarnRepository warnRepository, GuildManager manager) {
+	public ModerationServiceImpl(WarnRepository warnRepository) {
 		this.warnRepository = warnRepository;
-		this.manager = manager;
 	}
 
 	@Override
-	public boolean isModerator(Member member) {
-		if (member.hasPermission(Permission.ADMINISTRATOR) || member.isOwner()) return true;
-
-		GuildManager.GuildSettings settings = manager.getSettings(member.getGuild());
-		if (settings == null) return false;
-		Role modRole = settings.getModeratorRole();
-		if (modRole == null) return false;
-
-		return CheckUtil.hasRole(member, modRole);
-	}
-
-	@Override
+	@Cacheable("warn")
 	public WarnModel getWarn(long id) {
 		return warnRepository.findById(id);
 	}
 
 	@Override
+	@Cacheable("warns")
 	public List<WarnModel> getWarns(Member member) {
 		return warnRepository.findAllByGuildAndUser(member.getGuild().getIdLong(), member.getIdLong());
 	}

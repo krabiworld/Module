@@ -17,13 +17,12 @@
 
 package org.module.controller;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandClient;
 import org.json.JSONObject;
 import org.module.Locale;
 import org.module.configuration.BotConfiguration;
-import org.module.service.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.Command;
+import org.module.structure.CommandClient;
+import org.module.util.LocaleUtil;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,53 +33,47 @@ import java.util.List;
 
 @RestController
 public class CommandsController {
-	private final MessageService messageService;
-
-	@Autowired
-	public CommandsController(MessageService messageService) {
-		this.messageService = messageService;
-	}
-
 	@GetMapping(value = "/commands/{lang}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String commands(@PathVariable String lang) {
-		Locale locale = messageService.getLocale(!lang.equals("ru") ? "en" : "ru");
+		Locale locale = LocaleUtil.getLocale(!lang.equals("ru") ? "en" : "ru");
 
 		CommandClient client = BotConfiguration.commandClient;
 
 		JSONObject json = new JSONObject();
 		JSONObject jsonCategories = new JSONObject();
-		List<Command> commands = client.getCommands();
-		List<Command.Category> categories = new LinkedList<>();
+		List<Command> commands = new LinkedList<>();
+		List<String> categories = new LinkedList<>();
+
+		client.getCommands().forEach(cmd -> commands.add(cmd.getAnnotation()));
 
 		categoriesLoop:
 		for (Command cmd : commands) {
-			if (cmd.isHidden()) continue;
+			if (cmd.hidden()) continue;
 			for (var category : categories) {
-				if (category.getName().equals(cmd.getCategory().getName())) continue categoriesLoop;
+				if (category.equals(cmd.category())) continue categoriesLoop;
 			}
-			categories.add(cmd.getCategory());
+			categories.add(cmd.category());
 		}
 
 		for (var category : categories) {
-			JSONObject jsonCategory = new JSONObject().put("name", category.getName());
+			JSONObject jsonCategory = new JSONObject().put("name", category);
 			JSONObject jsonCommands = new JSONObject();
 
 			List<Command> filteredCommands = commands.stream()
-				.filter(cmd -> cmd.getCategory().getName().equalsIgnoreCase(category.getName())).toList();
+				.filter(cmd -> cmd.category().equalsIgnoreCase(category)).toList();
 			for (Command command : filteredCommands) {
-				jsonCommands.put(command.getName().toLowerCase(), new JSONObject()
-					.put("name", command.getName())
-					.put("help", locale.get(String.format("command.%s.help", command.getName())))
-					.put("arguments", locale.get(String.format("command.%s.arguments", command.getName())))
+				jsonCommands.put(command.name().toLowerCase(), new JSONObject()
+					.put("name", locale.get(command.name()))
+					.put("help", locale.get(command.help()))
+					.put("args", locale.get(command.args()))
 					.put("dialog", false));
 			}
 
 			jsonCategory.put("commands", jsonCommands);
-			jsonCategories.put(category.getName().toLowerCase(), jsonCategory);
+			jsonCategories.put(category.toLowerCase(), jsonCategory);
 		}
 
 		json.put("commands", client.getCommands().size());
-		json.put("slashCommands", client.getSlashCommands().size());
 		json.put("categories", jsonCategories);
 
 		return json.toString();

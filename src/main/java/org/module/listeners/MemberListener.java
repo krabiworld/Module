@@ -15,7 +15,7 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.event;
+package org.module.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -28,21 +28,11 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.module.Constants;
-import org.module.service.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.module.util.LogsUtil;
 
 import java.util.List;
 
-@Component
-public class MemberEvents extends ListenerAdapter {
-	private final MessageService messageService;
-
-	@Autowired
-	public MemberEvents(MessageService messageService) {
-		this.messageService = messageService;
-	}
-
+public class MemberListener extends ListenerAdapter {
 	@Override
 	public void onGuildBan(GuildBanEvent event) {
 		User user = event.getUser();
@@ -51,7 +41,7 @@ public class MemberEvents extends ListenerAdapter {
 			.setAuthor(user.getAsTag() + " was banned", null, user.getEffectiveAvatarUrl())
 			.setColor(Constants.ERROR)
 			.setFooter("ID: " + user.getId());
-		messageService.sendLog(event.getGuild(), embed);
+		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
@@ -64,7 +54,7 @@ public class MemberEvents extends ListenerAdapter {
 			.addField(getRegisteredAtField(member))
 			.addField(getMemberCount(member.getGuild()))
 			.setFooter("ID: " + member.getId());
-		messageService.sendLog(event.getGuild(), embed);
+		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 
 	@Override
@@ -82,7 +72,7 @@ public class MemberEvents extends ListenerAdapter {
 			.addField(getRegisteredAtField(event.getMember()))
 			.addField(getMemberCount(event.getGuild()))
 			.setFooter("ID: " + member.getId());
-		messageService.sendLog(event.getGuild(), embed);
+		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 	@Override
 	public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
@@ -98,7 +88,7 @@ public class MemberEvents extends ListenerAdapter {
 			.setColor(Constants.SUCCESS)
 			.setDescription(addedRoles.toString())
 			.setFooter("ID: " + event.getUser().getId());
-		messageService.sendLog(event.getGuild(), embed);
+		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 	@Override
 	public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
@@ -114,7 +104,7 @@ public class MemberEvents extends ListenerAdapter {
 			.setColor(Constants.ERROR)
 			.setDescription(removedRoles.toString())
 			.setFooter("ID: " + event.getUser().getId());
-		messageService.sendLog(event.getGuild(), embed);
+		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 	@Override
 	public void onGuildUnban(GuildUnbanEvent event) {
@@ -124,7 +114,7 @@ public class MemberEvents extends ListenerAdapter {
 			.setAuthor(user.getAsTag() + " was unbanned", null, user.getEffectiveAvatarUrl())
 			.setColor(Constants.SUCCESS)
 			.setFooter("ID: " + user.getId());
-		messageService.sendLog(event.getGuild(), embed);
+		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 	@Override
 	public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
@@ -146,7 +136,7 @@ public class MemberEvents extends ListenerAdapter {
 
 		if (after != null) embed.addField("After", after, true);
 
-		messageService.sendLog(event.getGuild(), embed);
+		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 
 	private MessageEmbed.Field getRegisteredAtField(Member member) {

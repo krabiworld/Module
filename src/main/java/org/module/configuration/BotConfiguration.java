@@ -17,23 +17,18 @@
 
 package org.module.configuration;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandClient;
-import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.module.Constants;
 import org.module.command.information.HelpCommand;
 import org.module.command.information.ServerinfoCommand;
 import org.module.command.information.StatsCommand;
 import org.module.command.information.UserCommand;
 import org.module.command.moderation.*;
 import org.module.command.owner.EvalCommand;
-import org.module.command.owner.OwnerCommand;
 import org.module.command.settings.LangCommand;
 import org.module.command.settings.LogsCommand;
 import org.module.command.settings.ModRoleCommand;
@@ -41,12 +36,11 @@ import org.module.command.settings.PrefixCommand;
 import org.module.command.utilities.AvatarCommand;
 import org.module.command.utilities.EmojiCommand;
 import org.module.command.utilities.RandomCommand;
-import org.module.event.CommandEvents;
-import org.module.event.MemberEvents;
-import org.module.event.MessageEvents;
-import org.module.manager.GuildManager;
+import org.module.listeners.MemberListener;
+import org.module.listeners.MessageListener;
+import org.module.structure.*;
+import org.module.util.LogsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,65 +49,52 @@ import javax.security.auth.login.LoginException;
 
 @Configuration
 public class BotConfiguration {
-	@Value("${discord.token}")
-	private String token;
-
-	@Value("${discord.ownerId}")
-	private String ownerId;
-
 	public static JDA jda;
 	public static CommandClient commandClient;
 	private final ApplicationContext ctx;
-	private final GuildManager manager;
-	private final MessageEvents messageEvents;
-	private final MemberEvents memberEvents;
+	private final DiscordConfiguration configuration;
+	private final GuildManagerProvider manager;
+	private final CommandListenerAdapter listener;
 
 	@Autowired
 	public BotConfiguration(
 		ApplicationContext ctx,
-		GuildManager manager,
-		MessageEvents messageEvents,
-		MemberEvents memberEvents
+		DiscordConfiguration configuration,
+		GuildManagerProvider manager,
+		CommandListenerAdapter listener
 	) {
 		this.ctx = ctx;
+		this.configuration = configuration;
 		this.manager = manager;
-		this.messageEvents = messageEvents;
-		this.memberEvents = memberEvents;
+		this.listener = listener;
 	}
 
 	@Bean
 	public void configure() throws LoginException {
-		JDA jda = JDABuilder
-			.createDefault(token)
+		LogsUtil.setManager(manager);
+
+		commandClient = CommandClientBuilder
+			.builder()
+			.setOwnerId(configuration.getOwnerId())
+			.setCommands(getCommands())
+			.setGuildManager(manager)
+			.setListener(listener)
+			.build();
+		jda = JDABuilder
+			.createDefault(configuration.getToken())
+			.setActivity(Activity.playing("!help"))
 			.enableIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS))
 			.enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY, CacheFlag.EMOTE)
 			.disableCache(CacheFlag.VOICE_STATE)
 			.setBulkDeleteSplittingEnabled(false)
 			.setMemberCachePolicy(MemberCachePolicy.ALL)
 			.useSharding(0, 1)
-			.addEventListeners(manager, messageEvents, memberEvents)
+			.addEventListeners(commandClient, manager, new MessageListener(), new MemberListener())
 			.build();
-
-		CommandClient commandClient = new CommandClientBuilder()
-			.setOwnerId(ownerId)
-			.setPrefix(Constants.DEFAULT_PREFIX)
-			.setActivity(Activity.playing("!help"))
-			.setPrefixes(new String[]{"<@!" + jda.getSelfUser().getId() + "> "})
-			.setEmojis("✅", null, "❌")
-			.useHelpBuilder(false)
-			.setGuildSettingsManager(manager)
-			.addCommands(getCommands())
-			.setListener(ctx.getBean(CommandEvents.class))
-			.build();
-
-		jda.addEventListener(commandClient);
-
-		BotConfiguration.jda = jda;
-		BotConfiguration.commandClient = commandClient;
 	}
 
-	private Command[] getCommands() {
-		return new Command[]{
+	private AbstractCommand[] getCommands() {
+		return new AbstractCommand[]{
 			// Information
 			ctx.getBean(HelpCommand.class),
 			ctx.getBean(ServerinfoCommand.class),
@@ -132,7 +113,6 @@ public class BotConfiguration {
 			ctx.getBean(WarnsCommand.class),
 			// Owner
 			ctx.getBean(EvalCommand.class),
-			ctx.getBean(OwnerCommand.class),
 			// Settings
 			ctx.getBean(LogsCommand.class),
 			ctx.getBean(ModRoleCommand.class),

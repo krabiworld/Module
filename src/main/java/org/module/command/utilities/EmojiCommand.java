@@ -17,49 +17,43 @@
 
 package org.module.command.utilities;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.util.ArgsUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emote;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.module.Constants;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EmojiCommand extends Command {
-	private final MessageService messageService;
-
-	@Autowired
-	public EmojiCommand(MessageService messageService) {
-		this.messageService = messageService;
-		this.name = "emoji";
-        this.category = Constants.UTILITIES;
-    }
-
+@Command(
+	name = "command.emoji.name",
+	args = "command.emoji.args",
+	help = "command.emoji.help",
+	category = "category.utilities"
+)
+public class EmojiCommand extends AbstractCommand {
     @Override
-    protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this, locale);
+    protected void execute(CommandContext ctx) {
+		if (ctx.getArgs().isEmpty()) {
+			ctx.sendHelp();
 			return;
 		}
-        Emote emoji = ArgsUtil.getEmote(event, event.getArgs());
+
+        Emote emoji = ctx.findEmote(ctx.getArgs());
         if (emoji == null) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
             return;
         }
 
 		MessageEmbed embed = new EmbedBuilder()
-			.setTitle("Emoji " + emoji.getName(), emoji.getImageUrl())
+			.setTitle(ctx.get("command.emoji.title", emoji.getName()), emoji.getImageUrl())
 			.setColor(Constants.DEFAULT)
 			.setImage(emoji.getImageUrl())
 			.setFooter("ID: " + emoji.getId())
 			.build();
 
-        event.reply(embed);
+        ctx.send(embed);
     }
 }

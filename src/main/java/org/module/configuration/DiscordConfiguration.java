@@ -15,13 +15,19 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.repository;
+package org.module.configuration;
 
-import org.module.model.OwnerModel;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@Repository
-public interface OwnerRepository extends JpaRepository<OwnerModel, Long> {
-	OwnerModel findById(long id);
+@Configuration
+@ConfigurationProperties("discord")
+@Getter
+@Setter
+public class DiscordConfiguration {
+	private String token;
+
+	private String ownerId;
 }

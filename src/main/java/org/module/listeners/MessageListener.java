@@ -15,7 +15,7 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.event;
+package org.module.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -28,27 +28,17 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.module.Constants;
-import org.module.cache.MessageCache;
-import org.module.service.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.module.manager.CacheManager;
+import org.module.util.LogsUtil;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 
-@Component
-public class MessageEvents extends ListenerAdapter {
-	private final MessageService messageService;
-
-	@Autowired
-	public MessageEvents(MessageService messageService) {
-		this.messageService = messageService;
-	}
-
+public class MessageListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		MessageCache.addMessage(event.getMessage());
+		CacheManager.addMessage(event.getMessage());
 	}
 
 	@Override
@@ -56,7 +46,7 @@ public class MessageEvents extends ListenerAdapter {
 		ArrayList<Object> deletedMessages = new ArrayList<>();
 
 		for (String messageId : event.getMessageIds()) {
-			Message message = MessageCache.getMessage(Long.parseLong(messageId));
+			Message message = CacheManager.getMessage(Long.parseLong(messageId));
 			if (message == null) continue;
 			deletedMessages.add(String.format("%s %s%s%s: %s\n",
 				message.getTimeCreated().format(DateTimeFormatter.ofPattern("dd-MM-yyyy, HH:mm:ss,")),
@@ -77,11 +67,11 @@ public class MessageEvents extends ListenerAdapter {
 			.setTitle("Deleted " + event.getMessageIds().size() + " messages!")
 			.setDescription("Deleted in " + event.getChannel().getAsMention())
 			.setColor(Constants.ERROR);
-		messageService.sendLog(event.getGuild(), embed, deletedMessagesString.toString().getBytes());
+		LogsUtil.sendLog(event.getGuild(), embed, deletedMessagesString.toString().getBytes());
 	}
 	@Override
 	public void onMessageDelete(MessageDeleteEvent event) {
-		Message msg = MessageCache.getMessage(event.getMessageIdLong());
+		Message msg = CacheManager.getMessage(event.getMessageIdLong());
 		if (msg == null) return;
 
 		User author = msg.getAuthor();
@@ -110,16 +100,16 @@ public class MessageEvents extends ListenerAdapter {
 			embed.addField("Attachments", attachments.toString(), false);
 		}
 
-		messageService.sendLog(event.getGuild(), embed);
+		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 
 	@Override
 	public void onMessageUpdate(MessageUpdateEvent event) {
-		Message before = MessageCache.getMessage(event.getMessageIdLong());
+		Message before = CacheManager.getMessage(event.getMessageIdLong());
 		Message after = event.getMessage();
 		User author = after.getAuthor();
 
-		MessageCache.addMessage(after);
+		CacheManager.addMessage(after);
 
 		if (author.isBot() || before == null) return;
 		if (before.getContentStripped().equals(after.getContentStripped())) return;
@@ -138,7 +128,7 @@ public class MessageEvents extends ListenerAdapter {
 			embed.addField("After", "```" + after.getContentStripped() + "```", false);
 		}
 
-		messageService.sendLog(event.getGuild(), embed);
+		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 
 	private MessageEmbed.Field getAuthorField(User user) {

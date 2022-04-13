@@ -17,8 +17,6 @@
 
 package org.module.manager;
 
-import com.jagrosh.jdautilities.command.GuildSettingsManager;
-import com.jagrosh.jdautilities.command.GuildSettingsProvider;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -27,16 +25,16 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.module.Constants;
 import org.module.model.GuildModel;
 import org.module.service.GuildService;
+import org.module.structure.GuildManagerProvider;
+import org.module.structure.GuildSettingsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 
 @Component
-public class GuildManager extends ListenerAdapter implements GuildSettingsManager<GuildManager.GuildSettings> {
+public class GuildManager extends ListenerAdapter implements GuildManagerProvider {
 	private final GuildService guildService;
 
 	@Autowired
@@ -55,10 +53,11 @@ public class GuildManager extends ListenerAdapter implements GuildSettingsManage
 	}
 
 	@Override
-	public GuildSettings getSettings(Guild guild) {
+	public GuildSettingsProvider getSettings(Guild guild) {
 		return new GuildSettings(guild, guildService.getGuild(guild.getIdLong()));
 	}
 
+	@Override
 	public void setPrefix(Guild guild, String prefix) {
 		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
 		guildConfig.setPrefix(prefix);
@@ -66,20 +65,7 @@ public class GuildManager extends ListenerAdapter implements GuildSettingsManage
 		guildService.updateGuild(guildConfig);
 	}
 
-	public void setLogsChannel(Guild guild, TextChannel channel) {
-		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
-		guildConfig.setLogs(channel == null ? 0 : channel.getIdLong());
-
-		guildService.updateGuild(guildConfig);
-	}
-
-	public void setModeratorRole(Guild guild, Role role) {
-		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
-		guildConfig.setMod(role.getIdLong());
-
-		guildService.updateGuild(guildConfig);
-	}
-
+	@Override
 	public void setLang(Guild guild, Constants.Language lang) {
 		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
 		guildConfig.setLang(lang == Constants.Language.EN ? "en" : "ru");
@@ -87,41 +73,56 @@ public class GuildManager extends ListenerAdapter implements GuildSettingsManage
 		guildService.updateGuild(guildConfig);
 	}
 
+	@Override
+	public void setLogsChannel(Guild guild, TextChannel channel) {
+		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
+		guildConfig.setLogs(channel == null ? 0 : channel.getIdLong());
+
+		guildService.updateGuild(guildConfig);
+	}
+
+	@Override
+	public void setModeratorRole(Guild guild, Role role) {
+		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
+		guildConfig.setMod(role.getIdLong());
+
+		guildService.updateGuild(guildConfig);
+	}
+
 	public static class GuildSettings implements GuildSettingsProvider {
+		@Nonnull private final String prefix, lang;
 		@Nullable private final TextChannel logsChannel;
 		@Nullable private final Role moderatorRole;
-		@Nonnull private final String prefix, lang;
 
 		private GuildSettings(Guild guild, GuildModel guildModel) {
-			this.logsChannel = guild.getTextChannelById(guildModel.getLogs());
-			this.moderatorRole = guild.getRoleById(guildModel.getMod());
 			this.prefix = guildModel.getPrefix();
 			this.lang = guildModel.getLang();
-		}
-
-		@Nullable
-		public TextChannel getLogsChannel() {
-			return logsChannel;
-		}
-
-		@Nullable
-		public Role getModeratorRole() {
-			return moderatorRole;
+			this.logsChannel = guild.getTextChannelById(guildModel.getLogs());
+			this.moderatorRole = guild.getRoleById(guildModel.getMod());
 		}
 
 		@Nonnull
+		@Override
 		public String getPrefix() {
 			return prefix;
 		}
 
 		@Nonnull
+		@Override
 		public String getLang() {
 			return lang;
 		}
 
+		@Nullable
 		@Override
-		public Collection<String> getPrefixes() {
-			return Collections.singleton(prefix);
+		public TextChannel getLogsChannel() {
+			return logsChannel;
+		}
+
+		@Nullable
+		@Override
+		public Role getModeratorRole() {
+			return moderatorRole;
 		}
 	}
 }
