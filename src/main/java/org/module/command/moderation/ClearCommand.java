@@ -17,17 +17,13 @@
 
 package org.module.command.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.service.ModerationService;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
@@ -35,45 +31,36 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class ClearCommand extends Command {
-	private final ModerationService moderationService;
-	private final MessageService messageService;
-
-	@Autowired
-    public ClearCommand(ModerationService moderationService, MessageService messageService) {
-		this.moderationService = moderationService;
-		this.messageService = messageService;
-        this.name = "clear";
-        this.category = Constants.MODERATION;
-        this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
-        this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE, Permission.MESSAGE_ATTACH_FILES};
-    }
-
+@Command(
+	name = "command.clear.name",
+	args = "command.clear.args",
+	help = "command.clear.help",
+	category = "category.moderation",
+	moderator = true,
+	botPermissions = {Permission.MESSAGE_MANAGE, Permission.MESSAGE_ATTACH_FILES},
+	userPermissions = {Permission.MESSAGE_MANAGE}
+)
+public class ClearCommand extends AbstractCommand {
     @Override
-    protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		if (!moderationService.isModerator(event.getMember())) {
-			messageService.sendError(event, locale, "error.not.mod");
+    protected void execute(CommandContext ctx) {
+		if (ctx.getArgs().isEmpty()) {
+			ctx.sendHelp();
 			return;
 		}
-		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this, locale);
-			return;
-		}
-        int count = Integer.parseInt(event.getArgs());
-        if (count < 2 || count > 1000 || event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this, locale);
+        int count = Integer.parseInt(ctx.getArgs());
+        if (count < 2 || count > 1000) {
+			ctx.sendHelp();
             return;
         }
 
         try {
-            event.getMessage().delete().queue();
+            ctx.getMessage().delete().queue();
 
             List<Message> messages = new LinkedList<>();
             List<Message> delMessages = new LinkedList<>();
-            MessageHistory history = event.getChannel().getHistory();
-            OffsetDateTime dateTime = event.getMessage().getTimeCreated().minusHours(335);
-            TextChannel channel = event.getTextChannel();
+            MessageHistory history = ctx.getChannel().getHistory();
+            OffsetDateTime dateTime = ctx.getMessage().getTimeCreated().minusHours(335);
+            TextChannel channel = ctx.getTextChannel();
 
             while (count > 100) {
                 messages.addAll(history.retrievePast(100).complete());
@@ -102,7 +89,7 @@ public class ClearCommand extends Command {
                 index += 100;
             }
         } catch (Exception e) {
-            event.replyError(e.getMessage());
+            ctx.send(e.getMessage());
         }
     }
 }

@@ -17,46 +17,38 @@
 
 package org.module.command.utilities;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.util.ArgsUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
 @Component
-public class RandomCommand extends Command {
-	private final MessageService messageService;
-
-	@Autowired
-	public RandomCommand(MessageService messageService) {
-		this.messageService = messageService;
-		this.name = "random";
-		this.category = Constants.UTILITIES;
-	}
-
+@Command(
+	name = "command.random.name",
+	args = "command.random.args",
+	help = "command.random.help",
+	category = "category.utilities"
+)
+public class RandomCommand extends AbstractCommand {
 	@Override
-	protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		String[] args = ArgsUtil.split(event.getArgs());
+	protected void execute(CommandContext ctx) {
+		String[] args = ctx.splitArgs();
 
-		if (event.getArgs().isEmpty()) {
-			event.reply(random(false, false, 0, 0));
+		if (ctx.getArgs().isEmpty()) {
+			ctx.send(random(false, false, 0, 0));
 		} else {
 			try {
 				if (args.length > 1) {
 					long min = Long.parseLong(args[0]);
 					long max = Long.parseLong(args[1]);
-					event.reply(random(true, true, min, max));
+					ctx.send(random(true, true, min, max));
 					return;
 				}
-				event.reply(random(true, false, Long.parseLong(args[0]), 0));
+				ctx.send(random(true, false, Long.parseLong(args[0]), 0));
 			} catch (Exception e) {
-				messageService.sendHelp(event, this, locale);
+				ctx.sendHelp();
 			}
 		}
 	}

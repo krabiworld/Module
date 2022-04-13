@@ -15,21 +15,8 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.util;
+package org.module.structure;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-
-public class CheckUtil {
-	/** Returns true if the member has the specified role. */
-    public static boolean hasRole(Member member, Role role) {
-		return member.getRoles().stream().anyMatch(memberRole -> memberRole == role);
-    }
-
-	/** Return true if member found in banned list. */
-	public static boolean isBanned(String user, Guild guild) {
-		return !FinderUtil.findBannedUsers(user, guild).isEmpty();
-	}
+public interface CommandListenerAdapter {
+	void onCommand();
 }

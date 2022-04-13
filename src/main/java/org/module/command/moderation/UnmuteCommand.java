@@ -17,63 +17,49 @@
 
 package org.module.command.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.service.ModerationService;
-import org.module.util.ArgsUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UnmuteCommand extends Command {
-	private final ModerationService moderationService;
-	private final MessageService messageService;
-
-	@Autowired
-    public UnmuteCommand(ModerationService moderationService, MessageService messageService) {
-		this.moderationService = moderationService;
-		this.messageService = messageService;
-		this.name = "unmute";
-        this.category = Constants.MODERATION;
-        this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
-        this.botPermissions = new Permission[]{Permission.MANAGE_ROLES};
-    }
-
+@Command(
+	name = "command.unmute.name",
+	args = "command.unmute.args",
+	help = "command.unmute.help",
+	category = "category.moderation",
+	moderator = true,
+	botPermissions = {Permission.MANAGE_ROLES},
+	userPermissions = {Permission.MANAGE_ROLES}
+)
+public class UnmuteCommand extends AbstractCommand {
     @Override
-    protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		if (!moderationService.isModerator(event.getMember())) {
-			messageService.sendError(event, locale, "error.not.mod");
-			return;
-		}
-		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this, locale);
+    protected void execute(CommandContext ctx) {
+		if (ctx.getArgs().isEmpty()) {
+			ctx.sendHelp();
 			return;
 		}
 
-		String[] args = ArgsUtil.split(event.getArgs());
-		Member member = ArgsUtil.getMember(event, args[0]);
+		String[] args = ctx.splitArgs();
+		Member member = ctx.findMember(args[0]);
 
         if (member == null) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
             return;
         }
-		if (!event.getSelfMember().canInteract(member)) {
-			messageService.sendError(event, locale, "command.unmute.error.role.position");
+		if (!ctx.getSelfMember().canInteract(member)) {
+			ctx.sendError("command.unmute.error.role.position");
 			return;
 		}
 		if (!member.isTimedOut()) {
-			messageService.sendError(event, locale, "command.unmute.error.not.muted");
+			ctx.sendError("command.unmute.error.not.muted");
             return;
 		}
 
 		member.removeTimeout().queue();
-		messageService.sendSuccess(event, locale, "command.unmute.success.unmuted",
-			member.getUser().getAsTag(), event.getMember().getEffectiveName());
+		ctx.sendSuccess("command.unmute.success.unmuted",
+			member.getUser().getAsTag(), ctx.getMember().getEffectiveName());
     }
 }

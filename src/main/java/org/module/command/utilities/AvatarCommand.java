@@ -17,48 +17,40 @@
 
 package org.module.command.utilities;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.util.ArgsUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AvatarCommand extends Command {
-	private final MessageService messageService;
+@Command(
+	name = "command.avatar.name",
+	args = "command.avatar.args",
+	help = "command.avatar.help",
+	category = "category.utilities"
+)
+public class AvatarCommand extends AbstractCommand {
+	@Override
+    protected void execute(CommandContext ctx) {
+		Member member = ctx.getMember();
 
-	@Autowired
-	public AvatarCommand(MessageService messageService) {
-		this.messageService = messageService;
-		this.name = "avatar";
-        this.category = Constants.UTILITIES;
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		Member member = event.getMember();
-
-        if (!event.getArgs().isEmpty()) {
-            member = ArgsUtil.getMember(event, event.getArgs());
+        if (!ctx.getArgs().isEmpty()) {
+            member = ctx.findMember(ctx.getArgs());
         }
         if (member == null) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
             return;
         }
 
 		MessageEmbed embed = new EmbedBuilder()
-			.setAuthor("Avatar of " + member.getUser().getName())
+			.setAuthor(ctx.get("command.avatar.title", member.getUser().getName()))
 			.setColor(member.getColor())
 			.setImage(member.getEffectiveAvatarUrl() + "?size=512")
 			.build();
 
-        event.reply(embed);
+        ctx.send(embed);
     }
 }

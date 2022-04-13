@@ -17,64 +17,59 @@
 
 package org.module.command.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.service.ModerationService;
-import org.module.util.ArgsUtil;
 import net.dv8tion.jda.api.entities.Member;
+import org.module.service.ModerationService;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WarnCommand extends Command {
+@Command(
+	name = "command.warn.name",
+	args = "command.warn.args",
+	help = "command.warn.help",
+	category = "category.moderation",
+	moderator = true
+)
+public class WarnCommand extends AbstractCommand {
 	private final ModerationService moderationService;
-	private final MessageService messageService;
 
 	@Autowired
-	public WarnCommand(ModerationService moderationService, MessageService messageService) {
+	public WarnCommand(ModerationService moderationService) {
 		this.moderationService = moderationService;
-		this.messageService = messageService;
-		this.name = "warn";
-		this.category = Constants.MODERATION;
 	}
 
 	@Override
-	protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		if (!moderationService.isModerator(event.getMember())) {
-			messageService.sendError(event, locale, "error.not.mod");
-			return;
-		}
-		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this, locale);
+	protected void execute(CommandContext ctx) {
+		if (ctx.getArgs().isEmpty()) {
+			ctx.sendHelp();
 			return;
 		}
 
-		String[] args = ArgsUtil.split(event.getArgs());
-		Member member = ArgsUtil.getMember(event, args[0]);
-		String reason = ArgsUtil.getGluedArg(args, 1);
+		String[] args = ctx.splitArgs();
+		Member member = ctx.findMember(args[0]);
+		String reason = ctx.getGluedArg(args, 1);
 
 		if (member == null || member.getUser().isBot()) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
 			return;
 		}
-		if (!event.getSelfMember().canInteract(member)) {
-			messageService.sendError(event, locale, "command.warn.error.role.position");
+		if (!ctx.getSelfMember().canInteract(member)) {
+			ctx.sendError("command.warn.error.role.position");
 			return;
 		}
-		if (member == event.getMember()) {
-			messageService.sendError(event, locale, "command.warn.error.cannot.yourself");
+		if (member == ctx.getMember()) {
+			ctx.sendError("command.warn.error.cannot.yourself");
 			return;
 		}
 
 		long warnId = moderationService.warn(member, reason);
 
-		messageService.sendSuccess(event, locale, "command.warn.success.warned",
+		ctx.sendSuccess("command.warn.success.warned",
 			member.getUser().getAsTag(), warnId,
-			event.getMember().getEffectiveName(),
+			ctx.getMember().getEffectiveName(),
 			reason.isEmpty() ? "." : " with reason: " + reason);
 	}
 }

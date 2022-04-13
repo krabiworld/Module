@@ -17,16 +17,14 @@
 
 package org.module.command.information;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.entities.*;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.util.ArgsUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
@@ -35,26 +33,22 @@ import java.util.List;
 import static org.module.Constants.*;
 
 @Component
-public class UserCommand extends Command {
-	private final MessageService messageService;
-
-	@Autowired
-	public UserCommand(MessageService messageService) {
-		this.messageService = messageService;
-        this.name = "user";
-        this.category = Constants.INFORMATION;
-    }
-
+@Command(
+	name = "command.user.name",
+	args = "command.user.args",
+	help = "command.user.help",
+	category = "category.information"
+)
+public class UserCommand extends AbstractCommand {
     @Override
-    protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		Member member = event.getMember();
+    protected void execute(CommandContext ctx) {
+		Member member = ctx.getMember();
 
-		if (!event.getArgs().isEmpty()) {
-			member = ArgsUtil.getMember(event, event.getArgs());
+		if (!ctx.getArgs().isEmpty()) {
+			member = ctx.findMember(ctx.getArgs());
 		}
 		if (member == null) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
 			return;
 		}
 
@@ -76,7 +70,7 @@ public class UserCommand extends Command {
 			.setFooter("ID: " + member.getId());
 		if (profile.getBannerUrl() != null) embed.setImage(profile.getBannerUrl() + "?size=512");
 
-        event.reply(embed.build());
+        ctx.send(embed);
     }
 
 	private String getStatus(OnlineStatus onlineStatus) {

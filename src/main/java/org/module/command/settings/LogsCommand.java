@@ -17,94 +17,74 @@
 
 package org.module.command.settings;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.manager.GuildManager;
-import org.module.service.MessageService;
-import org.module.util.ArgsUtil;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LogsCommand extends Command {
-	private final GuildManager manager;
-	private final MessageService messageService;
-
+@Command(
+	name = "command.logs.name",
+	args = "command.logs.args",
+	help = "command.logs.help",
+	category = "category.settings",
+	userPermissions = {Permission.MANAGE_SERVER}
+)
+public class LogsCommand extends AbstractCommand {
 	@Autowired
-	public LogsCommand(GuildManager manager, MessageService messageService) {
-		this.manager = manager;
-		this.messageService = messageService;
-		this.name = "logs";
-		this.category = Constants.SETTINGS;
-		this.userPermissions = new Permission[]{Permission.MANAGE_SERVER};
-		this.children = new Command[]{new OffSubCommand(), new OnSubCommand()};
+	public LogsCommand() {
+		this.children = new AbstractCommand[]{new OffSubCommand(), new OnSubCommand()};
 	}
 
 	@Override
-	protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-
-		messageService.sendHelp(event, this, locale);
+	protected void execute(CommandContext ctx) {
+		ctx.sendHelp();
 	}
 
-	private class OffSubCommand extends Command {
-		public OffSubCommand() {
-			this.name = "off";
-		}
-
+	@Command(name = "command.logs.off.name")
+	private static class OffSubCommand extends AbstractCommand {
 		@Override
-		protected void execute(CommandEvent event) {
-			Locale locale = messageService.getLocale(event.getGuild());
-
-			GuildManager.GuildSettings settings = manager.getSettings(event.getGuild());
-			if (settings == null) return;
-			TextChannel currentLogsChannel = settings.getLogsChannel();
+		protected void execute(CommandContext ctx) {
+			TextChannel currentLogsChannel = ctx.getSettings().getLogsChannel();
 
 			if (currentLogsChannel == null) {
-				messageService.sendError(event, locale, "command.logs.error.already.disabled");
+				ctx.sendError("command.logs.error.already.disabled");
 				return;
 			}
-			manager.setLogsChannel(event.getGuild(), null);
-			messageService.sendSuccess(event, locale, "command.logs.success.disabled");
+
+			ctx.getManager().setLogsChannel(ctx.getGuild(), null);
+			ctx.sendSuccess("command.logs.success.disabled");
 		}
 	}
 
-	private class OnSubCommand extends Command {
-		public OnSubCommand() {
-			this.name = "on";
-		}
-
+	@Command(name = "command.logs.on.name")
+	private static class OnSubCommand extends AbstractCommand {
 		@Override
-		protected void execute(CommandEvent event) {
-			Locale locale = messageService.getLocale(event.getGuild());
+		protected void execute(CommandContext ctx) {
+			TextChannel currentLogsChannel = ctx.getSettings().getLogsChannel();
 
-			GuildManager.GuildSettings settings = LogsCommand.this.manager.getSettings(event.getGuild());
-			if (settings == null) return;
-			TextChannel currentLogsChannel = settings.getLogsChannel();
-
-			if (event.getArgs().isEmpty()) {
-				messageService.sendHelp(event, this, locale);
+			if (ctx.getArgs().isEmpty()) {
+				ctx.sendHelp();
 				return;
 			}
 
-			TextChannel logsChannel = ArgsUtil.getTextChannel(event, event.getArgs());
+			TextChannel logsChannel = ctx.findTextChannel(ctx.getArgs());
 
 			if (logsChannel == null) {
-				messageService.sendError(event, locale, "error.channel.not.found");
+				ctx.sendError("error.channel.not.found");
 				return;
 			}
 			if (logsChannel == currentLogsChannel) {
-				messageService.sendError(event, locale, "error.channel.already.set");
+				ctx.sendError("error.channel.already.set");
 				return;
 			}
 
-			manager.setLogsChannel(event.getGuild(), logsChannel);
+			ctx.getManager().setLogsChannel(ctx.getGuild(), logsChannel);
 
-			messageService.sendSuccess(event, locale, "command.logs.success.changed", logsChannel.getAsMention());
+			ctx.sendSuccess("command.logs.success.changed", logsChannel.getAsMention());
 		}
 	}
 }

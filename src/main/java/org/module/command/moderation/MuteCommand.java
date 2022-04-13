@@ -17,75 +17,60 @@
 
 package org.module.command.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.service.ModerationService;
-import org.module.util.ArgsUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
 @Component
-public class MuteCommand extends Command {
-	private final ModerationService moderationService;
-	private final MessageService messageService;
-
-	@Autowired
-    public MuteCommand(ModerationService moderationService, MessageService messageService) {
-		this.moderationService = moderationService;
-		this.messageService = messageService;
-        this.name = "mute";
-        this.category = Constants.MODERATION;
-		this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
-        this.botPermissions = new Permission[]{Permission.MANAGE_ROLES};
-    }
-
+@Command(
+	name = "command.mute.name",
+	args = "command.mute.args",
+	help = "command.mute.help",
+	category = "category.moderation",
+	moderator = true,
+	botPermissions = {Permission.MANAGE_ROLES},
+	userPermissions = {Permission.MANAGE_ROLES}
+)
+public class MuteCommand extends AbstractCommand {
     @Override
-    protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		if (!moderationService.isModerator(event.getMember())) {
-			messageService.sendError(event, locale, "error.not.mod");
-			return;
-		}
-
-		String[] args = ArgsUtil.split(event.getArgs());
+    protected void execute(CommandContext ctx) {
+		String[] args = ctx.splitArgs();
 
 		if (args.length < 3) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
 			return;
 		}
 
-		Member member = ArgsUtil.getMember(event, args[0]);
+		Member member = ctx.findMember(args[0]);
 		long durationLong;
 		String unitOfTime = args[2];
 
         if (member == null) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
             return;
         }
-		if (!event.getSelfMember().canInteract(member)) {
-			messageService.sendError(event, locale, "command.mute.error.role.position");
+		if (!ctx.getSelfMember().canInteract(member)) {
+			ctx.sendError("command.mute.error.role.position");
 			return;
 		}
-		if (member == event.getMember()) {
-			messageService.sendError(event, locale, "command.mute.error.cannot.yourself");
+		if (member == ctx.getMember()) {
+			ctx.sendError("command.mute.error.cannot.yourself");
 			return;
 		}
 		if (member.isTimedOut()) {
-			messageService.sendError(event, locale, "command.mute.error.already.muted");
+			ctx.sendError("command.mute.error.already.muted");
             return;
 		}
 
 		try {
 			durationLong = Long.parseLong(args[1]);
 		} catch (Exception e) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
 			return;
 		}
 
@@ -99,14 +84,14 @@ public class MuteCommand extends Command {
 				default -> throw new Exception(String.format("Unit of time %s not found.", unitOfTime));
 			};
 		} catch (Exception e) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
 			return;
 		}
 
 		member.timeoutFor(duration).queue();
-		messageService.sendSuccess(event, locale, "command.mute.success.muted",
+		ctx.sendSuccess("command.mute.success.muted",
 			member.getUser().getAsTag(),
-			event.getMember().getEffectiveName(),
+			ctx.getMember().getEffectiveName(),
 			durationLong, unitOfTime);
     }
 }

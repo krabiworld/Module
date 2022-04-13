@@ -21,6 +21,7 @@ import org.module.model.GuildModel;
 import org.module.repository.GuildRepository;
 import org.module.service.GuildService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +34,7 @@ public class GuildServiceImpl implements GuildService {
 	}
 
 	@Override
+	@Cacheable("guild")
 	public GuildModel getGuild(long id) {
 		return guildRepository.findById(id);
 	}

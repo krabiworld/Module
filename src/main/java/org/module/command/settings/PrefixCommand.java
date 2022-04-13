@@ -17,42 +17,32 @@
 
 package org.module.command.settings;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.manager.GuildManager;
-import org.module.service.MessageService;
 import net.dv8tion.jda.api.Permission;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PrefixCommand extends Command {
-	private final GuildManager manager;
-	private final MessageService messageService;
-
-	@Autowired
-	public PrefixCommand(GuildManager manager, MessageService messageService) {
-		this.manager = manager;
-		this.messageService = messageService;
-		this.name = "prefix";
-		this.category = Constants.SETTINGS;
-		this.userPermissions = new Permission[]{Permission.MANAGE_SERVER};
-	}
-
+@Command(
+	name = "command.prefix.name",
+	args = "command.prefix.args",
+	help = "command.prefix.help",
+	category = "category.settings",
+	userPermissions = {Permission.MANAGE_SERVER}
+)
+public class PrefixCommand extends AbstractCommand {
 	@Override
-	protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		String newPrefix = event.getArgs();
+	protected void execute(CommandContext ctx) {
+		String newPrefix = ctx.getArgs();
 
 		if (newPrefix.length() < 1 || newPrefix.length() > 4) {
-			messageService.sendError(event, locale, "command.prefix.error.length");
+			ctx.sendError("command.prefix.error.length");
 			return;
 		}
 
-		manager.setPrefix(event.getGuild(), newPrefix);
+		ctx.getManager().setPrefix(ctx.getGuild(), newPrefix);
 
-		messageService.sendSuccess(event, locale, "command.prefix.success.changed", event.getArgs());
+		ctx.sendSuccess("command.prefix.success.changed", ctx.getArgs());
 	}
 }

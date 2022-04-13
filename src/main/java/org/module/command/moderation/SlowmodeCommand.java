@@ -17,56 +17,43 @@
 
 package org.module.command.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.service.MessageService;
-import org.module.service.ModerationService;
 import net.dv8tion.jda.api.Permission;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SlowmodeCommand extends Command {
-	private final ModerationService moderationService;
-	private final MessageService messageService;
-
-	@Autowired
-    public SlowmodeCommand(ModerationService moderationService, MessageService messageService) {
-		this.moderationService = moderationService;
-		this.messageService = messageService;
-		this.name = "slowmode";
-        this.category = Constants.MODERATION;
-        this.userPermissions = new Permission[]{Permission.MANAGE_CHANNEL};
-        this.botPermissions = new Permission[]{Permission.MANAGE_CHANNEL};
-    }
-
+@Command(
+	name = "command.slowmode.name",
+	args = "command.slowmode.args",
+	help = "command.slowmode.help",
+	category = "category.moderation",
+	moderator = true,
+	botPermissions = {Permission.MANAGE_CHANNEL},
+	userPermissions = {Permission.MANAGE_CHANNEL}
+)
+public class SlowmodeCommand extends AbstractCommand {
     @Override
-    protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		if (!moderationService.isModerator(event.getMember())) {
-			messageService.sendError(event, locale, "error.not.mod");
-			return;
-		}
-		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this, locale);
+    protected void execute(CommandContext ctx) {
+		if (ctx.getArgs().isEmpty()) {
+			ctx.sendHelp();
             return;
         }
 
-        int interval = Integer.parseInt(event.getArgs());
+        int interval = Integer.parseInt(ctx.getArgs());
 
         if (interval < 0 || interval > 21600) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
             return;
         }
-        if (event.getTextChannel().getSlowmode() == interval) {
-			messageService.sendError(event, locale, "command.slowmode.error.already.set");
+        if (ctx.getTextChannel().getSlowmode() == interval) {
+			ctx.sendError("command.slowmode.error.already.set");
             return;
         }
 
-        event.getTextChannel().getManager().setSlowmode(interval).queue();
-		messageService.sendSuccess(event, locale, "command.slowmode.success.changed",
-			event.getTextChannel().getAsMention(), interval);
+        ctx.getTextChannel().getManager().setSlowmode(interval).queue();
+		ctx.sendSuccess("command.slowmode.success.changed",
+			ctx.getTextChannel().getAsMention(), interval);
     }
 }

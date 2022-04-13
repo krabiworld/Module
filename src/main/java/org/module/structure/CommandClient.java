@@ -15,19 +15,17 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.service;
-
-import net.dv8tion.jda.api.entities.Member;
-import org.module.model.WarnModel;
+package org.module.structure;
 
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
-public interface ModerationService {
-	WarnModel getWarn(long id);
+public interface CommandClient {
+	String getOwnerId();
 
-	List<WarnModel> getWarns(Member member);
+	List<AbstractCommand> getCommands();
 
-	long warn(Member member, String reason);
+	GuildManagerProvider getManager();
 
-	void removeWarn(WarnModel warnModel);
+	ScheduledExecutorService getScheduleExecutor();
 }

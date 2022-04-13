@@ -17,61 +17,56 @@
 
 package org.module.command.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Locale;
-import org.module.model.WarnModel;
-import org.module.service.MessageService;
-import org.module.service.ModerationService;
 import net.dv8tion.jda.api.entities.Member;
+import org.module.model.WarnModel;
+import org.module.service.ModerationService;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.module.Constants.*;
-
 @Component
-public class RemwarnCommand extends Command {
+@Command(
+	name = "command.remwarn.name",
+	args = "command.remwarn.args",
+	help = "command.remwarn.help",
+	category = "category.moderation",
+	moderator = true
+)
+public class RemwarnCommand extends AbstractCommand {
 	private final ModerationService moderationService;
-	private final MessageService messageService;
 
 	@Autowired
-	public RemwarnCommand(ModerationService moderationService, MessageService messageService) {
+	public RemwarnCommand(ModerationService moderationService) {
 		this.moderationService = moderationService;
-		this.messageService = messageService;
-		this.name = "remwarn";
-		this.category = MODERATION;
 	}
 
 	@Override
-	protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		if (!moderationService.isModerator(event.getMember())) {
-			messageService.sendError(event, locale, "error.not.mod");
-			return;
-		}
-		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this, locale);
+	protected void execute(CommandContext ctx) {
+		if (ctx.getArgs().isEmpty()) {
+			ctx.sendHelp();
 			return;
 		}
 
-		WarnModel warnModel = moderationService.getWarn(Long.parseLong(event.getArgs()));
+		WarnModel warnModel = moderationService.getWarn(Long.parseLong(ctx.getArgs()));
 
-		if (warnModel == null || warnModel.getGuild() != event.getGuild().getIdLong()) {
-			messageService.sendError(event, locale, "command.remwarn.error.not.found");
+		if (warnModel == null || warnModel.getGuild() != ctx.getGuild().getIdLong()) {
+			ctx.sendError("command.remwarn.error.not.found");
 			return;
 		}
 
-		Member member = event.getGuild().getMemberById(warnModel.getUser());
+		Member member = ctx.getGuild().getMemberById(warnModel.getUser());
 
 		if (member == null) {
-			messageService.sendHelp(event, this, locale);
+			ctx.sendHelp();
 			return;
 		}
 
 		moderationService.removeWarn(warnModel);
 
-		messageService.sendSuccess(event, locale, "command.remwarn.success.removed.warn",
-			event.getMember().getEffectiveName(),
+		ctx.sendSuccess("command.remwarn.success.removed.warn",
+			ctx.getMember().getEffectiveName(),
 			warnModel.getId(),
 			member.getUser().getAsTag());
 	}

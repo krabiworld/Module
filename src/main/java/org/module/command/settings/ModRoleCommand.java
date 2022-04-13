@@ -17,57 +17,43 @@
 
 package org.module.command.settings;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import org.module.Constants;
-import org.module.Locale;
-import org.module.manager.GuildManager;
-import org.module.service.MessageService;
-import org.module.util.ArgsUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.module.structure.AbstractCommand;
+import org.module.structure.Command;
+import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ModRoleCommand extends Command {
-	private final GuildManager manager;
-	private final MessageService messageService;
-
-	@Autowired
-	public ModRoleCommand(GuildManager manager, MessageService messageService) {
-		this.manager = manager;
-		this.messageService = messageService;
-		this.name = "modrole";
-		this.category = Constants.SETTINGS;
-		this.userPermissions = new Permission[]{Permission.MANAGE_SERVER};
-	}
-
+@Command(
+	name = "command.modrole.name",
+	args = "command.modrole.args",
+	help = "command.modrole.help",
+	category = "category.settings",
+	userPermissions = {Permission.MANAGE_SERVER}
+)
+public class ModRoleCommand extends AbstractCommand {
 	@Override
-	protected void execute(CommandEvent event) {
-		Locale locale = messageService.getLocale(event.getGuild());
-		if (event.getArgs().isEmpty()) {
-			messageService.sendHelp(event, this, locale);
+	protected void execute(CommandContext ctx) {
+		if (ctx.getArgs().isEmpty()) {
+			ctx.sendHelp();
 			return;
 		}
 
-		Role role = ArgsUtil.getRole(event, event.getArgs());
+		Role role = ctx.findRole(ctx.getArgs());
 
-		GuildManager.GuildSettings settings = manager.getSettings(event.getGuild());
-		if (settings == null) return;
-
-		Role modRole = settings.getModeratorRole();
+		Role modRole = ctx.getSettings().getModeratorRole();
 		if (role == null) {
-			messageService.sendError(event, locale, "error.role.not.found");
+			ctx.sendError("error.role.not.found");
 			return;
 		}
 		if (role == modRole) {
-			messageService.sendError(event, locale, "error.role.already.set");
+			ctx.sendError("error.role.already.set");
 			return;
 		}
 
-		manager.setModeratorRole(event.getGuild(), role);
+		ctx.getManager().setModeratorRole(ctx.getGuild(), role);
 
-		messageService.sendSuccess(event, locale, "command.modrole.success.changed", role.getName());
+		ctx.sendSuccess("command.modrole.success.changed", role.getName());
 	}
 }
