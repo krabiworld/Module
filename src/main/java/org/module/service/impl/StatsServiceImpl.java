@@ -40,9 +40,9 @@ public class StatsServiceImpl implements StatsService {
 	}
 
 	@Override
-	public void incrementExecutedCommands() {
+	public void incrementExecutedCommands(long number) {
 		StatsModel stats = getStats();
-		stats.setExecutedCommands(stats.getExecutedCommands() + 1);
+		stats.setExecutedCommands(stats.getExecutedCommands() + number);
 		statsRepository.saveAndFlush(stats);
 	}
 }

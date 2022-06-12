@@ -9,6 +9,11 @@
       "name": "discord.ownerId",
       "type": "java.lang.String",
       "description": "Bot owner id."
-    }
+		},
+		{
+			"name": "discord.guildId",
+			"type": "java.lang.String",
+			"description": "Force guild id."
+		}
   ]
 }

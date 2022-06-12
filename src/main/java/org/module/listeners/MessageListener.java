@@ -69,6 +69,7 @@ public class MessageListener extends ListenerAdapter {
 			.setColor(Constants.ERROR);
 		LogsUtil.sendLog(event.getGuild(), embed, deletedMessagesString.toString().getBytes());
 	}
+
 	@Override
 	public void onMessageDelete(MessageDeleteEvent event) {
 		Message msg = CacheManager.getMessage(event.getMessageIdLong());

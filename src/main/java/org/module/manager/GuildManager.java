@@ -22,19 +22,16 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.module.Constants;
 import org.module.model.GuildModel;
 import org.module.service.GuildService;
-import org.module.structure.GuildManagerProvider;
-import org.module.structure.GuildSettingsProvider;
+import org.module.structure.GuildProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Component
-public class GuildManager extends ListenerAdapter implements GuildManagerProvider {
+public class GuildManager extends ListenerAdapter implements GuildProvider.Manager {
 	private final GuildService guildService;
 
 	@Autowired
@@ -53,24 +50,8 @@ public class GuildManager extends ListenerAdapter implements GuildManagerProvide
 	}
 
 	@Override
-	public GuildSettingsProvider getSettings(Guild guild) {
+	public GuildProvider.Settings getSettings(Guild guild) {
 		return new GuildSettings(guild, guildService.getGuild(guild.getIdLong()));
-	}
-
-	@Override
-	public void setPrefix(Guild guild, String prefix) {
-		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
-		guildConfig.setPrefix(prefix);
-
-		guildService.updateGuild(guildConfig);
-	}
-
-	@Override
-	public void setLang(Guild guild, Constants.Language lang) {
-		GuildModel guildConfig = guildService.getGuild(guild.getIdLong());
-		guildConfig.setLang(lang == Constants.Language.EN ? "en" : "ru");
-
-		guildService.updateGuild(guildConfig);
 	}
 
 	@Override
@@ -89,28 +70,13 @@ public class GuildManager extends ListenerAdapter implements GuildManagerProvide
 		guildService.updateGuild(guildConfig);
 	}
 
-	public static class GuildSettings implements GuildSettingsProvider {
-		@Nonnull private final String prefix, lang;
+	public static class GuildSettings implements GuildProvider.Settings {
 		@Nullable private final TextChannel logsChannel;
 		@Nullable private final Role moderatorRole;
 
 		private GuildSettings(Guild guild, GuildModel guildModel) {
-			this.prefix = guildModel.getPrefix();
-			this.lang = guildModel.getLang();
 			this.logsChannel = guild.getTextChannelById(guildModel.getLogs());
 			this.moderatorRole = guild.getRoleById(guildModel.getMod());
-		}
-
-		@Nonnull
-		@Override
-		public String getPrefix() {
-			return prefix;
-		}
-
-		@Nonnull
-		@Override
-		public String getLang() {
-			return lang;
 		}
 
 		@Nullable

@@ -18,6 +18,7 @@
 discord:
   token: token
   ownerId: owner id
+  guildId: guild id
 
 spring:
   datasource:

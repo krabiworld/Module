@@ -19,10 +19,12 @@ package org.module.command.moderation;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.module.Constants;
 import org.module.model.WarnModel;
 import org.module.service.ModerationService;
-import org.module.structure.AbstractCommand;
+import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,29 +33,26 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Command(
-	name = "command.warns.name",
-	args = "command.warns.args",
-	help = "command.warns.help",
-	category = "category.moderation"
-)
-public class WarnsCommand extends AbstractCommand {
+public class WarnsCommand extends Command {
 	private final ModerationService moderationService;
 
 	@Autowired
 	public WarnsCommand(ModerationService moderationService) {
+		this.name = "warns";
+		this.description = "Warns member";
+		this.category = Category.MODERATION;
+		this.options.add(new OptionData(
+			OptionType.USER, "user", "User to show warns", false
+		));
 		this.moderationService = moderationService;
 	}
 
 	@Override
 	protected void execute(CommandContext ctx) {
-		Member member = ctx.getMember();
+		Member member = ctx.getOptionAsMember("user", ctx.getMember());
 
-		if (!ctx.getArgs().isEmpty()) {
-			member = ctx.findMember(ctx.getArgs());
-		}
 		if (member == null || member.getUser().isBot()) {
-			ctx.sendHelp();
+			ctx.replyHelp();
 			return;
 		}
 
@@ -72,6 +71,6 @@ public class WarnsCommand extends AbstractCommand {
 			.setColor(Constants.DEFAULT)
 			.setDescription(warnsMessage.isEmpty() ? "" : warnsMessage)
 			.setFooter("ID: " + member.getId());
-		ctx.send(embed.build());
+		ctx.reply(embed.build());
 	}
 }

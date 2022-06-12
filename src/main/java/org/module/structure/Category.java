@@ -17,22 +17,18 @@
 
 package org.module.structure;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import org.module.Constants;
+import lombok.Getter;
 
-import javax.annotation.Nullable;
+@Getter
+public enum Category {
+	INFORMATION("Information"),
+	MODERATION("Moderation"),
+	SETTINGS("Settings"),
+	UTILITIES("Utilities");
 
-public interface GuildManagerProvider {
-	@Nullable
-	GuildSettingsProvider getSettings(Guild guild);
+	private final String name;
 
-	void setPrefix(Guild guild, String prefix);
-
-	void setLang(Guild guild, Constants.Language lang);
-
-	void setLogsChannel(Guild guild, TextChannel channel);
-
-	void setModeratorRole(Guild guild, Role role);
+	Category(String name) {
+		this.name = name;
+	}
 }

@@ -18,58 +18,59 @@
 package org.module.command.moderation;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.module.service.ModerationService;
-import org.module.structure.AbstractCommand;
+import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
+
 @Component
-@Command(
-	name = "command.warn.name",
-	args = "command.warn.args",
-	help = "command.warn.help",
-	category = "category.moderation",
-	moderator = true
-)
-public class WarnCommand extends AbstractCommand {
+public class WarnCommand extends Command {
 	private final ModerationService moderationService;
 
 	@Autowired
 	public WarnCommand(ModerationService moderationService) {
+		this.name = "warn";
+		this.description = "Warn member";
+		this.category = Category.MODERATION;
+		this.moderationCommand = true;
+		this.options.add(new OptionData(
+			OptionType.USER, "user", "User to warn", true
+		));
+		this.options.add(new OptionData(
+			OptionType.STRING, "reason", "Warn reason", false
+		));
 		this.moderationService = moderationService;
 	}
 
 	@Override
 	protected void execute(CommandContext ctx) {
-		if (ctx.getArgs().isEmpty()) {
-			ctx.sendHelp();
-			return;
-		}
-
-		String[] args = ctx.splitArgs();
-		Member member = ctx.findMember(args[0]);
-		String reason = ctx.getGluedArg(args, 1);
+		Member member = ctx.getOptionAsMember("user");
+		String reason = ctx.getOptionAsString("reason");
 
 		if (member == null || member.getUser().isBot()) {
-			ctx.sendHelp();
+			ctx.replyHelp();
 			return;
 		}
 		if (!ctx.getSelfMember().canInteract(member)) {
-			ctx.sendError("command.warn.error.role.position");
+			ctx.replyError("I cannot warnModel member with role equal or higher than me.");
 			return;
 		}
 		if (member == ctx.getMember()) {
-			ctx.sendError("command.warn.error.cannot.yourself");
+			ctx.replyError("You cannot warnModel yourself.");
 			return;
 		}
 
 		long warnId = moderationService.warn(member, reason);
 
-		ctx.sendSuccess("command.warn.success.warned",
+		ctx.replySuccess(MessageFormat.format("**{0}** warned (ID: `#{1}`) by moderator **{2}**{3}",
 			member.getUser().getAsTag(), warnId,
 			ctx.getMember().getEffectiveName(),
-			reason.isEmpty() ? "." : " with reason: " + reason);
+			reason.isEmpty() ? "." : " with reason: " + reason));
 	}
 }

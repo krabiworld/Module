@@ -23,19 +23,11 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.module.command.information.HelpCommand;
-import org.module.command.information.ServerinfoCommand;
-import org.module.command.information.StatsCommand;
-import org.module.command.information.UserCommand;
+import org.module.command.EvalCommand;
+import org.module.command.information.*;
 import org.module.command.moderation.*;
-import org.module.command.owner.EvalCommand;
-import org.module.command.settings.LangCommand;
-import org.module.command.settings.LogsCommand;
-import org.module.command.settings.ModRoleCommand;
-import org.module.command.settings.PrefixCommand;
-import org.module.command.utilities.AvatarCommand;
-import org.module.command.utilities.EmojiCommand;
-import org.module.command.utilities.RandomCommand;
+import org.module.command.settings.*;
+import org.module.command.utilities.*;
 import org.module.listeners.MemberListener;
 import org.module.listeners.MessageListener;
 import org.module.structure.*;
@@ -53,14 +45,14 @@ public class BotConfiguration {
 	public static CommandClient commandClient;
 	private final ApplicationContext ctx;
 	private final DiscordConfiguration configuration;
-	private final GuildManagerProvider manager;
+	private final GuildProvider.Manager manager;
 	private final CommandListenerAdapter listener;
 
 	@Autowired
 	public BotConfiguration(
 		ApplicationContext ctx,
 		DiscordConfiguration configuration,
-		GuildManagerProvider manager,
+		GuildProvider.Manager manager,
 		CommandListenerAdapter listener
 	) {
 		this.ctx = ctx;
@@ -76,39 +68,39 @@ public class BotConfiguration {
 		commandClient = CommandClientBuilder
 			.builder()
 			.setOwnerId(configuration.getOwnerId())
+			.forceGuildOnly(configuration.getGuildId())
 			.setCommands(getCommands())
 			.setGuildManager(manager)
 			.setListener(listener)
 			.build();
 		jda = JDABuilder
 			.createDefault(configuration.getToken())
-			.setActivity(Activity.playing("!help"))
+			.setActivity(Activity.playing("/help"))
 			.enableIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS))
 			.enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY, CacheFlag.EMOTE)
 			.disableCache(CacheFlag.VOICE_STATE)
 			.setBulkDeleteSplittingEnabled(false)
 			.setMemberCachePolicy(MemberCachePolicy.ALL)
 			.useSharding(0, 1)
-			.addEventListeners(commandClient, manager, new MessageListener(), new MemberListener())
-			.build();
+			.addEventListeners(
+				commandClient,
+				manager,
+				new MessageListener(),
+				new MemberListener()
+			).build();
 	}
 
-	private AbstractCommand[] getCommands() {
-		return new AbstractCommand[]{
+	private Command[] getCommands() {
+		return new Command[]{
 			// Information
 			ctx.getBean(HelpCommand.class),
-			ctx.getBean(ServerinfoCommand.class),
+			ctx.getBean(ServerCommand.class),
 			ctx.getBean(StatsCommand.class),
 			ctx.getBean(UserCommand.class),
 			// Moderation
-			ctx.getBean(BanCommand.class),
 			ctx.getBean(ClearCommand.class),
-			ctx.getBean(KickCommand.class),
-			ctx.getBean(MuteCommand.class),
 			ctx.getBean(RemwarnCommand.class),
 			ctx.getBean(SlowmodeCommand.class),
-			ctx.getBean(UnbanCommand.class),
-			ctx.getBean(UnmuteCommand.class),
 			ctx.getBean(WarnCommand.class),
 			ctx.getBean(WarnsCommand.class),
 			// Owner
@@ -116,8 +108,6 @@ public class BotConfiguration {
 			// Settings
 			ctx.getBean(LogsCommand.class),
 			ctx.getBean(ModRoleCommand.class),
-			ctx.getBean(LangCommand.class),
-			ctx.getBean(PrefixCommand.class),
 			// Utilities
 			ctx.getBean(AvatarCommand.class),
 			ctx.getBean(EmojiCommand.class),

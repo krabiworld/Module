@@ -18,14 +18,13 @@
 package org.module.structure;
 
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 
 public interface CommandClient {
 	String getOwnerId();
 
-	List<AbstractCommand> getCommands();
+	List<Command> getCommands();
 
-	GuildManagerProvider getManager();
+	List<Category> getCategories();
 
-	ScheduledExecutorService getScheduleExecutor();
+	GuildProvider.Manager getManager();
 }

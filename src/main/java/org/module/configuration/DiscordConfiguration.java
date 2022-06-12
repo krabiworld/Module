@@ -30,4 +30,6 @@ public class DiscordConfiguration {
 	private String token;
 
 	private String ownerId;
+
+	private String guildId;
 }

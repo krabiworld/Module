@@ -18,94 +18,83 @@
 package org.module.command.information;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.module.Constants;
-import org.module.structure.AbstractCommand;
+import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.module.util.EmbedUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.text.MessageFormat;
 
 @Component
-@Command(
-	name = "command.help.name",
-	args = "command.help.args",
-	help = "command.help.help",
-	category = "category.information"
-)
-public class HelpCommand extends AbstractCommand {
+public class HelpCommand extends Command {
+	public HelpCommand() {
+		this.name = "help";
+		this.description = "List of all commands and category";
+		this.category = Category.INFORMATION;
+		this.options.add(new OptionData(
+			OptionType.STRING, "query", "Command or category", false
+		));
+	}
+
     @Override
     protected void execute(CommandContext ctx) {
-		String args = ctx.getArgs();
-		String prefix = ctx.getPrefix();
-        EmbedBuilder embed = new EmbedBuilder().setColor(Constants.DEFAULT);
-		List<Command> commands = new LinkedList<>();
-		List<String> categories = new LinkedList<>();
-
-        categoriesLoop:
-        for (AbstractCommand abstractCommand : ctx.getCommands()) {
-			Command command = abstractCommand.getAnnotation();
-			commands.add(command);
-
-			if (command.hidden()) continue;
-            for (String category : categories) {
-                // if command already exists in "categories" - continue
-                if (category.equals(ctx.get(command.category()))) continue categoriesLoop;
-            }
-            categories.add(ctx.get(command.category()));
-        }
+		var query = ctx.getOptionAsString("query");
+        var embed = new EmbedBuilder().setColor(Constants.DEFAULT);
+		var commands = ctx.getClient().getCommands();
+		var categories = ctx.getClient().getCategories();
 
         // if "args" is empty - getTemplate all commands
-        if (args.isEmpty()) {
-            StringBuilder commandsBuilder = new StringBuilder();
-            embed.setTitle(ctx.get("command.help.title"));
-			embed.setDescription(ctx.get("command.help.description", prefix, prefix));
+        if (query.isEmpty()) {
+            var commandsBuilder = new StringBuilder();
+            embed.setTitle("Available commands:");
+			embed.setDescription("For additional information enter `help category` to get information about category or `help command` to get information about command.");
 
-            for (String category : categories) {
-                for (Command cmd : commands) {
-                    if (cmd.hidden()) continue;
-                    if (ctx.get(cmd.category()).equals(category)) {
+            for (var category : categories) {
+                for (var cmd : commands) {
+                    if (cmd.isHidden()) continue;
+                    if (cmd.getCategory().getName().equals(category.getName())) {
                         commandsBuilder.append("`")
-							.append(prefix)
-							.append(ctx.get(cmd.name()))
+							.append(cmd.getName())
 							.append("` ");
                     }
                 }
-                embed.addField(category + " (" + prefix + "help " + category + ")",
+                embed.addField(MessageFormat.format("{0} (help {0})", category.getName()),
 					commandsBuilder.toString(), false);
                 commandsBuilder = new StringBuilder();
             }
 
-            ctx.send(embed);
+            ctx.reply(embed.build());
         } else {
-            for (String category : categories) {
+            for (var category : categories) {
                 // if match found with name of category
-                if (category.toLowerCase().startsWith(args.toLowerCase())) {
-                    for (Command cmd : commands) {
-                        if (cmd.hidden()) continue;
-                        if (ctx.get(cmd.category()).equals(category)) {
-							String name = ctx.get(cmd.name());
-							String help = ctx.get(cmd.help());
-							embed.addField(prefix + name, help, false);
+                if (category.getName().toLowerCase().startsWith(query.toLowerCase())) {
+                    for (var cmd : commands) {
+                        if (cmd.isHidden()) continue;
+                        if (cmd.getCategory().getName().equals(category.getName())) {
+							var name = cmd.getName();
+							var help = cmd.getDescription();
+							embed.addField(name, help, false);
 						}
                     }
-                    embed.setTitle(ctx.get("command.help.category.title", category));
-                    ctx.send(embed);
+                    embed.setTitle(MessageFormat.format("Commands of category {0}", category.getName()));
+                    ctx.reply(embed.build());
                     return;
                 }
             }
-            for (Command cmd : commands) {
+            for (var cmd : commands) {
                 // if match found with name of command
-                if (ctx.get(cmd.name()).toLowerCase().startsWith(args.toLowerCase()) && !cmd.hidden()) {
-					EmbedUtil helpEmbed = new EmbedUtil(cmd, ctx.getLocale(), prefix);
-					ctx.send(helpEmbed);
+                if (cmd.getName().toLowerCase().startsWith(query.toLowerCase()) && !cmd.isHidden()) {
+					var helpEmbed = new EmbedUtil(cmd);
+					ctx.reply(helpEmbed.build());
 					return;
                 }
             }
 
-			ctx.sendError("command.help.error.not.found", args);
+			ctx.replyError(MessageFormat.format("Command or category **{0}** not found.", query));
         }
     }
 }

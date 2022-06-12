@@ -34,11 +34,7 @@ public class GuildModel {
 	@Column(name = "guild_id")
 	private long id;
 
-	private String prefix = "!";
-
 	private long logs = 0;
 
 	private long mod = 0;
-
-	private String lang = "en";
 }

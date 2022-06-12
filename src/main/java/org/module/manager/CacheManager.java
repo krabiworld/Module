@@ -31,19 +31,39 @@ import java.util.ArrayList;
 public class CacheManager {
     public static final ArrayList<Message> MESSAGES = new ArrayList<>();
 
+	public static int executedCommands = 0;
+
     public static void addMessage(@Nonnull Message message) {
-        for (Message msg : MESSAGES) {
-			if (msg.getIdLong() == message.getIdLong()) MESSAGES.set(MESSAGES.indexOf(msg), message);
-		}
+		MESSAGES.stream()
+			.filter(msg -> msg.getIdLong() == message.getIdLong())
+			.forEach(msg -> MESSAGES.set(MESSAGES.indexOf(msg), message));
+
 		if (MESSAGES.size() + 1 > Constants.MAX_MESSAGE_CACHE) MESSAGES.remove(0);
+
         MESSAGES.add(message);
     }
 
     @Nullable
     public static Message getMessage(long messageId) {
-        for (Message message : MESSAGES) {
-			if (message.getIdLong() == messageId) return message;
-		}
-        return null;
+		return MESSAGES.stream()
+			.filter(msg -> msg.getIdLong() == messageId)
+			.findFirst()
+			.orElse(null);
     }
+
+	public static void incrementExecutedCommands() {
+		executedCommands++;
+	}
+
+	public static boolean checkExecutedCommands() {
+		return executedCommands >= Constants.MAX_EXECUTED_COMMANDS_CACHE;
+	}
+
+	public static int getExecutedCommands() {
+		return executedCommands;
+	}
+
+	public static void resetExecutedCommands() {
+		executedCommands = 0;
+	}
 }

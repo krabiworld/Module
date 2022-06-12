@@ -35,14 +35,14 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("net.dv8tion:JDA:5.0.0-alpha.9") {
+	implementation("net.dv8tion:JDA:5.0.0-alpha.12") {
 		exclude(module = "opus-java")
 	}
     implementation("pw.chew:jda-chewtils-commons:2.0-SNAPSHOT")
 	implementation("org.json:json:20220320")
 	implementation("ch.qos.logback:logback-classic:1.2.11")
 	implementation("org.codehaus.groovy:groovy:3.0.10")
-	runtimeOnly("org.postgresql:postgresql:42.3.3")
+	runtimeOnly("org.postgresql:postgresql:42.3.4")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

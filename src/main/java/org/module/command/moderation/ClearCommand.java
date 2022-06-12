@@ -21,45 +21,45 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.module.structure.AbstractCommand;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
 import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
 @Component
-@Command(
-	name = "command.clear.name",
-	args = "command.clear.args",
-	help = "command.clear.help",
-	category = "category.moderation",
-	moderator = true,
-	botPermissions = {Permission.MESSAGE_MANAGE, Permission.MESSAGE_ATTACH_FILES},
-	userPermissions = {Permission.MESSAGE_MANAGE}
-)
-public class ClearCommand extends AbstractCommand {
+public class ClearCommand extends Command {
+	public ClearCommand() {
+		this.name = "clear";
+		this.description = "Clear last messages in current channel";
+		this.category = Category.MODERATION;
+		this.moderationCommand = true;
+		this.options.add(
+			new OptionData(OptionType.INTEGER, "count", "Count to delete messages", true)
+		);
+		this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE, Permission.MESSAGE_ATTACH_FILES};
+		this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
+	}
+
     @Override
     protected void execute(CommandContext ctx) {
-		if (ctx.getArgs().isEmpty()) {
-			ctx.sendHelp();
-			return;
-		}
-        int count = Integer.parseInt(ctx.getArgs());
+        int count = ctx.getOptionAsInt("count");
         if (count < 2 || count > 1000) {
-			ctx.sendHelp();
+			ctx.replyHelp();
             return;
         }
 
         try {
-            ctx.getMessage().delete().queue();
-
-            List<Message> messages = new LinkedList<>();
+			List<Message> messages = new LinkedList<>();
             List<Message> delMessages = new LinkedList<>();
             MessageHistory history = ctx.getChannel().getHistory();
-            OffsetDateTime dateTime = ctx.getMessage().getTimeCreated().minusHours(335);
+            OffsetDateTime dateTime = ctx.getChannel().getTimeCreated().minusHours(335);
             TextChannel channel = ctx.getTextChannel();
 
             while (count > 100) {
@@ -88,8 +88,10 @@ public class ClearCommand extends AbstractCommand {
 				}
                 index += 100;
             }
+
+			ctx.replySuccess(MessageFormat.format("Successfully cleared {0} messages.", delMessages.size()));
         } catch (Exception e) {
-            ctx.send(e.getMessage());
+            ctx.reply(e.getMessage());
         }
     }
 }

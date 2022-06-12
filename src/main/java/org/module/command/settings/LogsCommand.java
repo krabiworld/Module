@@ -17,74 +17,72 @@
 
 package org.module.command.settings;
 
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.module.structure.AbstractCommand;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
+
 @Component
-@Command(
-	name = "command.logs.name",
-	args = "command.logs.args",
-	help = "command.logs.help",
-	category = "category.settings",
-	userPermissions = {Permission.MANAGE_SERVER}
-)
-public class LogsCommand extends AbstractCommand {
-	@Autowired
+public class LogsCommand extends Command {
 	public LogsCommand() {
-		this.children = new AbstractCommand[]{new OffSubCommand(), new OnSubCommand()};
+		this.name = "logs";
+		this.description = "Server logging";
+		this.category = Category.SETTINGS;
+		this.children = new Command[]{new OffSubCommand(), new OnSubCommand()};
 	}
 
 	@Override
-	protected void execute(CommandContext ctx) {
-		ctx.sendHelp();
-	}
+	protected void execute(CommandContext ctx) {}
 
-	@Command(name = "command.logs.off.name")
-	private static class OffSubCommand extends AbstractCommand {
+	public static class OffSubCommand extends Command {
+		public OffSubCommand() {
+			this.name = "off";
+		}
+
 		@Override
 		protected void execute(CommandContext ctx) {
-			TextChannel currentLogsChannel = ctx.getSettings().getLogsChannel();
+			TextChannel currentChannel = ctx.getSettings().getLogsChannel();
 
-			if (currentLogsChannel == null) {
-				ctx.sendError("command.logs.error.already.disabled");
+			if (currentChannel == null) {
+				ctx.replyError("Logs already disabled.");
 				return;
 			}
 
-			ctx.getManager().setLogsChannel(ctx.getGuild(), null);
-			ctx.sendSuccess("command.logs.success.disabled");
+			ctx.getClient().getManager().setLogsChannel(ctx.getGuild(), null);
+			ctx.replySuccess("Logs are disabled.");
 		}
 	}
 
-	@Command(name = "command.logs.on.name")
-	private static class OnSubCommand extends AbstractCommand {
+	public static class OnSubCommand extends Command {
+		public OnSubCommand() {
+			this.name = "on";
+			this.options.add(
+				new OptionData(OptionType.CHANNEL, "channel", "Channel to reply logs", true)
+			);
+		}
+
 		@Override
 		protected void execute(CommandContext ctx) {
-			TextChannel currentLogsChannel = ctx.getSettings().getLogsChannel();
+			TextChannel channel = ctx.getOptionAsTextChannel("channel");
+			TextChannel currentChannel = ctx.getSettings().getLogsChannel();
 
-			if (ctx.getArgs().isEmpty()) {
-				ctx.sendHelp();
+			if (channel == null) {
+				ctx.replyError("Channel not found.");
+				return;
+			}
+			if (channel == currentChannel) {
+				ctx.replyError("This channel already set.");
 				return;
 			}
 
-			TextChannel logsChannel = ctx.findTextChannel(ctx.getArgs());
+			ctx.getClient().getManager().setLogsChannel(ctx.getGuild(), channel);
 
-			if (logsChannel == null) {
-				ctx.sendError("error.channel.not.found");
-				return;
-			}
-			if (logsChannel == currentLogsChannel) {
-				ctx.sendError("error.channel.already.set");
-				return;
-			}
-
-			ctx.getManager().setLogsChannel(ctx.getGuild(), logsChannel);
-
-			ctx.sendSuccess("command.logs.success.changed", logsChannel.getAsMention());
+			ctx.replySuccess(MessageFormat.format("Channel changed to {0}", channel.getAsMention()));
 		}
 	}
 }
