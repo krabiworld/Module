@@ -17,6 +17,7 @@
 
 package org.module.listeners;
 
+import org.module.manager.CacheManager;
 import org.module.service.StatsService;
 import org.module.structure.CommandListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,11 @@ public class CommandListener implements CommandListenerAdapter {
 
 	@Override
 	public void onCommand() {
-		statsService.incrementExecutedCommands();
+		CacheManager.incrementExecutedCommands();
+
+		if (CacheManager.checkExecutedCommands()) {
+			statsService.incrementExecutedCommands(CacheManager.getExecutedCommands());
+			CacheManager.resetExecutedCommands();
+		}
 	}
 }

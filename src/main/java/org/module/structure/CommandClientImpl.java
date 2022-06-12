@@ -17,79 +17,70 @@
 
 package org.module.structure;
 
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.module.Locale;
-import org.module.util.EmbedUtil;
-import org.module.util.LocaleUtil;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class CommandClientImpl extends ListenerAdapter implements CommandClient {
 	private final String ownerId;
-	private final List<AbstractCommand> commands;
-	private final GuildManagerProvider manager;
+	private final String forceGuildId;
+	private final List<Command> commands;
+	private final GuildProvider.Manager manager;
 	private final CommandListenerAdapter listener;
-	private final ScheduledExecutorService executor;
 
 	public CommandClientImpl(
 		String ownerId,
-		List<AbstractCommand> commands,
-		GuildManagerProvider manager,
+		String forceGuildId,
+		List<Command> commands,
+		GuildProvider.Manager manager,
 		CommandListenerAdapter listener
 	) {
 		this.ownerId = ownerId;
+		this.forceGuildId = forceGuildId;
 		this.commands = commands;
 		this.manager = manager;
 		this.listener = listener;
-		this.executor = Executors.newSingleThreadScheduledExecutor();
 	}
 
 	@Override
-	public void onMessageReceived(MessageReceivedEvent event) {
-		if (event.getAuthor().isBot()) return;
+	public void onReady(@NotNull ReadyEvent event) {
+		List<CommandData> data = new ArrayList<>();
 
-		GuildSettingsProvider settings = manager.getSettings(event.getGuild());
-		if (settings == null) return;
-
-		String raw = event.getMessage().getContentRaw();
-
-		String prefix = settings.getPrefix();
-
-		if (!raw.startsWith(prefix)) {
-			String mention = event.getJDA().getSelfUser().getAsMention();
-			if (!raw.startsWith(mention)) return;
-			prefix = mention.trim();
+		for (Command command : commands) {
+			data.add(command.buildCommandData());
 		}
 
-		raw = raw.substring(prefix.length()).trim();
-		int spaceIndex = raw.indexOf(' ');
-		String cmdName = raw.substring(0, spaceIndex == -1 ? raw.length() : spaceIndex);
-		String args = raw.substring(cmdName.length()).trim();
-		AbstractCommand abstractCommand = null;
-		Locale locale = LocaleUtil.getLocale(settings);
-
-		for (AbstractCommand command : commands) {
-			String name = locale.get(command.getAnnotation().name());
-
-			if (name.equals(cmdName)) {
-				abstractCommand = command;
-				break;
-			}
+		if (forceGuildId == null) {
+			event.getJDA().updateCommands().addCommands(data).queue();
+		} else {
+			Objects.requireNonNull(event.getJDA().getGuildById(forceGuildId))
+				.updateCommands().addCommands(data).queue();
 		}
+	}
 
-		if (abstractCommand == null) return;
+	@Override
+	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+		Command command = commands
+			.stream()
+			.filter(cmd -> cmd.getName().equals(event.getName()))
+			.findFirst()
+			.orElse(null);
 
-		Command command = abstractCommand.getAnnotation();
-		EmbedUtil helpEmbed = new EmbedUtil(command, locale, settings.getPrefix());
-		CommandContext context = new CommandContext(event, this, command, helpEmbed, settings, locale, args);
+		if (command == null) return;
+
+		ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
 		executor.submit(listener::onCommand);
-
-		AbstractCommand finalAbstractCommand = abstractCommand;
-		executor.submit(() -> finalAbstractCommand.run(context));
+		executor.submit(() -> command.run(new CommandContext(event, this, command)));
 	}
 
 	@Override
@@ -98,17 +89,17 @@ public class CommandClientImpl extends ListenerAdapter implements CommandClient 
 	}
 
 	@Override
-	public List<AbstractCommand> getCommands() {
+	public List<Command> getCommands() {
 		return commands;
 	}
 
 	@Override
-	public GuildManagerProvider getManager() {
-		return manager;
+	public List<Category> getCategories() {
+		return Arrays.asList(Category.values());
 	}
 
 	@Override
-	public ScheduledExecutorService getScheduleExecutor() {
-		return executor;
+	public GuildProvider.Manager getManager() {
+		return manager;
 	}
 }

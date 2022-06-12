@@ -17,7 +17,9 @@
 
 package org.module.command.utilities;
 
-import org.module.structure.AbstractCommand;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
@@ -25,35 +27,40 @@ import org.springframework.stereotype.Component;
 import java.util.Random;
 
 @Component
-@Command(
-	name = "command.random.name",
-	args = "command.random.args",
-	help = "command.random.help",
-	category = "category.utilities"
-)
-public class RandomCommand extends AbstractCommand {
+public class RandomCommand extends Command {
+	public RandomCommand() {
+		this.name = "random";
+		this.description = "Returns a random number";
+		this.category = Category.UTILITIES;
+		this.options.add(
+			new OptionData(OptionType.NUMBER, "min", "First number", false)
+		);
+		this.options.add(
+			new OptionData(OptionType.NUMBER, "max", "Second number", false)
+		);
+	}
+
 	@Override
 	protected void execute(CommandContext ctx) {
-		String[] args = ctx.splitArgs();
+		int min = ctx.getOptionAsInt("min");
+		int max = ctx.getOptionAsInt("max");
 
-		if (ctx.getArgs().isEmpty()) {
-			ctx.send(random(false, false, 0, 0));
+		if (min == -1 && max == -1) {
+			ctx.reply(random(false, false, 0, 0));
 		} else {
 			try {
-				if (args.length > 1) {
-					long min = Long.parseLong(args[0]);
-					long max = Long.parseLong(args[1]);
-					ctx.send(random(true, true, min, max));
+				if (min != -1 && max != -1) {
+					ctx.reply(random(true, true, min, max));
 					return;
 				}
-				ctx.send(random(true, false, Long.parseLong(args[0]), 0));
+				ctx.reply(random(true, false, min, 0));
 			} catch (Exception e) {
-				ctx.sendHelp();
+				ctx.replyHelp();
 			}
 		}
 	}
 
-	private String random(boolean min, boolean max, long minNumber, long maxNumber) {
+	private String random(boolean min, boolean max, int minNumber, int maxNumber) {
 		Random random = new Random();
 		long result;
 		if (min && !max) {

@@ -21,9 +21,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 public class CommandClientBuilder {
+	private final LinkedList<Command> commands = new LinkedList<>();
 	private String ownerId;
-	private final LinkedList<AbstractCommand> commands = new LinkedList<>();
-	private GuildManagerProvider manager;
+	private String forceGuildId = null;
+	private GuildProvider.Manager manager;
 	private CommandListenerAdapter listener;
 
 	public static CommandClientBuilder builder() {
@@ -31,7 +32,7 @@ public class CommandClientBuilder {
 	}
 
 	public CommandClient build() {
-		return new CommandClientImpl(ownerId, commands, manager, listener);
+		return new CommandClientImpl(ownerId, forceGuildId, commands, manager, listener);
 	}
 
 	public CommandClientBuilder setOwnerId(String ownerId) {
@@ -39,12 +40,17 @@ public class CommandClientBuilder {
 		return this;
 	}
 
-	public CommandClientBuilder setCommands(AbstractCommand... commands) {
+	public CommandClientBuilder forceGuildOnly(String guildId) {
+		this.forceGuildId = guildId;
+		return this;
+	}
+
+	public CommandClientBuilder setCommands(Command... commands) {
 		Collections.addAll(this.commands, commands);
 		return this;
 	}
 
-	public CommandClientBuilder setGuildManager(GuildManagerProvider manager) {
+	public CommandClientBuilder setGuildManager(GuildProvider.Manager manager) {
 		this.manager = manager;
 		return this;
 	}

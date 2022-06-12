@@ -17,76 +17,49 @@
 
 package org.module.structure;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.module.Constants;
-import org.module.Locale;
 import org.module.util.EmbedUtil;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class CommandContext {
-	private static final Consumer<Message> errorDelay = m -> m.delete().queueAfter(10, TimeUnit.SECONDS);
-	private static final Consumer<Message> successDelay = m -> m.delete().queueAfter(20, TimeUnit.SECONDS);
+public record CommandContext(SlashCommandInteractionEvent event, CommandClient client, Command command) {
+	private static final Consumer<InteractionHook> SUCCESS = i -> i.deleteOriginal().queueAfter(20, TimeUnit.SECONDS);
 
-	private final MessageReceivedEvent event;
-	private final CommandClient client;
-	private final Command command;
-	private final EmbedUtil helpEmbed;
-	private final GuildSettingsProvider settings;
-	private final Locale locale;
-	private String args;
+	private static GuildProvider.Settings settings = null;
 
-	public CommandContext(
-		MessageReceivedEvent event,
-		CommandClient client,
-		Command command,
-		EmbedUtil helpEmbed,
-		GuildSettingsProvider settings,
-		Locale locale,
-		String args
-	) {
-		this.event = event;
-		this.client = client;
-		this.command = command;
-		this.helpEmbed = helpEmbed;
-		this.settings = settings;
-		this.locale = locale;
-		this.args = args;
+	public void reply(String message) {
+		event.reply(message).queue();
 	}
 
-	public void send(String message) {
-		sendMessage(message);
+	public void reply(MessageEmbed embed) {
+		event.replyEmbeds(embed).queue();
 	}
 
-	public void send(MessageEmbed embed) {
-		sendMessage(embed);
+	public void replySuccess(String message) {
+		MessageEmbed embed = new EmbedUtil(Constants.SUCCESS, message).build();
+		event.replyEmbeds(embed).queue(SUCCESS);
 	}
 
-	public void send(EmbedBuilder embedBuilder) {
-		sendMessage(embedBuilder.build());
+	public void replyError(String message) {
+		MessageEmbed embed = new EmbedUtil(Constants.ERROR, message).build();
+		event.replyEmbeds(embed).setEphemeral(true).queue();
 	}
 
-	public void sendSuccess(String key, Object... args) {
-		react("✅");
-		MessageEmbed embed = new EmbedUtil(Constants.SUCCESS, locale.get(key, args)).build();
-		sendMessage(embed, successDelay);
+	public void replyHelp() {
+		EmbedUtil embed = new EmbedUtil(command);
+		event.replyEmbeds(embed.build()).setEphemeral(true).queue();
 	}
 
-	public void sendError(String key, Object... args) {
-		react("❌");
-		MessageEmbed embed = new EmbedUtil(Constants.ERROR, locale.get(key, args)).build();
-		sendMessage(embed, errorDelay);
-	}
-
-	public void sendHelp() {
-		sendMessage(helpEmbed.build(), successDelay);
+	public boolean isOwner() {
+		return getUser().getId().equals(getClient().getOwnerId());
 	}
 
 	public boolean isModerator() {
@@ -100,28 +73,44 @@ public class CommandContext {
 		return member.getRoles().contains(settings.getModeratorRole());
 	}
 
-	public boolean isBanned(String user) {
-		return !FinderUtil.findBannedUsers(user, event.getGuild()).isEmpty();
+	public Member getOptionAsMember(String key) {
+		return getOptionAsMember(key, null);
 	}
 
-	public String get(String key, Object... args) {
-		return locale.get(key, args);
+	public Member getOptionAsMember(String key, Member defaultValue) {
+		return event.getOption(key, defaultValue, OptionMapping::getAsMember);
 	}
 
-	public Locale getLocale() {
-		return locale;
+	public User getOptionAsUser(String key, User defaultValue) {
+		return event.getOption(key, defaultValue, OptionMapping::getAsUser);
+	}
+
+	public Role getOptionAsRole(String key) {
+		return event.getOption(key, null, OptionMapping::getAsRole);
+	}
+
+	public TextChannel getOptionAsTextChannel(String key) {
+		return event.getOption(key, null, OptionMapping::getAsTextChannel);
+	}
+
+	public int getOptionAsInt(String key) {
+		return event.getOption(key, -1, OptionMapping::getAsInt);
+	}
+
+	public String getOptionAsString(String key) {
+		return event.getOption(key, "", OptionMapping::getAsString);
+	}
+
+	public String getSubcommandName() {
+		return event.getSubcommandName();
 	}
 
 	public JDA getJDA() {
 		return event.getJDA();
 	}
 
-	public String getPrefix() {
-		return settings.getPrefix();
-	}
-
 	public User getUser() {
-		return event.getAuthor();
+		return event.getUser();
 	}
 
 	public Member getMember() {
@@ -129,23 +118,11 @@ public class CommandContext {
 	}
 
 	public Member getSelfMember() {
-		return event.getGuild().getSelfMember();
+		return Objects.requireNonNull(event.getGuild()).getSelfMember();
 	}
 
 	public Guild getGuild() {
 		return event.getGuild();
-	}
-
-	public String getArgs() {
-		return args;
-	}
-
-	public void setArgs(String args) {
-		this.args = args;
-	}
-
-	public Message getMessage() {
-		return event.getMessage();
 	}
 
 	public MessageChannel getChannel() {
@@ -160,79 +137,14 @@ public class CommandContext {
 		return event.getTextChannel();
 	}
 
-	public GuildSettingsProvider getSettings() {
+	public GuildProvider.Settings getSettings() {
+		if (settings == null) {
+			settings = getClient().getManager().getSettings(getGuild());
+		}
 		return settings;
-	}
-
-	public List<AbstractCommand> getCommands() {
-		return client.getCommands();
 	}
 
 	public CommandClient getClient() {
 		return client;
-	}
-
-	public GuildManagerProvider getManager() {
-		return client.getManager();
-	}
-
-	public Command getCommand() {
-		return command;
-	}
-
-	public String[] splitArgs() {
-		return args.split("\\s+");
-	}
-
-	public String getGluedArg(String[] args, int start) {
-		StringBuilder arg = new StringBuilder();
-
-		for (int i = start; i < args.length; i++) {
-			arg.append(args[i]).append(" ");
-		}
-
-		return arg.toString().trim();
-	}
-
-	public Member findMember(String query) {
-		List<Member> members = FinderUtil.findMembers(query, event.getGuild());
-		return members.stream().findFirst().orElse(null);
-	}
-
-	public User findUser(String query) {
-		List<User> users = FinderUtil.findUsers(query, event.getJDA());
-		return users.stream().findFirst().orElse(null);
-	}
-
-	public Role findRole(String query) {
-		List<Role> roles = FinderUtil.findRoles(query, event.getGuild());
-		return roles.stream().findFirst().orElse(null);
-	}
-
-	public TextChannel findTextChannel(String query) {
-		List<TextChannel> channels = FinderUtil.findTextChannels(query, event.getGuild());
-		return channels.stream().findFirst().orElse(null);
-	}
-
-	public Emote findEmote(String query) {
-		List<Emote> emotes = FinderUtil.findEmotes(query, event.getGuild());
-		return emotes.stream().findFirst().orElse(null);
-	}
-
-	// private methods
-	private void sendMessage(String message) {
-		event.getChannel().sendMessage(message).queue();
-	}
-
-	private void sendMessage(MessageEmbed embed) {
-		event.getChannel().sendMessageEmbeds(embed).queue();
-	}
-
-	private void sendMessage(MessageEmbed embed, Consumer<Message> consumer) {
-		event.getChannel().sendMessageEmbeds(embed).queue(consumer);
-	}
-
-	private void react(String reaction) {
-		event.getMessage().addReaction(reaction.replaceAll("<a?:(.+):(\\d+)>", "$1:$2")).queue();
 	}
 }

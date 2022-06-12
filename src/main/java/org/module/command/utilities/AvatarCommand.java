@@ -18,39 +18,52 @@
 package org.module.command.utilities;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.module.structure.AbstractCommand;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
+import java.text.MessageFormat;
+
 @Component
-@Command(
-	name = "command.avatar.name",
-	args = "command.avatar.args",
-	help = "command.avatar.help",
-	category = "category.utilities"
-)
-public class AvatarCommand extends AbstractCommand {
+public class AvatarCommand extends Command {
+	public AvatarCommand() {
+		this.name = "avatar";
+		this.description = "Show avatar of member";
+		this.category = Category.UTILITIES;
+		this.options.add(
+			new OptionData(OptionType.USER, "user", "User to show avatar", false)
+		);
+	}
+
 	@Override
     protected void execute(CommandContext ctx) {
-		Member member = ctx.getMember();
+		User user = ctx.getOptionAsUser("user", ctx.getUser());
 
-        if (!ctx.getArgs().isEmpty()) {
-            member = ctx.findMember(ctx.getArgs());
-        }
-        if (member == null) {
-			ctx.sendHelp();
+        if (user == null) {
+			ctx.replyHelp();
             return;
         }
 
+		User.Profile profile = user.retrieveProfile().complete();
+		Color color;
+		if (profile.getAccentColor() == null) {
+			color = ctx.getGuild().retrieveMember(user).complete().getColor();
+		} else {
+			color = profile.getAccentColor();
+		}
+
 		MessageEmbed embed = new EmbedBuilder()
-			.setAuthor(ctx.get("command.avatar.title", member.getUser().getName()))
-			.setColor(member.getColor())
-			.setImage(member.getEffectiveAvatarUrl() + "?size=512")
+			.setAuthor(MessageFormat.format("Avatar of {0}", user.getName()))
+			.setColor(color)
+			.setImage(user.getEffectiveAvatarUrl() + "?size=512")
 			.build();
 
-        ctx.send(embed);
+        ctx.reply(embed);
     }
 }

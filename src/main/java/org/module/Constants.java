@@ -17,10 +17,11 @@
 
 package org.module;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class Constants {
 	public static final int MAX_MESSAGE_CACHE = 8000;
+	public static final int MAX_EXECUTED_COMMANDS_CACHE = 100;
 
 	/** Main color. */
 	public static final Color DEFAULT = new Color(46, 122, 213);
@@ -35,6 +36,4 @@ public class Constants {
 	public static final String IDLE = "<:idle:948619010575065131>";
 	public static final String DND = "<:dnd:948619010352750603>";
 	public static final String OFFLINE = "<:offline:948619010440843387>";
-
-	public enum Language { RU, EN }
 }

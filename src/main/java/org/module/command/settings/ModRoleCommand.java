@@ -19,41 +19,43 @@ package org.module.command.settings;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
-import org.module.structure.AbstractCommand;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
+
 @Component
-@Command(
-	name = "command.modrole.name",
-	args = "command.modrole.args",
-	help = "command.modrole.help",
-	category = "category.settings",
-	userPermissions = {Permission.MANAGE_SERVER}
-)
-public class ModRoleCommand extends AbstractCommand {
+public class ModRoleCommand extends Command {
+	public ModRoleCommand() {
+		this.name = "modrole";
+		this.description = "Set mod role to use moderator commands";
+		this.category = Category.SETTINGS;
+		this.options.add(
+			new OptionData(OptionType.ROLE, "role", "Role to set", true)
+		);
+		this.userPermissions = new Permission[]{Permission.MANAGE_SERVER};
+	}
+
 	@Override
 	protected void execute(CommandContext ctx) {
-		if (ctx.getArgs().isEmpty()) {
-			ctx.sendHelp();
-			return;
-		}
-
-		Role role = ctx.findRole(ctx.getArgs());
-
+		Role role = ctx.getOptionAsRole("role");
 		Role modRole = ctx.getSettings().getModeratorRole();
+
 		if (role == null) {
-			ctx.sendError("error.role.not.found");
+			ctx.replyError("Role not found.");
 			return;
 		}
 		if (role == modRole) {
-			ctx.sendError("error.role.already.set");
+			ctx.replyError("This role already set.");
 			return;
 		}
 
-		ctx.getManager().setModeratorRole(ctx.getGuild(), role);
+		ctx.getClient().getManager().setModeratorRole(ctx.getGuild(), role);
 
-		ctx.sendSuccess("command.modrole.success.changed", role.getName());
+		ctx.replySuccess(MessageFormat.format("Moderator role changed to **{0}**.", role.getName()));
 	}
 }

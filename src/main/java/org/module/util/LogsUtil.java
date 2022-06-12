@@ -21,15 +21,14 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
-import org.module.structure.GuildManagerProvider;
-import org.module.structure.GuildSettingsProvider;
+import org.module.structure.GuildProvider;
 
 import java.util.Date;
 
 public class LogsUtil {
-	private static GuildManagerProvider manager = null;
+	private static GuildProvider.Manager manager = null;
 
-	public static void setManager(GuildManagerProvider manager) {
+	public static void setManager(GuildProvider.Manager manager) {
 		LogsUtil.manager = manager;
 	}
 
@@ -42,7 +41,7 @@ public class LogsUtil {
 	public static void sendLog(Guild guild, EmbedBuilder embed, byte[] file) {
 		embed.setTimestamp(new Date().toInstant());
 
-		GuildSettingsProvider settings = manager.getSettings(guild);
+		GuildProvider.Settings settings = manager.getSettings(guild);
 		if (settings == null) return;
 		TextChannel logsChannel = settings.getLogsChannel();
 		if (logsChannel == null) return;

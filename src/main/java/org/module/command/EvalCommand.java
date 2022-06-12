@@ -15,10 +15,11 @@
  * along with Module. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.module.command.owner;
+package org.module.command;
 
 import groovy.lang.GroovyShell;
-import org.module.structure.AbstractCommand;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,50 +30,39 @@ import java.time.Duration;
 import java.time.Instant;
 
 @Component
-@Command(
-	name = "command.eval.name",
-	args = "command.eval.args",
-	help = "command.eval.help",
-	category = "category.owner",
-	hidden = true
-)
-public class EvalCommand extends AbstractCommand {
+public class EvalCommand extends Command {
 	private final ApplicationContext appCtx;
 
 	@Autowired
 	public EvalCommand(ApplicationContext appCtx) {
+		this.name = "eval";
+		this.ownerCommand = true;
+		this.hidden = true;
+		this.options.add(
+			new OptionData(OptionType.STRING, "code", "Code", true)
+		);
 		this.appCtx = appCtx;
 	}
 
 	@Override
 	protected void execute(CommandContext ctx) {
-		if (!ctx.getUser().getId().equals(ctx.getClient().getOwnerId())) {
-			return;
-		}
-
-		if (ctx.getArgs().isEmpty()) {
-			ctx.sendHelp();
-			return;
-		}
-
 		GroovyShell shell = new GroovyShell();
-		shell.setProperty("e", ctx);
-		shell.setProperty("ctx", appCtx);
+		shell.setProperty("ctx", ctx);
+		shell.setProperty("appCtx", appCtx);
 
 		ctx.getChannel().sendTyping().queue();
 		try {
 			Instant start = Instant.now();
 
-			Object eval = shell.evaluate(ctx.getArgs());
+			Object eval = shell.evaluate(ctx.getOptionAsString("code"));
 
 			Instant finish = Instant.now();
 
-			ctx.sendSuccess(String.format(
+			ctx.replySuccess(String.format(
 				"Evaluated successfully! %s ms\n```\n%s\n```", Duration.between(start, finish).toMillis(), eval
 			));
 		} catch (Exception e) {
-			ctx.send(e.getMessage());
+			ctx.reply(e.getMessage());
 		}
 	}
 }
-

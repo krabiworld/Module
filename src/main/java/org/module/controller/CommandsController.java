@@ -18,59 +18,38 @@
 package org.module.controller;
 
 import org.json.JSONObject;
-import org.module.Locale;
 import org.module.configuration.BotConfiguration;
-import org.module.structure.Command;
-import org.module.structure.CommandClient;
-import org.module.util.LocaleUtil;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.LinkedList;
-import java.util.List;
 
 @RestController
 public class CommandsController {
-	@GetMapping(value = "/commands/{lang}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public String commands(@PathVariable String lang) {
-		Locale locale = LocaleUtil.getLocale(!lang.equals("ru") ? "en" : "ru");
+	@GetMapping(value = "/commands", produces = MediaType.APPLICATION_JSON_VALUE)
+	public String commands() {
+		var client = BotConfiguration.commandClient;
 
-		CommandClient client = BotConfiguration.commandClient;
-
-		JSONObject json = new JSONObject();
-		JSONObject jsonCategories = new JSONObject();
-		List<Command> commands = new LinkedList<>();
-		List<String> categories = new LinkedList<>();
-
-		client.getCommands().forEach(cmd -> commands.add(cmd.getAnnotation()));
-
-		categoriesLoop:
-		for (Command cmd : commands) {
-			if (cmd.hidden()) continue;
-			for (var category : categories) {
-				if (category.equals(cmd.category())) continue categoriesLoop;
-			}
-			categories.add(cmd.category());
-		}
+		var json = new JSONObject();
+		var jsonCategories = new JSONObject();
+		var commands = client.getCommands().stream()
+			.filter(cmd -> cmd.getCategory() != null)
+			.toList();
+		var categories = client.getCategories();
 
 		for (var category : categories) {
-			JSONObject jsonCategory = new JSONObject().put("name", category);
-			JSONObject jsonCommands = new JSONObject();
+			var jsonCommands = new JSONObject();
+			var jsonCategory = new JSONObject().put("name", category.getName());
 
-			List<Command> filteredCommands = commands.stream()
-				.filter(cmd -> cmd.category().equalsIgnoreCase(category)).toList();
-			for (Command command : filteredCommands) {
-				jsonCommands.put(command.name().toLowerCase(), new JSONObject()
-					.put("name", locale.get(command.name()))
-					.put("help", locale.get(command.help()))
-					.put("args", locale.get(command.args()))
-					.put("dialog", false));
-			}
+			commands.stream()
+				.filter(cmd -> cmd.getCategory().getName().equalsIgnoreCase(category.getName()))
+				.forEach(cmd -> jsonCommands
+					.put(cmd.getName().toLowerCase(), new JSONObject()
+					.put("name", cmd.getName())
+					.put("description", cmd.getDescription())
+					.put("dialog", false)));
 
 			jsonCategory.put("commands", jsonCommands);
-			jsonCategories.put(category.toLowerCase(), jsonCategory);
+			jsonCategories.put(category.getName().toLowerCase(), jsonCategory);
 		}
 
 		json.put("commands", client.getCommands().size());

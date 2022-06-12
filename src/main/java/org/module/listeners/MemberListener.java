@@ -18,31 +18,16 @@
 package org.module.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.guild.GuildBanEvent;
-import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.module.Constants;
 import org.module.util.LogsUtil;
 
-import java.util.List;
-
 public class MemberListener extends ListenerAdapter {
-	@Override
-	public void onGuildBan(GuildBanEvent event) {
-		User user = event.getUser();
-
-		EmbedBuilder embed = new EmbedBuilder()
-			.setAuthor(user.getAsTag() + " was banned", null, user.getEffectiveAvatarUrl())
-			.setColor(Constants.ERROR)
-			.setFooter("ID: " + user.getId());
-		LogsUtil.sendLog(event.getGuild(), embed);
-	}
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 		Member member = event.getMember();
@@ -72,70 +57,6 @@ public class MemberListener extends ListenerAdapter {
 			.addField(getRegisteredAtField(event.getMember()))
 			.addField(getMemberCount(event.getGuild()))
 			.setFooter("ID: " + member.getId());
-		LogsUtil.sendLog(event.getGuild(), embed);
-	}
-	@Override
-	public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
-		List<Role> roles = event.getRoles();
-		StringBuilder addedRoles = new StringBuilder();
-
-		for (Role role : roles) {
-			addedRoles.append("`").append(role.getName()).append("` ");
-		}
-
-		EmbedBuilder embed = new EmbedBuilder()
-			.setTitle("Added role(s) for " + event.getUser().getName())
-			.setColor(Constants.SUCCESS)
-			.setDescription(addedRoles.toString())
-			.setFooter("ID: " + event.getUser().getId());
-		LogsUtil.sendLog(event.getGuild(), embed);
-	}
-	@Override
-	public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
-		List<Role> roles = event.getRoles();
-		StringBuilder removedRoles = new StringBuilder();
-
-		for (Role role : roles) {
-			removedRoles.append("`").append(role.getName()).append("` ");
-		}
-
-		EmbedBuilder embed = new EmbedBuilder()
-			.setTitle("Removed role(s) for " + event.getUser().getName())
-			.setColor(Constants.ERROR)
-			.setDescription(removedRoles.toString())
-			.setFooter("ID: " + event.getUser().getId());
-		LogsUtil.sendLog(event.getGuild(), embed);
-	}
-	@Override
-	public void onGuildUnban(GuildUnbanEvent event) {
-		User user = event.getUser();
-
-		EmbedBuilder embed = new EmbedBuilder()
-			.setAuthor(user.getAsTag() + " was unbanned", null, user.getEffectiveAvatarUrl())
-			.setColor(Constants.SUCCESS)
-			.setFooter("ID: " + user.getId());
-		LogsUtil.sendLog(event.getGuild(), embed);
-	}
-	@Override
-	public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event) {
-		Member member = event.getMember();
-		if (member.getUser().isBot()) return;
-		String before = event.getOldNickname();
-		String after = event.getNewNickname();
-		String action = " was updated";
-
-		if (before == null) return;
-		if (after == null) action = " was reset";
-
-		EmbedBuilder embed = new EmbedBuilder()
-			.setAuthor("Nickname for " + member.getUser().getAsTag() + action,
-				null, member.getEffectiveAvatarUrl())
-			.setColor(Constants.WARN)
-			.addField("Before", before, true)
-			.setFooter("ID: " + member.getId());
-
-		if (after != null) embed.addField("After", after, true);
-
 		LogsUtil.sendLog(event.getGuild(), embed);
 	}
 

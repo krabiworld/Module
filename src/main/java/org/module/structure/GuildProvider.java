@@ -17,22 +17,27 @@
 
 package org.module.structure;
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface GuildSettingsProvider {
-	@Nonnull
-	String getPrefix();
+public class GuildProvider {
+	public interface Manager {
+		@Nullable
+		Settings getSettings(Guild guild);
 
-	@Nonnull
-	String getLang();
+		void setLogsChannel(Guild guild, TextChannel channel);
 
-	@Nullable
-	TextChannel getLogsChannel();
+		void setModeratorRole(Guild guild, Role role);
+	}
 
-	@Nullable
-	Role getModeratorRole();
+	public interface Settings {
+		@Nullable
+		TextChannel getLogsChannel();
+
+		@Nullable
+		Role getModeratorRole();
+	}
 }

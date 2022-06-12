@@ -18,5 +18,5 @@
 package org.module.structure;
 
 public interface CommandListenerAdapter {
-	void onCommand();
+	default void onCommand() {}
 }
