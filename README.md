@@ -22,7 +22,7 @@ Multipurpose Discord bot for your server!.
 6. And run `java -jar /build/libs/Module-<version>.jar` to start the bot.
 
 ## License
-Module is licensed under the [GPL v3](LICENSE)
+Module is licensed under the [MIT](LICENSE)
 
 ## Special Thanks
-[u032](https://github.com/u032) and [JetBrains](https://jb.gg/OpenSourceSupport)!
+[JetBrains](https://jb.gg/OpenSourceSupport)!
