@@ -25,4 +25,4 @@ Multipurpose Discord bot for your server!.
 Module is licensed under the [MIT](LICENSE)
 
 ## Special Thanks
-[JetBrains](https://jb.gg/OpenSourceSupport)!
+[JetBrains](https://jb.gg/OpenSourceSupport)
