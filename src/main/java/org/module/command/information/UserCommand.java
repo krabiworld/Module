@@ -90,7 +90,7 @@ public class UserCommand extends Command {
         for (Activity activity : activityList) {
 			switch (activity.getType()) {
 				case CUSTOM_STATUS -> activities.append("**Custom Status:** ")
-					.append(activity.getEmoji() == null ? "" : activity.getEmoji().getAsMention() + " ");
+					.append(activity.getEmoji() == null ? "" : activity.getEmoji().asCustom().getAsMention() + " ");
 				case PLAYING -> activities.append("**Playing:** ");
 				case COMPETING -> activities.append("**Competing in:** ");
 				case LISTENING -> activities.append("**Listening to:** ");

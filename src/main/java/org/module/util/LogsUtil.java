@@ -19,8 +19,9 @@ package org.module.util;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.module.structure.GuildProvider;
 
 import java.util.Date;
@@ -46,10 +47,10 @@ public class LogsUtil {
 		TextChannel logsChannel = settings.getLogsChannel();
 		if (logsChannel == null) return;
 
-		MessageAction message = logsChannel.sendMessageEmbeds(embed.build());
+		MessageCreateAction message = logsChannel.sendMessageEmbeds(embed.build());
 
 		if (file != null) {
-			message = message.addFile(file, ".txt");
+			message = message.addFiles(FileUpload.fromData(file, ".txt"));
 		}
 
 		message.queue();

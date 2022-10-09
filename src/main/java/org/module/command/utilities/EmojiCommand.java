@@ -18,9 +18,9 @@
 package org.module.command.utilities;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.module.Constants;
@@ -49,7 +49,7 @@ public class EmojiCommand extends Command {
     protected void execute(CommandContext ctx) {
 		String args = ctx.getOptionAsString("emoji");
 
-        Emote emoji = findEmote(args, ctx.getGuild());
+        RichCustomEmoji emoji = findEmote(args, ctx.getGuild());
         if (emoji == null) {
 			ctx.replyHelp();
             return;
@@ -65,26 +65,26 @@ public class EmojiCommand extends Command {
         ctx.reply(embed);
     }
 
-	private static Emote findEmote(String query, Guild guild) {
+	private static RichCustomEmoji findEmote(String query, Guild guild) {
 		Matcher mentionMatcher = Pattern.compile("<:(.{2,32}):(\\d{17,20})>").matcher(query);
 
 		if (Pattern.compile("\\d{17,20}").matcher(query).matches()) {
-			Emote emote = guild.getEmoteById(query);
+			RichCustomEmoji emote = guild.getEmojiById(query);
 			if (emote != null) return emote;
 		} else if (mentionMatcher.matches()) {
 			String emoteName = mentionMatcher.group(1);
 			String emoteId = mentionMatcher.group(2);
-			Emote emote = guild.getEmoteById(emoteId);
+			RichCustomEmoji emote = guild.getEmojiById(emoteId);
 			if (emote != null && emote.getName().equals(emoteName)) return emote;
 		}
 
-		ArrayList<Emote> exact = new ArrayList<>();
-		ArrayList<Emote> wrongCase = new ArrayList<>();
-		ArrayList<Emote> startsWith = new ArrayList<>();
-		ArrayList<Emote> contains = new ArrayList<>();
+		ArrayList<RichCustomEmoji> exact = new ArrayList<>();
+		ArrayList<RichCustomEmoji> wrongCase = new ArrayList<>();
+		ArrayList<RichCustomEmoji> startsWith = new ArrayList<>();
+		ArrayList<RichCustomEmoji> contains = new ArrayList<>();
 		String lowerQuery = query.toLowerCase();
 
-		guild.getEmoteCache().forEach(emote -> {
+		guild.getEmojiCache().forEach(emote -> {
 			String name = emote.getName();
 			if (name.equals(query)) exact.add(emote);
 			else if (name.equalsIgnoreCase(query) && exact.isEmpty()) wrongCase.add(emote);

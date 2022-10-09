@@ -18,10 +18,10 @@
 package org.module.manager;
 
 import net.dv8tion.jda.api.entities.Message;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.module.Constants;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 /*
@@ -33,7 +33,7 @@ public class CacheManager {
 
 	public static int executedCommands = 0;
 
-    public static void addMessage(@Nonnull Message message) {
+    public static void addMessage(@NotNull Message message) {
 		MESSAGES.stream()
 			.filter(msg -> msg.getIdLong() == message.getIdLong())
 			.forEach(msg -> MESSAGES.set(MESSAGES.indexOf(msg), message));

@@ -18,7 +18,6 @@
 create table guilds
 (
 	guild_id bigint,
-	prefix   text,
 	logs     bigint,
 	mod      bigint
 );

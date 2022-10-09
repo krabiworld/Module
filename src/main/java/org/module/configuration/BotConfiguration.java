@@ -37,8 +37,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.security.auth.login.LoginException;
-
 @Configuration
 public class BotConfiguration {
 	public static JDA jda;
@@ -62,7 +60,7 @@ public class BotConfiguration {
 	}
 
 	@Bean
-	public void configure() throws LoginException {
+	public void configure() {
 		LogsUtil.setManager(manager);
 
 		commandClient = CommandClientBuilder
@@ -77,7 +75,7 @@ public class BotConfiguration {
 			.createDefault(configuration.getToken())
 			.setActivity(Activity.playing("/help"))
 			.enableIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS))
-			.enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY, CacheFlag.EMOTE)
+			.enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY, CacheFlag.EMOJI)
 			.disableCache(CacheFlag.VOICE_STATE)
 			.setBulkDeleteSplittingEnabled(false)
 			.setMemberCachePolicy(MemberCachePolicy.ALL)
