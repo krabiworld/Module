@@ -19,9 +19,8 @@ package org.module.structure;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-
-import javax.annotation.Nullable;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import org.jetbrains.annotations.Nullable;
 
 public class GuildProvider {
 	public interface Manager {

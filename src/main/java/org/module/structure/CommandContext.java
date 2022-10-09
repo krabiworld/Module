@@ -20,6 +20,9 @@ package org.module.structure;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -90,7 +93,7 @@ public record CommandContext(SlashCommandInteractionEvent event, CommandClient c
 	}
 
 	public TextChannel getOptionAsTextChannel(String key) {
-		return event.getOption(key, null, OptionMapping::getAsTextChannel);
+		return event.getOption(key, null, OptionMapping::getAsChannel).asTextChannel();
 	}
 
 	public int getOptionAsInt(String key) {
@@ -134,7 +137,7 @@ public record CommandContext(SlashCommandInteractionEvent event, CommandClient c
 	}
 
 	public TextChannel getTextChannel() {
-		return event.getTextChannel();
+		return event.getChannel().asTextChannel();
 	}
 
 	public GuildProvider.Settings getSettings() {

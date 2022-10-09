@@ -19,16 +19,15 @@ package org.module.manager;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.Nullable;
 import org.module.model.GuildModel;
 import org.module.service.GuildService;
 import org.module.structure.GuildProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
 
 @Component
 public class GuildManager extends ListenerAdapter implements GuildProvider.Manager {
