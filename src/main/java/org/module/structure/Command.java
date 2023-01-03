@@ -19,6 +19,7 @@ package org.module.structure;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 
 import java.text.MessageFormat;
@@ -82,6 +83,10 @@ public abstract class Command {
 
 	public SubcommandGroupData getSubcommandGroup() {
 		return subcommandGroup;
+	}
+
+	public List<Permission> getUserPermissions() {
+		return List.of(userPermissions);
 	}
 
 	protected abstract void execute(CommandContext ctx);
@@ -165,6 +170,10 @@ public abstract class Command {
 
 	public CommandData buildCommandData() {
 		SlashCommandData data = Commands.slash(name, description);
+
+		if (!getUserPermissions().isEmpty()) {
+			data.setDefaultPermissions(DefaultMemberPermissions.enabledFor(getUserPermissions()));
+		}
 
 		if (!getOptions().isEmpty()) {
 			data.addOptions(getOptions());
