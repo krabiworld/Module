@@ -150,4 +150,15 @@ public record CommandContext(SlashCommandInteractionEvent event, CommandClient c
 	public CommandClient getClient() {
 		return client;
 	}
+
+	public boolean isBanned(String memberId) {
+		var ban = getGuild()
+			.retrieveBanList()
+			.complete()
+			.stream()
+			.filter(obj -> obj.getUser().getId().equals(memberId))
+			.findFirst();
+
+		return ban.isPresent();
+	}
 }

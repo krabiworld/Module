@@ -101,6 +101,11 @@ public class BotConfiguration {
 			ctx.getBean(SlowmodeCommand.class),
 			ctx.getBean(WarnCommand.class),
 			ctx.getBean(WarnsCommand.class),
+			ctx.getBean(BanCommand.class),
+			ctx.getBean(KickCommand.class),
+			ctx.getBean(MuteCommand.class),
+			ctx.getBean(UnbanCommand.class),
+			ctx.getBean(UnmuteCommand.class),
 			// Owner
 			ctx.getBean(EvalCommand.class),
 			// Settings
