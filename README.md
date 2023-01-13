@@ -16,7 +16,7 @@ Multipurpose Discord bot for your server!.
 ## Build and run
 1. Clone this repository.
 2. In directory `src/main/resources` rename `application.example.yml` to `application.yml` and write required data to this file.
-3. Create tables with provided schemas in directory `src/main/resources/schemas`.
+3. Create tables with provided schema in directory `src/main/resources`.
 4. Install JDK 17.
 5. Run `./gradlew build` to build executable jar file.
 6. And run `java -jar /build/libs/Module-<version>.jar` to start the bot.
