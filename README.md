@@ -1,5 +1,5 @@
 # Module
-![](https://img.shields.io/github/workflow/status/HeadcrabJ/Module/CodeQL)
+![](https://img.shields.io/github/actions/workflow/status/HeadcrabJ/Module/codeql-analysis.yml?branch=main)
 ![](https://img.shields.io/github/repo-size/HeadcrabJ/Module)
 ![](https://img.shields.io/maven-central/v/net.dv8tion/JDA?label=JDA)
 

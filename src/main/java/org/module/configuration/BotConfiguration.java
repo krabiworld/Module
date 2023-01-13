@@ -17,6 +17,9 @@
 
 package org.module.configuration;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -30,6 +33,7 @@ import org.module.command.settings.*;
 import org.module.command.utilities.*;
 import org.module.listeners.MemberListener;
 import org.module.listeners.MessageListener;
+import org.module.manager.GuildMusicManager;
 import org.module.structure.*;
 import org.module.util.LogsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +41,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 public class BotConfiguration {
 	public static JDA jda;
+	public static AudioPlayerManager playerManager;
+	private static Map<Long, GuildMusicManager> musicManagers;
 	public static CommandClient commandClient;
 	private final ApplicationContext ctx;
 	private final DiscordConfiguration configuration;
@@ -63,6 +72,10 @@ public class BotConfiguration {
 	public void configure() {
 		LogsUtil.setManager(manager);
 
+		musicManagers = new HashMap<>();
+		playerManager = new DefaultAudioPlayerManager();
+		AudioSourceManagers.registerRemoteSources(playerManager);
+		AudioSourceManagers.registerLocalSource(playerManager);
 		commandClient = CommandClientBuilder
 			.builder()
 			.setOwnerId(configuration.getOwnerId())
