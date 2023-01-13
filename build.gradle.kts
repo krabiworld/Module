@@ -22,22 +22,21 @@ plugins {
 	id("io.spring.dependency-management") version "1.0.13.RELEASE"
 }
 
-version = "1.3"
+version = "2.0"
 application {
 	mainClass.set("org.module.Module")
 }
 
 repositories {
     mavenCentral()
-	maven("https://m2.chew.pro/snapshots/")
+	maven("https://jitpack.io")
 }
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("net.dv8tion:JDA:5.0.0-beta.2") {
-		exclude(module = "opus-java")
-	}
+	implementation("net.dv8tion:JDA:5.0.0-beta.2")
+	implementation("com.github.walkyst:lavaplayer-fork:1.3.99.2")
 	implementation("org.json:json:20220924")
 	implementation("ch.qos.logback:logback-classic:1.2.11")
 	implementation("org.codehaus.groovy:groovy:3.0.14")
@@ -50,10 +49,6 @@ dependencies {
 
 springBoot {
 	buildInfo()
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
 }
 
 tasks.withType<JavaCompile> {
