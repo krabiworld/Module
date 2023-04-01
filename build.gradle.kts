@@ -23,7 +23,7 @@ dependencies {
 	implementation("org.json:json:20220924")
 	implementation("ch.qos.logback:logback-classic:1.2.11")
 	implementation("org.codehaus.groovy:groovy:3.0.14")
-	runtimeOnly("org.postgresql:postgresql:42.5.1")
+	runtimeOnly("org.postgresql:postgresql:42.6.0")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
