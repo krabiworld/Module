@@ -22,7 +22,7 @@ dependencies {
 	implementation("com.github.walkyst:lavaplayer-fork:1.3.99.2")
 	implementation("org.json:json:20220924")
 	implementation("ch.qos.logback:logback-classic:1.2.11")
-	implementation("org.codehaus.groovy:groovy:3.0.14")
+	implementation("org.codehaus.groovy:groovy:3.0.17")
 	runtimeOnly("org.postgresql:postgresql:42.5.1")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
