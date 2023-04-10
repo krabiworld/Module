@@ -18,7 +18,7 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("net.dv8tion:JDA:5.0.0-beta.2")
+	implementation("net.dv8tion:JDA:5.0.0-beta.8")
 	implementation("com.github.walkyst:lavaplayer-fork:1.3.99.2")
 	implementation("org.json:json:20220924")
 	implementation("ch.qos.logback:logback-classic:1.2.11")
