@@ -1,9 +1,11 @@
 discord:
   token: token
-  ownerId: owner id
-  guildId: guild id
+  ownerId: id
+  guildId: id
 
 spring:
+  jpa:
+    open-in-view: false
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://host:5432/database

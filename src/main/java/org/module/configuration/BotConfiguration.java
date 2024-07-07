@@ -3,6 +3,7 @@ package org.module.configuration;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import jakarta.annotation.PostConstruct;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -21,7 +22,6 @@ import org.module.structure.*;
 import org.module.util.LogsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public class BotConfiguration {
 		this.listener = listener;
 	}
 
-	@Bean
+	@PostConstruct
 	public void configure() {
 		LogsUtil.setManager(manager);
 

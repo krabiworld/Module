@@ -1,5 +1,6 @@
 package org.module.structure;
 
+import lombok.Getter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
@@ -10,63 +11,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Command {
+	@Getter
 	protected String name = null;
 
+	@Getter
 	protected String description = "Without description";
 
+	@Getter
 	protected Category category = null;
 
+	@Getter
 	protected boolean ownerCommand = false;
 
+	@Getter
 	protected boolean moderationCommand = false;
 
+	@Getter
 	protected boolean hidden = false;
 
+	@Getter
 	protected Command[] children = new Command[0];
 
+	@Getter
 	protected List<OptionData> options = new ArrayList<>();
 
+	@Getter
 	protected SubcommandGroupData subcommandGroup = null;
 
 	protected Permission[] botPermissions = {};
 
 	protected Permission[] userPermissions = {};
-
-	public String getName() {
-		return name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public Category getCategory() {
-		return category;
-	}
-
-	public Command[] getChildren() {
-		return children;
-	}
-
-	public boolean isModerationCommand() {
-		return moderationCommand;
-	}
-
-	public boolean isOwnerCommand() {
-		return ownerCommand;
-	}
-
-	public boolean isHidden() {
-		return hidden;
-	}
-
-	public List<OptionData> getOptions() {
-		return options;
-	}
-
-	public SubcommandGroupData getSubcommandGroup() {
-		return subcommandGroup;
-	}
 
 	public List<Permission> getUserPermissions() {
 		return List.of(userPermissions);
@@ -144,7 +118,7 @@ public abstract class Command {
 		}
 
 		if (!userPermsMsg.isEmpty()) {
-			ctx.replyError(MessageFormat.format("You don't have permission: {0}", userPermsMsg.toString()));
+			ctx.replyError(MessageFormat.format("You don`t have permission: {0}", userPermsMsg.toString()));
 			return;
 		}
 
@@ -188,6 +162,6 @@ public abstract class Command {
 	}
 
 	private String botPerms(String perms) {
-		return MessageFormat.format("I don't have permission: {0}", perms);
+		return MessageFormat.format("I don`t have permission: {0}", perms);
 	}
 }
