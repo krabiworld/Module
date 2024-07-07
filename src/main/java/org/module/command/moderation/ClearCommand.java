@@ -48,7 +48,7 @@ public class ClearCommand extends Command {
             while (count > 100) {
                 messages.addAll(history.retrievePast(100).complete());
                 count -= 100;
-                if (messages.get(messages.size() - 1).getTimeCreated().isBefore(dateTime)) {
+                if (messages.getLast().getTimeCreated().isBefore(dateTime)) {
                     count = 0;
                     break;
                 }

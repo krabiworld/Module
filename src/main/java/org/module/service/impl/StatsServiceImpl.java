@@ -24,6 +24,7 @@ public class StatsServiceImpl implements StatsService {
 
 	@Override
 	public void incrementExecutedCommands(long number) {
+		//noinspection SpringCacheableMethodCallsInspection
 		StatsModel stats = getStats();
 		stats.setExecutedCommands(stats.getExecutedCommands() + number);
 		statsRepository.saveAndFlush(stats);

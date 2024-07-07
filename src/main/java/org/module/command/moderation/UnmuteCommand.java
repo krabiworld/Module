@@ -40,7 +40,7 @@ public class UnmuteCommand extends Command {
 		}
 
 		member.removeTimeout().queue();
-		ctx.replySuccess(MessageFormat.format("**%s** unmuted by moderator **%s**.",
+		ctx.replySuccess(MessageFormat.format("**{0}** unmuted by moderator **{1}**.",
 			member.getUser().getAsTag(), ctx.getMember().getEffectiveName()));
 	}
 }

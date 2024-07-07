@@ -1,5 +1,6 @@
 package org.module.manager;
 
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 public class CacheManager {
     public static final ArrayList<Message> MESSAGES = new ArrayList<>();
 
+	@Getter
 	public static int executedCommands = 0;
 
     public static void addMessage(@NotNull Message message) {
@@ -21,7 +23,7 @@ public class CacheManager {
 			.filter(msg -> msg.getIdLong() == message.getIdLong())
 			.forEach(msg -> MESSAGES.set(MESSAGES.indexOf(msg), message));
 
-		if (MESSAGES.size() + 1 > Constants.MAX_MESSAGE_CACHE) MESSAGES.remove(0);
+		if (MESSAGES.size() + 1 > Constants.MAX_MESSAGE_CACHE) MESSAGES.removeFirst();
 
         MESSAGES.add(message);
     }
@@ -40,10 +42,6 @@ public class CacheManager {
 
 	public static boolean checkExecutedCommands() {
 		return executedCommands >= Constants.MAX_EXECUTED_COMMANDS_CACHE;
-	}
-
-	public static int getExecutedCommands() {
-		return executedCommands;
 	}
 
 	public static void resetExecutedCommands() {
