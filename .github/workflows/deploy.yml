@@ -1,0 +1,22 @@
+name: Deploy app
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Create env
+        run: |
+          echo -e "DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}}\n
+          DISCORD_OWNERID=${{secrets.DISCORD_OWNERID}}\n
+          DISCORD_GUILDID=${{secrets.DISCORD_GUILDID}}\n
+          SPRING_DATASOURCE_USERNAME=${{secrets.DB_USERNAME}}\n
+          SPRING_DATASOURCE_PASSWORD=${{secrets.DB_PASSWORD}}\n" >> ./.env
+      - name: Build and start app
+        run: |
+          docker compose up -d --build
