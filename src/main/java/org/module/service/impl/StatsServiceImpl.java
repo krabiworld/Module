@@ -19,7 +19,13 @@ public class StatsServiceImpl implements StatsService {
 	@Override
 	@Cacheable("stats")
 	public StatsModel getStats() {
-		return statsRepository.findById(1);
+		StatsModel stats =  statsRepository.findById(1);
+		if (stats == null) {
+			stats = new StatsModel();
+			stats.setId(1);
+			statsRepository.saveAndFlush(stats);
+		}
+		return stats;
 	}
 
 	@Override
