@@ -7,6 +7,7 @@ public enum Category {
 	INFORMATION("Information"),
 	MODERATION("Moderation"),
 	SETTINGS("Settings"),
+	MUSIC("Music"),
 	UTILITIES("Utilities");
 
 	private final String name;

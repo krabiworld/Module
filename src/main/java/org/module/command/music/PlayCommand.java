@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.module.manager.MusicManager;
+import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,7 @@ public class PlayCommand extends Command {
 	@Autowired
 	public PlayCommand(MusicManager musicManager) {
 		this.name = "play";
-		this.ownerCommand = true;
-		this.hidden = true;
+		this.category = Category.MUSIC;
 		this.options.add(
 			new OptionData(OptionType.STRING, "track", "URL to track", true)
 		);

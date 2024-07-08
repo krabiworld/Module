@@ -8,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.module.music.GuildMusicManager;
@@ -81,18 +80,21 @@ public class MusicManager {
 		});
 	}
 
+	public void skip(Guild guild) {
+		GuildMusicManager musicManager = getGuildAudioPlayer(guild);
+		musicManager.scheduler.nextTrack();
+	}
+
+	public void pause(Guild guild, boolean pause) {
+		GuildMusicManager musicManager = getGuildAudioPlayer(guild);
+		musicManager.player.setPaused(pause);
+	}
+
 	private void play(AudioManager manager, VoiceChannel voiceChannel, GuildMusicManager musicManager, AudioTrack track) {
 		if (!manager.isConnected()) {
 			manager.openAudioConnection(voiceChannel);
 		}
 
 		musicManager.scheduler.queue(track);
-	}
-
-	private void skipTrack(TextChannel channel) {
-		GuildMusicManager musicManager = getGuildAudioPlayer(channel.getGuild());
-		musicManager.scheduler.nextTrack();
-
-		channel.sendMessage("Skipped to next track.").queue();
 	}
 }

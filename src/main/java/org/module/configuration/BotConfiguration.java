@@ -11,6 +11,9 @@ import org.module.command.EvalCommand;
 import org.module.command.information.*;
 import org.module.command.moderation.*;
 import org.module.command.music.PlayCommand;
+import org.module.command.music.PauseCommand;
+import org.module.command.music.ResumeCommand;
+import org.module.command.music.SkipCommand;
 import org.module.command.settings.*;
 import org.module.command.utilities.*;
 import org.module.listeners.MemberListener;
@@ -79,8 +82,6 @@ public class BotConfiguration {
 			ctx.getBean(ServerCommand.class),
 			ctx.getBean(StatsCommand.class),
 			ctx.getBean(UserCommand.class),
-			// Music
-			ctx.getBean(PlayCommand.class),
 			// Moderation
 			ctx.getBean(ClearCommand.class),
 			ctx.getBean(RemwarnCommand.class),
@@ -92,15 +93,20 @@ public class BotConfiguration {
 			ctx.getBean(MuteCommand.class),
 			ctx.getBean(UnbanCommand.class),
 			ctx.getBean(UnmuteCommand.class),
-			// Owner
-			ctx.getBean(EvalCommand.class),
 			// Settings
 			ctx.getBean(LogsCommand.class),
 			ctx.getBean(ModRoleCommand.class),
+			// Music
+			ctx.getBean(PlayCommand.class),
+			ctx.getBean(PauseCommand.class),
+			ctx.getBean(ResumeCommand.class),
+			ctx.getBean(SkipCommand.class),
 			// Utilities
 			ctx.getBean(AvatarCommand.class),
 			ctx.getBean(EmojiCommand.class),
-			ctx.getBean(RandomCommand.class)
+			ctx.getBean(RandomCommand.class),
+			// Owner
+			ctx.getBean(EvalCommand.class)
 		};
 	}
 }
