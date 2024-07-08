@@ -1,4 +1,4 @@
-package org.module.command;
+package org.module.command.owner;
 
 import groovy.lang.GroovyShell;
 import net.dv8tion.jda.api.interactions.commands.OptionType;

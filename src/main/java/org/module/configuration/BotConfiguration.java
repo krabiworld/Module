@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.module.command.EvalCommand;
+import org.module.command.owner.EvalCommand;
 import org.module.command.information.*;
 import org.module.command.moderation.*;
 import org.module.command.music.PlayCommand;
