@@ -24,14 +24,14 @@ public class TrackScheduler extends AudioEventAdapter {
 		}
 	}
 
-	public void nextTract() {
+	public void nextTrack() {
 		player.startTrack(queue.poll(), false);
 	}
 
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
 		if (endReason.mayStartNext) {
-			nextTract();
+			nextTrack();
 		}
 	}
 }

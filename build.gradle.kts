@@ -19,7 +19,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("net.dv8tion:JDA:5.0.0")
-	implementation("com.github.walkyst:lavaplayer-fork:1.3.99.2")
+	implementation("dev.arbjerg:lavaplayer:2.2.0")
 	implementation("org.json:json:20231013")
 	implementation("org.codehaus.groovy:groovy:3.0.14")
 	runtimeOnly("org.postgresql:postgresql:42.7.2")
