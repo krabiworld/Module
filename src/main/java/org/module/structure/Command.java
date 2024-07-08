@@ -10,36 +10,18 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public abstract class Command {
-	@Getter
 	protected String name = null;
-
-	@Getter
 	protected String description = "Without description";
-
-	@Getter
 	protected Category category = null;
-
-	@Getter
 	protected boolean ownerCommand = false;
-
-	@Getter
 	protected boolean moderationCommand = false;
-
-	@Getter
 	protected boolean hidden = false;
-
-	@Getter
 	protected Command[] children = new Command[0];
-
-	@Getter
 	protected List<OptionData> options = new ArrayList<>();
-
-	@Getter
 	protected SubcommandGroupData subcommandGroup = null;
-
 	protected Permission[] botPermissions = {};
-
 	protected Permission[] userPermissions = {};
 
 	public List<Permission> getUserPermissions() {

@@ -16,43 +16,25 @@ public class RandomCommand extends Command {
 		this.description = "Returns a random number";
 		this.category = Category.UTILITIES;
 		this.options.add(
-			new OptionData(OptionType.NUMBER, "min", "First number", false)
+			new OptionData(OptionType.INTEGER, "min", "Minimum number", false)
 		);
 		this.options.add(
-			new OptionData(OptionType.NUMBER, "max", "Second number", false)
+			new OptionData(OptionType.INTEGER, "max", "Maximum number", false)
 		);
 	}
 
 	@Override
 	protected void execute(CommandContext ctx) {
-		int min = ctx.getOptionAsInt("min");
-		int max = ctx.getOptionAsInt("max");
+		int min = ctx.getOptionAsInt("min", 1);
+		int max = ctx.getOptionAsInt("max", 100);
 
-		if (min == -1 && max == -1) {
-			ctx.reply(random(false, false, 0, 0));
-		} else {
-			try {
-				if (min != -1 && max != -1) {
-					ctx.reply(random(true, true, min, max));
-					return;
-				}
-				ctx.reply(random(true, false, min, 0));
-			} catch (Exception e) {
-				ctx.replyHelp();
-			}
+		if (min >= max) {
+			ctx.replyError("Min should be less than Max.");
+			return;
 		}
-	}
 
-	private String random(boolean min, boolean max, int minNumber, int maxNumber) {
-		Random random = new Random();
-		long result;
-		if (min && !max) {
-			result = random.nextLong();
-		} else if (min) {
-			result = Math.round(Math.floor(Math.random() * (maxNumber - minNumber + 1) + minNumber));
-		} else {
-			result = random.nextInt(1000);
-		}
-		return String.valueOf(result);
+		long number = new Random().nextLong(min, max);
+
+		ctx.reply(String.valueOf(number));
 	}
 }

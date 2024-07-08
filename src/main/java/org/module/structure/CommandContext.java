@@ -79,8 +79,8 @@ public record CommandContext(SlashCommandInteractionEvent event, CommandClient c
 		return event.getOption(key, null, OptionMapping::getAsChannel).asTextChannel();
 	}
 
-	public int getOptionAsInt(String key) {
-		return event.getOption(key, -1, OptionMapping::getAsInt);
+	public int getOptionAsInt(String key, int... defaultValue) {
+		return event.getOption(key, defaultValue.length == 0 ? -1 : defaultValue[0], OptionMapping::getAsInt);
 	}
 
 	public String getOptionAsString(String key) {
