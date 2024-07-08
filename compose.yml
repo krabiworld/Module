@@ -1,0 +1,21 @@
+services:
+  app:
+    container_name: module
+    build: .
+    restart: always
+    depends_on:
+      - db
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_DB: module
+      POSTGRES_PASSWORD: passwd
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    external: true

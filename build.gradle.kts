@@ -5,7 +5,6 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.5"
 }
 
-version = "2.0"
 application {
 	mainClass.set("org.module.Module")
 }
