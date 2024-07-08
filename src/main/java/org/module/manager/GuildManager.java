@@ -23,12 +23,7 @@ public class GuildManager extends ListenerAdapter implements GuildProvider.Manag
 
 	@Override
 	public void onGuildJoin(GuildJoinEvent event) {
-		if (guildService.getGuild(event.getGuild().getIdLong()) != null) return;
-
-		GuildModel guildConfig = new GuildModel();
-		guildConfig.setId(event.getGuild().getIdLong());
-
-		guildService.addGuild(guildConfig);
+		guildService.getGuild(event.getGuild().getIdLong());
 	}
 
 	@Override

@@ -19,12 +19,13 @@ public class GuildServiceImpl implements GuildService {
 	@Override
 	@Cacheable("guild")
 	public GuildModel getGuild(long id) {
-		return guildRepository.findById(id);
-	}
-
-	@Override
-	public void addGuild(GuildModel guildModel) {
-		guildRepository.saveAndFlush(guildModel);
+		GuildModel guild = guildRepository.findById(id);
+		if (guild == null) {
+			guild = new GuildModel();
+			guild.setId(id);
+			guildRepository.saveAndFlush(guild);
+		}
+		return guild;
 	}
 
 	@Override
