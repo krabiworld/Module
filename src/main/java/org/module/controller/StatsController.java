@@ -1,8 +1,9 @@
 package org.module.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import org.json.JSONObject;
 import org.module.configuration.BotConfiguration;
 import org.module.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,13 @@ public class StatsController {
 			channelsCount += guild.getChannels().size();
 		}
 
-		return new JSONObject()
-			.put("guilds", jda.getGuilds().size())
-			.put("users", jda.getUsers().size())
-			.put("channels", channelsCount)
-			.put("executedCommands", statsService.getStats().getExecutedCommands())
-			.put("shards", jda.getShardInfo().getShardTotal())
-			.toString();
+		JsonObject json = new JsonObject();
+		json.addProperty("guilds", jda.getGuilds().size());
+		json.addProperty("users", jda.getUsers().size());
+		json.addProperty("channels", channelsCount);
+		json.addProperty("executedCommands", statsService.getStats().getExecutedCommands());
+		json.addProperty("shards", jda.getShardInfo().getShardTotal());
+
+		return new Gson().toJson(json);
 	}
 }

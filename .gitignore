@@ -1,4 +1,13 @@
-build
-.gradle
-.idea
-/src/main/resources/application.yml
+# IDE
+.idea/
+.vscode/
+
+# Gradle
+build/
+.gradle/
+
+# Config
+src/main/resources/application.yml
+
+# macOS
+.DS_Store
