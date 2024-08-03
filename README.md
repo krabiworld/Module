@@ -8,7 +8,6 @@ Multipurpose Discord bot for your server!.
 ## Technologies
 - [Java](https://www.oracle.com/java/)
 - [JDA](https://github.com/DV8FromTheWorld/JDA)
-- [JDA-Chewtils](https://github.com/Chew/JDA-Chewtils)
 - [Spring](https://spring.io)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Lombok](https://projectlombok.org/)
