@@ -7,40 +7,30 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.module.command.owner.EvalCommand;
-import org.module.command.information.*;
-import org.module.command.moderation.*;
-import org.module.command.music.PlayCommand;
-import org.module.command.music.PauseCommand;
-import org.module.command.music.ResumeCommand;
-import org.module.command.music.SkipCommand;
-import org.module.command.settings.*;
-import org.module.command.utilities.*;
 import org.module.listeners.MemberListener;
 import org.module.listeners.MessageListener;
 import org.module.structure.*;
 import org.module.util.LogsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class BotConfiguration {
 	public static JDA jda;
 	public static CommandClient commandClient;
-	private final ApplicationContext ctx;
+	private final Command[] commands;
 	private final DiscordConfiguration configuration;
 	private final GuildProvider.Manager manager;
 	private final CommandListenerAdapter listener;
 
 	@Autowired
 	public BotConfiguration(
-		ApplicationContext ctx,
+		Command[] commands,
 		DiscordConfiguration configuration,
 		GuildProvider.Manager manager,
 		CommandListenerAdapter listener
 	) {
-		this.ctx = ctx;
+		this.commands = commands;
 		this.configuration = configuration;
 		this.manager = manager;
 		this.listener = listener;
@@ -54,7 +44,7 @@ public class BotConfiguration {
 			.builder()
 			.setOwnerId(configuration.getOwnerId())
 			.forceGuildOnly(configuration.getGuildId())
-			.setCommands(getCommands())
+			.setCommands(commands)
 			.setGuildManager(manager)
 			.setListener(listener)
 			.build();
@@ -73,40 +63,5 @@ public class BotConfiguration {
 				new MessageListener(),
 				new MemberListener()
 			).build();
-	}
-
-	private Command[] getCommands() {
-		return new Command[]{
-			// Information
-			ctx.getBean(HelpCommand.class),
-			ctx.getBean(ServerCommand.class),
-			ctx.getBean(StatsCommand.class),
-			ctx.getBean(UserCommand.class),
-			// Moderation
-			ctx.getBean(ClearCommand.class),
-			ctx.getBean(RemwarnCommand.class),
-			ctx.getBean(SlowmodeCommand.class),
-			ctx.getBean(WarnCommand.class),
-			ctx.getBean(WarnsCommand.class),
-			ctx.getBean(BanCommand.class),
-			ctx.getBean(KickCommand.class),
-			ctx.getBean(MuteCommand.class),
-			ctx.getBean(UnbanCommand.class),
-			ctx.getBean(UnmuteCommand.class),
-			// Settings
-			ctx.getBean(LogsCommand.class),
-			ctx.getBean(ModRoleCommand.class),
-			// Music
-			ctx.getBean(PlayCommand.class),
-			ctx.getBean(PauseCommand.class),
-			ctx.getBean(ResumeCommand.class),
-			ctx.getBean(SkipCommand.class),
-			// Utilities
-			ctx.getBean(AvatarCommand.class),
-			ctx.getBean(EmojiCommand.class),
-			ctx.getBean(RandomCommand.class),
-			// Owner
-			ctx.getBean(EvalCommand.class)
-		};
 	}
 }

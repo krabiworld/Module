@@ -9,7 +9,6 @@ import org.module.structure.Category;
 import org.module.structure.Command;
 import org.module.structure.CommandContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Component;
 
 import java.lang.management.ManagementFactory;
@@ -20,15 +19,13 @@ import java.time.ZoneId;
 @Component
 public class StatsCommand extends Command {
 	private final StatsService statsService;
-	private final BuildProperties buildProperties;
 
 	@Autowired
-    public StatsCommand(StatsService statsService, BuildProperties buildProperties) {
+    public StatsCommand(StatsService statsService) {
 		this.name = "stats";
 		this.description = "Bot statistics";
 		this.category = Category.INFORMATION;
 		this.statsService = statsService;
-		this.buildProperties = buildProperties;
     }
 
     @Override
@@ -39,7 +36,6 @@ public class StatsCommand extends Command {
 			.setTitle(this.getDescription())
 			.setColor(Constants.DEFAULT)
 			.setThumbnail(jda.getSelfUser().getEffectiveAvatarUrl())
-			.setFooter("Version: " + buildProperties.getVersion())
 			.addField(getMainField(jda))
 			.addField(getPlatformField(jda))
 			.build();
